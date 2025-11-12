@@ -20,8 +20,8 @@
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="Kuba UI Hub - Material 3 Design System">
   
-  <!-- Mobile viewport settings - Fixed width to prevent scaling -->
-  <meta name="viewport" content="width=430, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <!-- Mobile viewport settings -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -62,6 +62,16 @@
       margin: 0 auto;
       background: #fff;
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      position: relative;
+    }
+    
+    /* Constrain Flutter canvas to container width */
+    flutter-view,
+    flt-glass-pane,
+    canvas {
+      max-width: 600px !important;
+      width: 100% !important;
     }
   </style>
 </head>
