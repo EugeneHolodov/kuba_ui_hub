@@ -125,7 +125,7 @@ class _InputPageState extends State<InputPage> {
                     onAccentColor: Theme.of(context).colorScheme.onSecondary,
                   ),
                   // Add bottom padding to prevent content from being hidden behind floating button
-                  const SizedBox(height: 80),
+                  const SizedBox(height: 150),
                 ],
               ),
             ),

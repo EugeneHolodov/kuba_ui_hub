@@ -1,0 +1,71 @@
+name: Deploy Flutter Web to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - 'flutter/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        working-directory: ./flutter
+        run: flutter pub get
+
+      - name: Build Flutter web app
+        working-directory: ./flutter
+        env:
+          # Set your backend URL here or as a GitHub secret
+          # To use a secret: Replace the value below with ${{ secrets.API_BASE_URL }}
+          # Then add API_BASE_URL as a repository secret in Settings > Secrets and variables > Actions
+          API_BASE_URL: ${{ secrets.API_BASE_URL || 'http://localhost:3000' }}
+        run: |
+          if [ -n "$API_BASE_URL" ] && [ "$API_BASE_URL" != "http://localhost:3000" ]; then
+            flutter build web --release --base-href "/kuba_ui_hub/" --dart-define=API_BASE_URL="$API_BASE_URL"
+          else
+            flutter build web --release --base-href "/kuba_ui_hub/"
+          fi
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './flutter/build/web'
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+

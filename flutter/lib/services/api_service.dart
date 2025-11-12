@@ -13,13 +13,29 @@ class Reviewer {
 }
 
 class ApiService {
-  // Update this to match your backend URL
+  // Backend URL configuration
+  // For web: uses environment variable or defaults to production URL
   // For iOS simulator: http://localhost:3000
   // For Android emulator: http://10.0.2.2:3000
   // For physical device: http://YOUR_COMPUTER_IP:3000 (e.g., http://192.168.1.100:3000)
   // To find your IP: macOS/Linux: ifconfig | grep "inet " | grep -v 127.0.0.1
   //                   Windows: ipconfig (look for IPv4 Address)
-  static const String baseUrl = 'http://localhost:3000';
+
+  // Get base URL from environment or use default
+  // In web builds, you can set this via window.location or environment variables
+  static String get baseUrl {
+    // For web, try to get from window location or use production URL
+    // Replace 'YOUR_BACKEND_URL' with your actual deployed backend URL
+    // Example: https://your-backend.onrender.com
+    const String productionUrl = String.fromEnvironment(
+      'API_BASE_URL',
+      defaultValue: 'http://localhost:3000',
+    );
+
+    // In web context, you might want to use relative URLs or detect the host
+    // For now, we'll use the environment variable or default
+    return productionUrl;
+  }
 
   // Get all reviewers
   static Future<List<Reviewer>> getReviewers() async {
