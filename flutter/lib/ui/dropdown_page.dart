@@ -29,6 +29,7 @@ class _DropdownPageState extends State<DropdownPage> {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Bottom Sheet Dropdown (Secondary Style)
@@ -42,6 +43,7 @@ class _DropdownPageState extends State<DropdownPage> {
               },
               accentColor: Theme.of(context).colorScheme.secondary,
               onAccentColor: Theme.of(context).colorScheme.onSecondary,
+              title: 'Bottom Sheet Dropdown (Secondary)',
             ),
             const SizedBox(height: 32),
 
@@ -56,6 +58,7 @@ class _DropdownPageState extends State<DropdownPage> {
               },
               accentColor: Theme.of(context).colorScheme.primary,
               onAccentColor: Theme.of(context).colorScheme.onPrimary,
+              title: 'Bottom Sheet Dropdown (Primary)',
             ),
             const SizedBox(height: 32),
 
@@ -71,6 +74,7 @@ class _DropdownPageState extends State<DropdownPage> {
               },
               accentColor: Theme.of(context).colorScheme.secondary,
               onAccentColor: Theme.of(context).colorScheme.onSecondary,
+              title: 'Bottom Sheet Dropdown (Multiple)',
               labelText: 'Select Multiple Options',
               bottomSheetTitle: 'Select Options',
             ),

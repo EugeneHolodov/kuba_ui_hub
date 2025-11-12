@@ -57,38 +57,6 @@ class _InputPageState extends State<InputPage> {
             ),
             const SizedBox(height: 32),
 
-            // Email Input
-            KubaInput(
-              value: _emailInput,
-              onChanged: (String? value) {
-                setState(() {
-                  _emailInput = value;
-                });
-              },
-              labelText: 'Email',
-              hintText: 'Enter your email',
-              keyboardType: TextInputType.emailAddress,
-              accentColor: Theme.of(context).colorScheme.primary,
-              onAccentColor: Theme.of(context).colorScheme.onPrimary,
-            ),
-            const SizedBox(height: 32),
-
-            // Password Input
-            KubaInput(
-              value: _passwordInput,
-              onChanged: (String? value) {
-                setState(() {
-                  _passwordInput = value;
-                });
-              },
-              labelText: 'Password',
-              hintText: 'Enter your password',
-              obscureText: true,
-              accentColor: Theme.of(context).colorScheme.secondary,
-              onAccentColor: Theme.of(context).colorScheme.onSecondary,
-            ),
-            const SizedBox(height: 32),
-
             // Multiline Input
             KubaInput(
               value: _multilineInput,
@@ -99,7 +67,7 @@ class _InputPageState extends State<InputPage> {
               },
               labelText: 'Multiline Input',
               hintText: 'Enter multiple lines of text',
-              maxLines: 4,
+              maxLines: 3,
               accentColor: Theme.of(context).colorScheme.primary,
               onAccentColor: Theme.of(context).colorScheme.onPrimary,
             ),

@@ -12,6 +12,7 @@ class KubaDropdown extends StatefulWidget {
   final Color accentColor;
   final Color onAccentColor;
   final String bottomSheetTitle;
+  final String title;
   final bool multiple;
 
   const KubaDropdown({
@@ -26,6 +27,7 @@ class KubaDropdown extends StatefulWidget {
     required this.accentColor,
     required this.onAccentColor,
     this.bottomSheetTitle = 'Select an Option',
+    this.title = 'Bottom Sheet Dropdown',
     this.multiple = false,
   }) : assert(
          (multiple && values != null && onMultipleChanged != null) ||
@@ -185,9 +187,9 @@ class _KubaDropdownState extends State<KubaDropdown> {
       children: [
         Row(
           children: [
-            const Text(
-              'Bottom Sheet Dropdown',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Text(
+              widget.title,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const Spacer(),
             if (_hasValue())
