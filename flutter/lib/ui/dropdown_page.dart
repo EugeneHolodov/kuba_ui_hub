@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/kuba_dropdown.dart';
+import '../widgets/review_input.dart';
 
 class DropdownPage extends StatefulWidget {
   const DropdownPage({super.key});
@@ -24,54 +25,65 @@ class _DropdownPageState extends State<DropdownPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Dropdown'), centerTitle: true),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      body: SizedBox.expand(
+        child: Stack(
+          fit: StackFit.expand,
           children: [
-            // Bottom Sheet Dropdown (Secondary Style)
-            KubaDropdown(
-              value: _bottomSheetValue,
-              options: _options,
-              onChanged: (String? value) {
-                setState(() {
-                  _bottomSheetValue = value;
-                });
-              },
-              accentColor: Theme.of(context).colorScheme.secondary,
-              onAccentColor: Theme.of(context).colorScheme.onSecondary,
-            ),
-            const SizedBox(height: 32),
+            SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Bottom Sheet Dropdown (Secondary Style)
+                  KubaDropdown(
+                    value: _bottomSheetValue,
+                    options: _options,
+                    onChanged: (String? value) {
+                      setState(() {
+                        _bottomSheetValue = value;
+                      });
+                    },
+                    accentColor: Theme.of(context).colorScheme.secondary,
+                    onAccentColor: Theme.of(context).colorScheme.onSecondary,
+                  ),
+                  const SizedBox(height: 32),
 
-            // Bottom Sheet Dropdown (Primary Style)
-            KubaDropdown(
-              value: _bottomSheetValue2,
-              options: _options,
-              onChanged: (String? value) {
-                setState(() {
-                  _bottomSheetValue2 = value;
-                });
-              },
-              accentColor: Theme.of(context).colorScheme.primary,
-              onAccentColor: Theme.of(context).colorScheme.onPrimary,
-            ),
-            const SizedBox(height: 32),
+                  // Bottom Sheet Dropdown (Primary Style)
+                  KubaDropdown(
+                    value: _bottomSheetValue2,
+                    options: _options,
+                    onChanged: (String? value) {
+                      setState(() {
+                        _bottomSheetValue2 = value;
+                      });
+                    },
+                    accentColor: Theme.of(context).colorScheme.primary,
+                    onAccentColor: Theme.of(context).colorScheme.onPrimary,
+                  ),
+                  const SizedBox(height: 32),
 
-            // Bottom Sheet Dropdown (Multiple Selection)
-            KubaDropdown(
-              multiple: true,
-              values: _multipleValues,
-              options: _options,
-              onMultipleChanged: (List<String> values) {
-                setState(() {
-                  _multipleValues = values;
-                });
-              },
-              accentColor: Theme.of(context).colorScheme.secondary,
-              onAccentColor: Theme.of(context).colorScheme.onSecondary,
-              labelText: 'Select Multiple Options',
-              bottomSheetTitle: 'Select Options',
+                  // Bottom Sheet Dropdown (Multiple Selection)
+                  KubaDropdown(
+                    multiple: true,
+                    values: _multipleValues,
+                    options: _options,
+                    onMultipleChanged: (List<String> values) {
+                      setState(() {
+                        _multipleValues = values;
+                      });
+                    },
+                    accentColor: Theme.of(context).colorScheme.secondary,
+                    onAccentColor: Theme.of(context).colorScheme.onSecondary,
+                    labelText: 'Select Multiple Options',
+                    bottomSheetTitle: 'Select Options',
+                  ),
+                  // Add bottom padding to prevent content from being hidden behind floating button
+                  const SizedBox(height: 80),
+                ],
+              ),
             ),
+            // Floating Review Button
+            ReviewInput(widgetName: 'kuba_dropdown'),
           ],
         ),
       ),

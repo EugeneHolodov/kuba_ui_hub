@@ -1,0 +1,23 @@
+name: Deploy Backend (Optional - Manual Setup Recommended)
+
+on:
+  workflow_dispatch:
+    inputs:
+      deploy_to:
+        description: 'Deployment target'
+        required: true
+        type: choice
+        options:
+          - render
+          - railway
+          - none
+
+jobs:
+  info:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deployment Info
+        run: |
+          echo "Backend deployment should be configured manually on your chosen platform."
+          echo "See DEPLOYMENT.md for detailed instructions."
+
