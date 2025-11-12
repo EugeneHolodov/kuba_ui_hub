@@ -58,13 +58,7 @@ class HomePage extends StatelessWidget {
             const SizedBox(height: 32),
 
             // Navigation cards
-            Text(
-              'Test Pages',
-              style: Theme.of(
-                context,
-              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
+            const Divider(thickness: 2, height: 32),
 
             // Dropdown Page Card
             Card(

@@ -128,9 +128,8 @@ class _StartupPageState extends State<StartupPage> {
                     // Title
                     Text(
                       'Welcome to Kuba UI Hub',
-                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: Theme.of(context).textTheme.headlineMedium
+                          ?.copyWith(fontWeight: FontWeight.bold),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 8),
