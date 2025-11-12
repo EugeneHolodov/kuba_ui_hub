@@ -26,10 +26,10 @@ class MyApp extends StatelessWidget {
         ),
       );
     }
-    
+
     return _buildMaterialApp();
   }
-  
+
   Widget _buildMaterialApp() {
     return MaterialApp(
       title: 'Kuba UI Hub',
