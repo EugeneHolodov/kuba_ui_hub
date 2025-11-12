@@ -70,11 +70,12 @@
       max-height: 932px !important;
       background: #1a1a1a;
       border-radius: 50px;
-      padding: 10px;
+      padding: 12px;
       box-shadow: 
-        0 0 0 2px #000,
-        0 20px 60px rgba(0, 0, 0, 0.6),
-        0 0 0 8px #2a2a2a;
+        0 0 0 3px #000,
+        0 20px 60px rgba(0, 0, 0, 0.7),
+        0 0 0 10px #2a2a2a,
+        inset 0 0 0 2px #333;
       position: relative;
       flex-shrink: 0 !important;
       flex-grow: 0 !important;
@@ -95,32 +96,22 @@
       z-index: 1;
     }
     
-    /* Screen area */
+    /* Screen area - inner display */
     #screen {
       width: 100% !important;
       height: 100% !important;
-      max-width: 410px !important;
-      max-height: 912px !important;
-      background: #fff;
-      border-radius: 40px;
+      background: #000;
+      border-radius: 38px;
       overflow: hidden;
       position: relative;
     }
     
-    /* Flutter app container - prevent scaling */
-    flutter-view {
+    /* Flutter app container */
+    flutter-view,
+    flutter-view > * {
       width: 100% !important;
       height: 100% !important;
-      max-width: 410px !important;
-      max-height: 912px !important;
-      display: block;
-      transform: scale(1) !important;
-    }
-    
-    /* Prevent any Flutter canvas from scaling */
-    canvas {
-      max-width: 410px !important;
-      max-height: 912px !important;
+      display: block !important;
     }
     
     /* Loading spinner */
@@ -178,57 +169,20 @@
   </div>
   
   <script>
-    // Lock phone frame dimensions after Flutter loads
+    // Ensure phone frame stays locked at device dimensions
     (function() {
-      function lockDimensions() {
-        const phoneFrame = document.getElementById('phone-frame');
-        const screen = document.getElementById('screen');
-        
-        if (phoneFrame) {
-          phoneFrame.style.width = '430px';
-          phoneFrame.style.height = '932px';
-          phoneFrame.style.maxWidth = '430px';
-          phoneFrame.style.maxHeight = '932px';
-          phoneFrame.style.minWidth = '430px';
-          phoneFrame.style.minHeight = '932px';
-        }
-        
-        if (screen) {
-          screen.style.maxWidth = '410px';
-          screen.style.maxHeight = '912px';
+      function lockPhoneFrame() {
+        const frame = document.getElementById('phone-frame');
+        if (frame) {
+          frame.style.width = '430px';
+          frame.style.height = '932px';
         }
       }
       
-      // Lock immediately
-      lockDimensions();
-      
-      // Lock after DOM loads
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', lockDimensions);
-      }
-      
-      // Lock after Flutter loads (with delay)
-      setTimeout(lockDimensions, 100);
-      setTimeout(lockDimensions, 500);
-      setTimeout(lockDimensions, 1000);
-      setTimeout(lockDimensions, 2000);
-      
-      // Watch for resize and lock again
-      window.addEventListener('resize', lockDimensions);
-      
-      // Use MutationObserver to catch any style changes
-      const observer = new MutationObserver(function(mutations) {
-        lockDimensions();
-      });
-      
-      // Observe the phone frame for attribute changes
-      const phoneFrame = document.getElementById('phone-frame');
-      if (phoneFrame) {
-        observer.observe(phoneFrame, {
-          attributes: true,
-          attributeFilter: ['style', 'class', 'width', 'height']
-        });
-      }
+      lockPhoneFrame();
+      window.addEventListener('resize', lockPhoneFrame);
+      setTimeout(lockPhoneFrame, 100);
+      setTimeout(lockPhoneFrame, 1000);
     })();
   </script>
 </body>
