@@ -47,27 +47,15 @@
       overflow: auto;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
-    }
-    
-    /* Container to center iPhone frame */
-    #app-container {
-      width: 100%;
-      min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 40px 20px;
-      position: relative;
     }
     
-    /* iPhone 16 Pro Max frame - Fixed size, always centered */
-    #phone-frame {
-      width: 430px !important;
-      height: 932px !important;
-      min-width: 430px !important;
-      max-width: 430px !important;
-      min-height: 932px !important;
-      max-height: 932px !important;
+    /* Simple container - Flutter handles sizing via MediaQuery */
+    #app-container {
+      position: relative;
+      /* Phone frame styling */
       background: #1a1a1a;
       border-radius: 50px;
       padding: 12px;
@@ -76,13 +64,10 @@
         0 20px 60px rgba(0, 0, 0, 0.7),
         0 0 0 10px #2a2a2a,
         inset 0 0 0 2px #333;
-      position: relative;
-      flex-shrink: 0 !important;
-      flex-grow: 0 !important;
     }
     
-    /* iPhone notch simulation */
-    #phone-frame::before {
+    /* iPhone notch */
+    #app-container::before {
       content: '';
       position: absolute;
       top: 0;
@@ -92,98 +77,62 @@
       height: 30px;
       background: #1a1a1a;
       border-radius: 0 0 20px 20px;
-      z-index: 10;
-      z-index: 1;
+      z-index: 1000;
     }
     
-    /* Screen area - inner display */
-    #screen {
-      width: 100% !important;
-      height: 100% !important;
+    /* Inner screen container */
+    #flutter-target {
+      width: 430px;
+      height: 932px;
       background: #000;
       border-radius: 38px;
       overflow: hidden;
       position: relative;
     }
     
-    /* Flutter app container */
-    flutter-view,
-    flutter-view > * {
-      width: 100% !important;
-      height: 100% !important;
-      display: block !important;
-    }
-    
-    /* Loading spinner */
+    /* Loading indicator */
     .loading {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
       color: #93328E;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       font-size: 16px;
       z-index: 100;
     }
     
-    /* Only make responsive on actual mobile devices (smaller than phone) */
-    @media (max-width: 480px) and (max-height: 980px) {
-      #app-container {
+    /* Mobile responsive */
+    @media (max-width: 480px), (max-height: 980px) {
+      html, body {
         padding: 0;
-        min-height: 100vh;
       }
       
-      #phone-frame {
-        width: 100vw;
-        height: 100vh;
+      #app-container {
         border-radius: 0;
         padding: 0;
         box-shadow: none;
       }
       
-      #phone-frame::before {
+      #app-container::before {
         display: none;
       }
       
-      #screen {
+      #flutter-target {
+        width: 100vw;
+        height: 100vh;
         border-radius: 0;
-      }
-    }
-    
-    /* Ensure phone stays centered on very wide screens */
-    @media (min-width: 2000px) {
-      #app-container {
-        padding: 60px;
       }
     }
   </style>
 </head>
 <body>
   <div id="app-container">
-    <div id="phone-frame">
-      <div id="screen">
-        
-        <script src="flutter_bootstrap.js" async></script>
-      </div>
+    <div id="flutter-target">
+      <div class="loading">Loading...</div>
     </div>
   </div>
   
-  <script>
-    // Ensure phone frame stays locked at device dimensions
-    (function() {
-      function lockPhoneFrame() {
-        const frame = document.getElementById('phone-frame');
-        if (frame) {
-          frame.style.width = '430px';
-          frame.style.height = '932px';
-        }
-      }
-      
-      lockPhoneFrame();
-      window.addEventListener('resize', lockPhoneFrame);
-      setTimeout(lockPhoneFrame, 100);
-      setTimeout(lockPhoneFrame, 1000);
-    })();
-  </script>
+  <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
