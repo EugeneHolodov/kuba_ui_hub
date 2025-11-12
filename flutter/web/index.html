@@ -44,35 +44,20 @@
     html, body {
       margin: 0;
       padding: 0;
-      background: #6e2d2d;
+      background: #f5f5f5;
       min-height: 100vh;
     }
     
-    /* Center the app with max-width */
     body {
       display: flex;
       justify-content: center;
       align-items: flex-start;
-      overflow-x: hidden;
     }
     
-    /* App container - centered with max-width 600px */
+    /* Simple container - Flutter handles sizing */
     #app-container {
-      width: 600px;
+      width: 100%;
       min-height: 100vh;
-      margin: 0 auto;
-      background: #189e7f;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-      overflow: hidden;
-      position: relative;
-    }
-    
-    /* Constrain Flutter canvas to container width */
-    flutter-view,
-    flt-glass-pane,
-    canvas {
-      max-width: 600px !important;
-      width: 100% !important;
     }
   </style>
 </head>

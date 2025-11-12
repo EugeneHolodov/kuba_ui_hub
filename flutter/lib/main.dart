@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'home_page.dart';
 import 'pages/startup_page.dart';
 import 'services/storage_service.dart';
@@ -13,8 +14,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    // Wrap the entire app to prevent web scaling
-    Widget app = MaterialApp(
+    final app = MaterialApp(
       title: 'Kuba UI Hub',
       theme: ThemeData(
         // Material 3 design system with brand colors
@@ -59,6 +59,26 @@ class MyApp extends StatelessWidget {
       ),
       home: const _AppInitializer(),
     );
+
+    // For web: constrain max-width to 600px and center
+    if (kIsWeb) {
+      return Center(
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 600),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 20,
+                spreadRadius: 0,
+              ),
+            ],
+          ),
+          child: app,
+        ),
+      );
+    }
 
     return app;
   }
