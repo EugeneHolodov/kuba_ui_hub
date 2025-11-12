@@ -60,7 +60,7 @@ class MyApp extends StatelessWidget {
       ),
       home: const _AppInitializer(),
     );
-    
+
     // For web: constrain to device dimensions
     if (kIsWeb) {
       return MediaQuery(
@@ -69,14 +69,10 @@ class MyApp extends StatelessWidget {
           devicePixelRatio: 1.0,
           textScaleFactor: 1.0,
         ),
-        child: SizedBox(
-          width: 430,
-          height: 932,
-          child: app,
-        ),
+        child: SizedBox(width: 430, height: 932, child: app),
       );
     }
-    
+
     return app;
   }
 }
