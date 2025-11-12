@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/kuba_dropdown.dart';
+import '../widgets/review_input.dart';
 
 class DropdownPage extends StatefulWidget {
   const DropdownPage({super.key});
@@ -72,6 +73,9 @@ class _DropdownPageState extends State<DropdownPage> {
               labelText: 'Select Multiple Options',
               bottomSheetTitle: 'Select Options',
             ),
+
+            // Review Input
+            ReviewInput(widgetName: 'kuba_dropdown'),
           ],
         ),
       ),

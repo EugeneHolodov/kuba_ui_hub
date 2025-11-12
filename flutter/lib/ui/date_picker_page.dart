@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/kuba_date_picker.dart';
+import '../widgets/review_input.dart';
 
 class DatePickerPage extends StatefulWidget {
   const DatePickerPage({super.key});
@@ -47,6 +48,9 @@ class _DatePickerPageState extends State<DatePickerPage> {
               onAccentColor: Theme.of(context).colorScheme.onSecondary,
               useBottomSheet: true,
             ),
+
+            // Review Input
+            ReviewInput(widgetName: 'kuba_date_picker'),
           ],
         ),
       ),

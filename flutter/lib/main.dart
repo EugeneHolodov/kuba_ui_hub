@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'home_page.dart';
+import 'pages/startup_page.dart';
+import 'services/storage_service.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,7 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Kuba UI Hub',
       theme: ThemeData(
         // Material 3 design system with brand colors
         // All components automatically use Material 3 styling:
@@ -54,8 +56,43 @@ class MyApp extends StatelessWidget {
           surfaceTint: const Color(0xFF93328E),
         ),
       ),
-      home: const HomePage(),
+      home: const _AppInitializer(),
     );
+  }
+}
+
+class _AppInitializer extends StatefulWidget {
+  const _AppInitializer();
+
+  @override
+  State<_AppInitializer> createState() => _AppInitializerState();
+}
+
+class _AppInitializerState extends State<_AppInitializer> {
+  bool _isLoading = true;
+  bool _hasReviewer = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkReviewer();
+  }
+
+  Future<void> _checkReviewer() async {
+    final hasReviewer = await StorageService.hasReviewer();
+    setState(() {
+      _hasReviewer = hasReviewer;
+      _isLoading = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
+    return _hasReviewer ? const HomePage() : const StartupPage();
   }
 }
 

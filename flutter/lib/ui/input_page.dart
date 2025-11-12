@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/kuba_input.dart';
+import '../widgets/review_input.dart';
 
 class InputPage extends StatefulWidget {
   const InputPage({super.key});
@@ -119,7 +120,9 @@ class _InputPageState extends State<InputPage> {
               accentColor: Theme.of(context).colorScheme.secondary,
               onAccentColor: Theme.of(context).colorScheme.onSecondary,
             ),
-            const SizedBox(height: 52),
+
+            // Review Input
+            ReviewInput(widgetName: 'kuba_input'),
           ],
         ),
       ),
