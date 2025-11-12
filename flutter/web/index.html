@@ -42,9 +42,10 @@
     }
     
     html, body {
-      width: 100%;
-      height: 100%;
+      margin: 0;
+      padding: 0;
       background: #f5f5f5;
+      min-height: 100vh;
     }
     
     /* Center the app with max-width */
@@ -52,6 +53,8 @@
       display: flex;
       justify-content: center;
       align-items: flex-start;
+      width: 100vw;
+      overflow-x: hidden;
     }
     
     /* App container - centered with max-width 600px */
