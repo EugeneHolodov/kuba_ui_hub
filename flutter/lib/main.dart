@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'home_page.dart';
 import 'pages/startup_page.dart';
 import 'services/storage_service.dart';
@@ -13,6 +14,23 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    // For web, wrap in a fixed-size container to prevent auto-scaling
+    if (kIsWeb) {
+      return Center(
+        child: Container(
+          width: 430, // iPhone 16 Pro Max width
+          height: 932, // iPhone 16 Pro Max height
+          clipBehavior: Clip.hardEdge,
+          decoration: const BoxDecoration(),
+          child: _buildMaterialApp(),
+        ),
+      );
+    }
+    
+    return _buildMaterialApp();
+  }
+  
+  Widget _buildMaterialApp() {
     return MaterialApp(
       title: 'Kuba UI Hub',
       theme: ThemeData(
