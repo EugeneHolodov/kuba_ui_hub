@@ -58,7 +58,8 @@ app.get('/', (req, res) => {
       reviews: '/api/reviews',
       reviewers: '/api/reviewers',
       users: '/api/users',
-      items: '/api/items'
+      items: '/api/items',
+      admin: '/admin'
     }
   });
 });
@@ -67,6 +68,7 @@ app.use('/api/reviews', require('./routes/reviews'));
 app.use('/api/reviewers', require('./routes/reviewers'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/items', require('./routes/items'));
+app.use('/admin', require('./routes/admin'));
 
 // Error handling middleware
 app.use((err, req, res, next) => {
