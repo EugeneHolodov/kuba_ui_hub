@@ -21,6 +21,7 @@ class KubaBottomSheet extends StatelessWidget {
     return showModalBottomSheet<T>(
       context: context,
       useSafeArea: true,
+      isScrollControlled: true, // Allow bottom sheet to resize with keyboard
       // Material 3 bottom sheet styling
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -33,76 +34,83 @@ class KubaBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Get keyboard height to adjust bottom sheet position
+    final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+
     return SafeArea(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Title with brand color header (includes handle bar)
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Theme.of(context).colorScheme.primary,
-                  Theme.of(context).colorScheme.primaryContainer,
+      child: Padding(
+        padding: EdgeInsets.only(bottom: keyboardHeight),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Title with brand color header (includes handle bar)
+            Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Theme.of(context).colorScheme.primary,
+                    Theme.of(context).colorScheme.primaryContainer,
+                  ],
+                ),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(20),
+                ),
+              ),
+              child: Column(
+                children: [
+                  // Handle bar with secondary color inside header
+                  Container(
+                    margin: const EdgeInsets.only(top: 8, bottom: 8),
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.secondary,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  // Title row
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          title,
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(
+                                color: Theme.of(context).colorScheme.onPrimary,
+                                fontWeight: FontWeight.bold,
+                              ),
+                        ),
+                        IconButton(
+                          icon: Icon(
+                            Icons.close,
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
+                          onPressed: () {
+                            if (onClose != null) {
+                              onClose!();
+                            } else {
+                              Navigator.pop(context);
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(20),
-              ),
             ),
-            child: Column(
-              children: [
-                // Handle bar with secondary color inside header
-                Container(
-                  margin: const EdgeInsets.only(top: 8, bottom: 8),
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.secondary,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-                // Title row
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        title,
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          color: Theme.of(context).colorScheme.onPrimary,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      IconButton(
-                        icon: Icon(
-                          Icons.close,
-                          color: Theme.of(context).colorScheme.onPrimary,
-                        ),
-                        onPressed: () {
-                          if (onClose != null) {
-                            onClose!();
-                          } else {
-                            Navigator.pop(context);
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // Content
-          Flexible(child: child),
-        ],
+            // Content
+            Flexible(child: child),
+          ],
+        ),
       ),
     );
   }

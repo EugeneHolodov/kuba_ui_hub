@@ -57,32 +57,40 @@ class KubaDatePicker extends StatelessWidget {
       title: bottomSheetTitle,
       child: StatefulBuilder(
         builder: (BuildContext context, StateSetter setModalState) {
+          // Calculate max height for content (calendar + padding)
+          final screenHeight = MediaQuery.of(context).size.height;
+          final maxContentHeight = screenHeight * 0.5; // Limit to 50% of screen
+
           return Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const SizedBox(height: 8),
-                        // Date Picker
-                        SizedBox(
-                          height: 300,
-                          child: CalendarDatePicker(
-                            initialDate: tempSelectedDate,
-                            firstDate: firstDate ?? DateTime(2000),
-                            lastDate: lastDate ?? DateTime(2100),
-                            onDateChanged: (DateTime date) {
-                              setModalState(() {
-                                tempSelectedDate = date;
-                              });
-                            },
+              Flexible(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxHeight: maxContentHeight),
+                  child: SingleChildScrollView(
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const SizedBox(height: 8),
+                          // Date Picker
+                          SizedBox(
+                            height: 300,
+                            child: CalendarDatePicker(
+                              initialDate: tempSelectedDate,
+                              firstDate: firstDate ?? DateTime(2000),
+                              lastDate: lastDate ?? DateTime(2100),
+                              onDateChanged: (DateTime date) {
+                                setModalState(() {
+                                  tempSelectedDate = date;
+                                });
+                              },
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 16),
-                      ],
+                          const SizedBox(height: 16),
+                        ],
+                      ),
                     ),
                   ),
                 ),

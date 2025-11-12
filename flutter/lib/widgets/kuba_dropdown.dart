@@ -48,30 +48,39 @@ class _KubaDropdownState extends State<KubaDropdown> {
         title: widget.bottomSheetTitle,
         child: StatefulBuilder(
           builder: (context, setModalState) {
+            // Calculate max height for list (70% of screen height minus header and buttons)
+            final screenHeight = MediaQuery.of(context).size.height;
+            final maxListHeight = screenHeight * 0.4; // Limit to 40% of screen
+
             return Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: widget.options.length,
-                    itemBuilder: (context, index) {
-                      final option = widget.options[index];
-                      final isSelected = selectedValues.contains(option);
-                      return CheckboxListTile(
-                        value: isSelected,
-                        onChanged: (bool? checked) {
-                          setModalState(() {
-                            if (checked == true) {
-                              selectedValues.add(option);
-                            } else {
-                              selectedValues.remove(option);
-                            }
-                          });
-                        },
-                        title: Text(option),
-                        subtitle: Text('Description for $option'),
-                        activeColor: Theme.of(context).colorScheme.primary,
-                      );
-                    },
+                Flexible(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxHeight: maxListHeight),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: widget.options.length,
+                      itemBuilder: (context, index) {
+                        final option = widget.options[index];
+                        final isSelected = selectedValues.contains(option);
+                        return CheckboxListTile(
+                          value: isSelected,
+                          onChanged: (bool? checked) {
+                            setModalState(() {
+                              if (checked == true) {
+                                selectedValues.add(option);
+                              } else {
+                                selectedValues.remove(option);
+                              }
+                            });
+                          },
+                          title: Text(option),
+                          subtitle: Text('Description for $option'),
+                          activeColor: Theme.of(context).colorScheme.primary,
+                        );
+                      },
+                    ),
                   ),
                 ),
                 Padding(

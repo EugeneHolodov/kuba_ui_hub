@@ -24,69 +24,64 @@ class _DropdownPageState extends State<DropdownPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(title: const Text('Dropdown'), centerTitle: true),
-      body: SizedBox.expand(
-        child: Stack(
-          fit: StackFit.expand,
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Bottom Sheet Dropdown (Secondary Style)
-                  KubaDropdown(
-                    value: _bottomSheetValue,
-                    options: _options,
-                    onChanged: (String? value) {
-                      setState(() {
-                        _bottomSheetValue = value;
-                      });
-                    },
-                    accentColor: Theme.of(context).colorScheme.secondary,
-                    onAccentColor: Theme.of(context).colorScheme.onSecondary,
-                  ),
-                  const SizedBox(height: 32),
-
-                  // Bottom Sheet Dropdown (Primary Style)
-                  KubaDropdown(
-                    value: _bottomSheetValue2,
-                    options: _options,
-                    onChanged: (String? value) {
-                      setState(() {
-                        _bottomSheetValue2 = value;
-                      });
-                    },
-                    accentColor: Theme.of(context).colorScheme.primary,
-                    onAccentColor: Theme.of(context).colorScheme.onPrimary,
-                  ),
-                  const SizedBox(height: 32),
-
-                  // Bottom Sheet Dropdown (Multiple Selection)
-                  KubaDropdown(
-                    multiple: true,
-                    values: _multipleValues,
-                    options: _options,
-                    onMultipleChanged: (List<String> values) {
-                      setState(() {
-                        _multipleValues = values;
-                      });
-                    },
-                    accentColor: Theme.of(context).colorScheme.secondary,
-                    onAccentColor: Theme.of(context).colorScheme.onSecondary,
-                    labelText: 'Select Multiple Options',
-                    bottomSheetTitle: 'Select Options',
-                  ),
-                  // Add bottom padding to prevent content from being hidden behind floating button
-                  const SizedBox(height: 80),
-                ],
-              ),
+            // Bottom Sheet Dropdown (Secondary Style)
+            KubaDropdown(
+              value: _bottomSheetValue,
+              options: _options,
+              onChanged: (String? value) {
+                setState(() {
+                  _bottomSheetValue = value;
+                });
+              },
+              accentColor: Theme.of(context).colorScheme.secondary,
+              onAccentColor: Theme.of(context).colorScheme.onSecondary,
             ),
-            // Floating Review Button
-            ReviewInput(widgetName: 'kuba_dropdown'),
+            const SizedBox(height: 32),
+
+            // Bottom Sheet Dropdown (Primary Style)
+            KubaDropdown(
+              value: _bottomSheetValue2,
+              options: _options,
+              onChanged: (String? value) {
+                setState(() {
+                  _bottomSheetValue2 = value;
+                });
+              },
+              accentColor: Theme.of(context).colorScheme.primary,
+              onAccentColor: Theme.of(context).colorScheme.onPrimary,
+            ),
+            const SizedBox(height: 32),
+
+            // Bottom Sheet Dropdown (Multiple Selection)
+            KubaDropdown(
+              multiple: true,
+              values: _multipleValues,
+              options: _options,
+              onMultipleChanged: (List<String> values) {
+                setState(() {
+                  _multipleValues = values;
+                });
+              },
+              accentColor: Theme.of(context).colorScheme.secondary,
+              onAccentColor: Theme.of(context).colorScheme.onSecondary,
+              labelText: 'Select Multiple Options',
+              bottomSheetTitle: 'Select Options',
+            ),
+            // Add bottom padding to prevent content from being hidden behind floating button
+            const SizedBox(height: 80),
           ],
         ),
       ),
+      floatingActionButton: ReviewInput(
+        widgetName: 'kuba_dropdown',
+      ).buildFloatingActionButton(context),
     );
   }
 }

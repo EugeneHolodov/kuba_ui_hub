@@ -16,52 +16,47 @@ class _DatePickerPageState extends State<DatePickerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(title: const Text('Date Picker'), centerTitle: true),
-      body: SizedBox.expand(
-        child: Stack(
-          fit: StackFit.expand,
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Date Picker (Dialog)
-                  KubaDatePicker(
-                    value: _dialogDate,
-                    onChanged: (DateTime? date) {
-                      setState(() {
-                        _dialogDate = date;
-                      });
-                    },
-                    accentColor: Theme.of(context).colorScheme.primary,
-                    onAccentColor: Theme.of(context).colorScheme.onPrimary,
-                    useBottomSheet: false,
-                  ),
-                  const SizedBox(height: 32),
-
-                  // Date Picker (Bottom Sheet)
-                  KubaDatePicker(
-                    value: _bottomSheetDate,
-                    onChanged: (DateTime? date) {
-                      setState(() {
-                        _bottomSheetDate = date;
-                      });
-                    },
-                    accentColor: Theme.of(context).colorScheme.secondary,
-                    onAccentColor: Theme.of(context).colorScheme.onSecondary,
-                    useBottomSheet: true,
-                  ),
-                  // Add bottom padding to prevent content from being hidden behind floating button
-                  const SizedBox(height: 80),
-                ],
-              ),
+            // Date Picker (Dialog)
+            KubaDatePicker(
+              value: _dialogDate,
+              onChanged: (DateTime? date) {
+                setState(() {
+                  _dialogDate = date;
+                });
+              },
+              accentColor: Theme.of(context).colorScheme.primary,
+              onAccentColor: Theme.of(context).colorScheme.onPrimary,
+              useBottomSheet: false,
             ),
-            // Floating Review Button
-            ReviewInput(widgetName: 'kuba_date_picker'),
+            const SizedBox(height: 32),
+
+            // Date Picker (Bottom Sheet)
+            KubaDatePicker(
+              value: _bottomSheetDate,
+              onChanged: (DateTime? date) {
+                setState(() {
+                  _bottomSheetDate = date;
+                });
+              },
+              accentColor: Theme.of(context).colorScheme.secondary,
+              onAccentColor: Theme.of(context).colorScheme.onSecondary,
+              useBottomSheet: true,
+            ),
+            // Add bottom padding to prevent content from being hidden behind floating button
+            const SizedBox(height: 80),
           ],
         ),
       ),
+      floatingActionButton: ReviewInput(
+        widgetName: 'kuba_date_picker',
+      ).buildFloatingActionButton(context),
     );
   }
 }

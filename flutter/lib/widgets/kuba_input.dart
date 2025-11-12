@@ -48,8 +48,19 @@ class _KubaInputState extends State<KubaInput> {
   @override
   void didUpdateWidget(KubaInput oldWidget) {
     super.didUpdateWidget(oldWidget);
+    // Only update controller if value changed from external source
+    // Don't update if the controller text matches the new value (user is typing)
     if (widget.value != oldWidget.value) {
-      _controller.text = widget.value ?? '';
+      final newValue = widget.value ?? '';
+      // Only update if the controller text is different from the new value
+      // This prevents cursor position issues when user is actively typing
+      if (_controller.text != newValue) {
+        _controller.text = newValue;
+        // Move cursor to end to maintain proper position
+        _controller.selection = TextSelection.fromPosition(
+          TextPosition(offset: _controller.text.length),
+        );
+      }
     }
   }
 
