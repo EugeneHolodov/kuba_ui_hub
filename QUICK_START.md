@@ -9,6 +9,8 @@
 3. Under **Source**, select **GitHub Actions**
 4. Save
 
+> 📖 **Need detailed steps?** See [GITHUB_PAGES_SETUP.md](./GITHUB_PAGES_SETUP.md) for a complete guide with screenshots descriptions.
+
 ### 2. Update Repository Name (if needed)
 
 If your repository is NOT named `kuba_ui_hub`, update the workflow:
@@ -35,6 +37,8 @@ flutter build web --release --base-href "/YOUR_REPO_NAME/" --dart-define=API_BAS
 3. Select `backend` folder
 4. Copy your backend URL
 
+> 📖 **Need detailed step-by-step instructions?** See [BACKEND_DEPLOYMENT.md](./BACKEND_DEPLOYMENT.md) for complete guides with all the details.
+
 ### 4. Configure Backend URL in GitHub
 
 1. Go to repository **Settings** → **Secrets and variables** → **Actions**
@@ -42,6 +46,8 @@ flutter build web --release --base-href "/YOUR_REPO_NAME/" --dart-define=API_BAS
 3. Name: `API_BASE_URL`
 4. Value: Your backend URL (e.g., `https://kuba-ui-hub-backend.onrender.com`)
 5. Save
+
+> 📖 **Detailed instructions** are also in [BACKEND_DEPLOYMENT.md](./BACKEND_DEPLOYMENT.md) under "After Deployment: Configure GitHub Secret"
 
 ### 5. Deploy!
 
