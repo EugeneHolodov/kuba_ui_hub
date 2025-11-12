@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'home_page.dart';
 import 'pages/startup_page.dart';
 import 'services/storage_service.dart';
@@ -60,18 +59,6 @@ class MyApp extends StatelessWidget {
       ),
       home: const _AppInitializer(),
     );
-
-    // For web: constrain to device dimensions
-    if (kIsWeb) {
-      return MediaQuery(
-        data: const MediaQueryData(
-          size: Size(430, 932), // iPhone 16 Pro Max
-          devicePixelRatio: 1.0,
-          textScaleFactor: 1.0,
-        ),
-        child: SizedBox(width: 430, height: 932, child: app),
-      );
-    }
 
     return app;
   }
