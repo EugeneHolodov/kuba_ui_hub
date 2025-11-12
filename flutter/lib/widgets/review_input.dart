@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
 import '../services/storage_service.dart';
+import 'kuba_bottom_sheet.dart';
 
-class ReviewInput extends StatefulWidget {
+// Content widget for bottom sheet
+class ReviewInputContent extends StatefulWidget {
   final String widgetName;
 
-  const ReviewInput({super.key, required this.widgetName});
+  const ReviewInputContent({super.key, required this.widgetName});
 
   @override
-  State<ReviewInput> createState() => _ReviewInputState();
+  State<ReviewInputContent> createState() => _ReviewInputContentState();
 }
 
-class _ReviewInputState extends State<ReviewInput> {
+class _ReviewInputContentState extends State<ReviewInputContent> {
   final TextEditingController _commentController = TextEditingController();
   bool _isSubmitting = false;
   bool _isSubmitted = false;
@@ -60,33 +62,50 @@ class _ReviewInputState extends State<ReviewInput> {
         _commentController.clear();
       });
 
-      // Show success message
+      // Get ScaffoldMessenger and MediaQuery before closing bottom sheet
+      final scaffoldMessenger = ScaffoldMessenger.of(context);
+      final mediaQuery = MediaQuery.of(context);
+
+      // Close bottom sheet first
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
+        Navigator.pop(context);
+      }
+
+      // Show success toaster message at the top after bottom sheet closes
+      Future.delayed(const Duration(milliseconds: 300), () {
+        final screenHeight = mediaQuery.size.height;
+        final topPadding = mediaQuery.padding.top;
+        scaffoldMessenger.showSnackBar(
           SnackBar(
             content: const Row(
               children: [
                 Icon(Icons.check_circle, color: Colors.white),
-                SizedBox(width: 8),
-                Text('Review submitted successfully!'),
+                SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'Review submitted successfully!',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
               ],
             ),
             backgroundColor: Colors.green,
             behavior: SnackBarBehavior.floating,
+            margin: EdgeInsets.only(
+              bottom: screenHeight - topPadding - 140,
+              left: 16,
+              right: 16,
+            ),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
+            duration: const Duration(seconds: 3),
           ),
         );
-      }
-
-      // Reset submitted state after 3 seconds
-      Future.delayed(const Duration(seconds: 3), () {
-        if (mounted) {
-          setState(() {
-            _isSubmitted = false;
-          });
-        }
       });
     } catch (e) {
       setState(() {
@@ -117,149 +136,163 @@ class _ReviewInputState extends State<ReviewInput> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(top: 32, bottom: 16),
-      color: Colors.white,
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.5,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primaryContainer,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.rate_review,
-                  color: Theme.of(context).colorScheme.onPrimaryContainer,
-                  size: 24,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Leave a Review',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
+          // Scrollable content area
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Description
+                  Text(
+                    'Share your thoughts about ${widget.widgetName}',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Comment Input
+                  TextField(
+                    controller: _commentController,
+                    maxLines: 4,
+                    enabled: !_isSubmitting && !_isSubmitted,
+                    decoration: InputDecoration(
+                      labelText: 'Your Comment',
+                      hintText: 'What do you think about this widget?',
+                      filled: true,
+                      fillColor: Theme.of(context).colorScheme.surfaceVariant,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: Theme.of(context).colorScheme.outline,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: Theme.of(context).colorScheme.outline,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: Theme.of(context).colorScheme.primary,
+                          width: 2,
+                        ),
+                      ),
+                      errorText: _errorMessage,
+                      errorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: Theme.of(context).colorScheme.error,
+                        ),
+                      ),
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: Theme.of(context).colorScheme.error,
+                          width: 2,
+                        ),
                       ),
                     ),
-                    Text(
-                      'Share your thoughts about ${widget.widgetName}',
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-
-          // Comment Input
-          TextField(
-            controller: _commentController,
-            maxLines: 4,
-            enabled: !_isSubmitting && !_isSubmitted,
-            decoration: InputDecoration(
-              labelText: 'Your Comment',
-              hintText: 'What do you think about this widget?',
-              filled: true,
-              fillColor: Theme.of(context).colorScheme.surfaceVariant,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(
-                  color: Theme.of(context).colorScheme.outline,
-                ),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(
-                  color: Theme.of(context).colorScheme.outline,
-                ),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(
-                  color: Theme.of(context).colorScheme.primary,
-                  width: 2,
-                ),
-              ),
-              errorText: _errorMessage,
-              errorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(
-                  color: Theme.of(context).colorScheme.error,
-                ),
-              ),
-              focusedErrorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(
-                  color: Theme.of(context).colorScheme.error,
-                  width: 2,
-                ),
+                  ),
+                ],
               ),
             ),
           ),
-          const SizedBox(height: 16),
 
-          // Submit Button
-          SizedBox(
-            width: double.infinity,
-            child: _isSubmitted
-                ? FilledButton.icon(
-                    onPressed: () {
-                      setState(() {
-                        _isSubmitted = false;
-                        _errorMessage = null;
-                      });
-                    },
-                    icon: const Icon(Icons.check_circle),
-                    label: const Text('Review Submitted!'),
-                    style: FilledButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      foregroundColor: Colors.white,
-                      minimumSize: const Size(double.infinity, 48),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
+          // Submit Button - Always at bottom
+          Container(
+            padding: const EdgeInsets.all(20.0),
+            decoration: BoxDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              border: Border(
+                top: BorderSide(
+                  color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+                  width: 1,
+                ),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                FilledButton(
+                  onPressed: _isSubmitting ? null : _submitReview,
+                  style: FilledButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                  )
-                : FilledButton.icon(
-                    onPressed: _isSubmitting ? null : _submitReview,
-                    icon: _isSubmitting
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                Colors.white,
-                              ),
-                            ),
-                          )
-                        : const Icon(Icons.send),
-                    label: Text(
-                      _isSubmitting ? 'Submitting...' : 'Submit Review',
-                    ),
-                    style: FilledButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                      minimumSize: const Size(double.infinity, 48),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      disabledBackgroundColor: Theme.of(
-                        context,
-                      ).colorScheme.surfaceVariant,
-                    ),
+                    elevation: 2,
                   ),
+                  child: _isSubmitting
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.white,
+                            ),
+                          ),
+                        )
+                      : Text(
+                          _isSubmitting ? 'Submitting...' : 'Submit',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                ),
+              ],
+            ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class ReviewInput extends StatelessWidget {
+  final String widgetName;
+
+  const ReviewInput({super.key, required this.widgetName});
+
+  // Static method to show review input in bottom sheet
+  static Future<void> showBottomSheet({
+    required BuildContext context,
+    required String widgetName,
+  }) {
+    return KubaBottomSheet.show(
+      context: context,
+      title: 'Leave a Review',
+      child: ReviewInputContent(widgetName: widgetName),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      left: 16,
+      right: 16,
+      bottom: 26,
+      child: FloatingActionButton.extended(
+        onPressed: () {
+          ReviewInput.showBottomSheet(context: context, widgetName: widgetName);
+        },
+        icon: const Icon(Icons.rate_review),
+        label: const Text(
+          'Leave a Review',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
+        ),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        elevation: 4,
       ),
     );
   }
