@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'test_page_custom.dart';
 import 'material3_test_page.dart';
 import 'ui/dropdown_page.dart';
 import 'ui/date_picker_page.dart';
@@ -64,70 +63,6 @@ class HomePage extends StatelessWidget {
               style: Theme.of(
                 context,
               ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-
-            // Custom Test Page Card
-            Card(
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const TestPageCustom(),
-                    ),
-                  );
-                },
-                borderRadius: BorderRadius.circular(16),
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primaryContainer,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Icon(
-                          Icons.tune,
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onPrimaryContainer,
-                          size: 28,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Custom Test Page',
-                              style: Theme.of(context).textTheme.titleMedium
-                                  ?.copyWith(fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Dropdowns, Date Pickers with custom styling',
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                          ],
-                        ),
-                      ),
-                      Icon(
-                        Icons.arrow_forward_ios,
-                        color: Theme.of(context).colorScheme.primary,
-                        size: 20,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
             ),
             const SizedBox(height: 16),
 
