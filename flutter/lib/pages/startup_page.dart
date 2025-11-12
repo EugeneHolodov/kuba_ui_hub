@@ -100,107 +100,131 @@ class _StartupPageState extends State<StartupPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Logo/Icon
-                Container(
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primaryContainer,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.person_outline,
-                    size: 64,
-                    color: Theme.of(context).colorScheme.onPrimaryContainer,
-                  ),
-                ),
-                const SizedBox(height: 32),
+        child: Column(
+          children: [
+            // Scrollable content area
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 32),
+                    // Logo/Icon
+                    Container(
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primaryContainer,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.person_outline,
+                        size: 64,
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                      ),
+                    ),
+                    const SizedBox(height: 32),
 
-                // Title
-                Text(
-                  'Welcome to Kuba UI Hub',
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Please select your name to continue',
-                  style: Theme.of(context).textTheme.bodyLarge,
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 48),
+                    // Title
+                    Text(
+                      'Welcome to Kuba UI Hub',
+                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Please select your name to continue',
+                      style: Theme.of(context).textTheme.bodyLarge,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 48),
 
-                // Loading state
-                if (_isLoading)
-                  const Column(
-                    children: [
-                      CircularProgressIndicator(),
-                      SizedBox(height: 16),
-                      Text('Loading reviewers...'),
-                    ],
-                  ),
+                    // Loading state
+                    if (_isLoading)
+                      const Column(
+                        children: [
+                          CircularProgressIndicator(),
+                          SizedBox(height: 16),
+                          Text('Loading reviewers...'),
+                        ],
+                      ),
 
-                // Error state
-                if (_errorMessage != null && !_isLoading)
-                  Column(
-                    children: [
-                      Card(
-                        color: Theme.of(context).colorScheme.errorContainer,
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.error_outline,
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onErrorContainer,
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Text(
-                                  _errorMessage!,
-                                  style: TextStyle(
+                    // Error state
+                    if (_errorMessage != null && !_isLoading)
+                      Column(
+                        children: [
+                          Card(
+                            color: Theme.of(context).colorScheme.errorContainer,
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.error_outline,
                                     color: Theme.of(
                                       context,
                                     ).colorScheme.onErrorContainer,
                                   ),
-                                ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Text(
+                                      _errorMessage!,
+                                      style: TextStyle(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onErrorContainer,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
-                        ),
+                          const SizedBox(height: 16),
+                          FilledButton.icon(
+                            onPressed: _loadReviewers,
+                            icon: const Icon(Icons.refresh),
+                            label: const Text('Retry'),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 16),
-                      FilledButton.icon(
-                        onPressed: _loadReviewers,
-                        icon: const Icon(Icons.refresh),
-                        label: const Text('Retry'),
-                      ),
-                    ],
-                  ),
 
-                // Dropdown and button
-                if (!_isLoading && _errorMessage == null) ...[
-                  KubaDropdown(
-                    value: _selectedReviewerName,
-                    options: _reviewers.map((r) => r.name).toList(),
-                    onChanged: _onReviewerSelected,
-                    accentColor: Theme.of(context).colorScheme.primary,
-                    onAccentColor: Theme.of(context).colorScheme.onPrimary,
-                    labelText: 'Select Your Name',
-                    hintText: 'Tap to select',
-                    bottomSheetTitle: 'Select Your Name',
-                  ),
-                  const SizedBox(height: 32),
-                  FilledButton(
+                    // Dropdown
+                    if (!_isLoading && _errorMessage == null)
+                      KubaDropdown(
+                        value: _selectedReviewerName,
+                        options: _reviewers.map((r) => r.name).toList(),
+                        onChanged: _onReviewerSelected,
+                        accentColor: Theme.of(context).colorScheme.primary,
+                        onAccentColor: Theme.of(context).colorScheme.onPrimary,
+                        labelText: 'Select Your Name',
+                        hintText: 'Tap to select',
+                        bottomSheetTitle: 'Select Your Name',
+                      ),
+                    const SizedBox(height: 32),
+                  ],
+                ),
+              ),
+            ),
+
+            // Fixed button at bottom
+            if (!_isLoading && _errorMessage == null)
+              Container(
+                padding: const EdgeInsets.all(24.0),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, -2),
+                    ),
+                  ],
+                ),
+                child: SafeArea(
+                  child: FilledButton(
                     onPressed: _saveAndContinue,
                     style: FilledButton.styleFrom(
                       minimumSize: const Size(double.infinity, 56),
@@ -216,10 +240,9 @@ class _StartupPageState extends State<StartupPage> {
                       ),
                     ),
                   ),
-                ],
-              ],
-            ),
-          ),
+                ),
+              ),
+          ],
         ),
       ),
     );
