@@ -20,8 +20,8 @@
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="Kuba UI Hub - Material 3 Design System">
   
-  <!-- Mobile viewport settings for iPhone 16 Pro Max (430x932) -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <!-- Mobile viewport settings - Fixed width to prevent scaling -->
+  <meta name="viewport" content="width=430, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -62,8 +62,12 @@
     
     /* iPhone 16 Pro Max frame - Fixed size, always centered */
     #phone-frame {
-      width: 430px;
-      height: 932px;
+      width: 430px !important;
+      height: 932px !important;
+      min-width: 430px !important;
+      max-width: 430px !important;
+      min-height: 932px !important;
+      max-height: 932px !important;
       background: #1a1a1a;
       border-radius: 50px;
       padding: 10px;
@@ -72,7 +76,8 @@
         0 20px 60px rgba(0, 0, 0, 0.6),
         0 0 0 8px #2a2a2a;
       position: relative;
-      flex-shrink: 0;
+      flex-shrink: 0 !important;
+      flex-grow: 0 !important;
     }
     
     /* iPhone notch simulation */
@@ -92,19 +97,30 @@
     
     /* Screen area */
     #screen {
-      width: 100%;
-      height: 100%;
+      width: 100% !important;
+      height: 100% !important;
+      max-width: 410px !important;
+      max-height: 912px !important;
       background: #fff;
       border-radius: 40px;
       overflow: hidden;
       position: relative;
     }
     
-    /* Flutter app container */
+    /* Flutter app container - prevent scaling */
     flutter-view {
-      width: 100%;
-      height: 100%;
+      width: 100% !important;
+      height: 100% !important;
+      max-width: 410px !important;
+      max-height: 912px !important;
       display: block;
+      transform: scale(1) !important;
+    }
+    
+    /* Prevent any Flutter canvas from scaling */
+    canvas {
+      max-width: 410px !important;
+      max-height: 912px !important;
     }
     
     /* Loading spinner */
@@ -160,5 +176,60 @@
       </div>
     </div>
   </div>
+  
+  <script>
+    // Lock phone frame dimensions after Flutter loads
+    (function() {
+      function lockDimensions() {
+        const phoneFrame = document.getElementById('phone-frame');
+        const screen = document.getElementById('screen');
+        
+        if (phoneFrame) {
+          phoneFrame.style.width = '430px';
+          phoneFrame.style.height = '932px';
+          phoneFrame.style.maxWidth = '430px';
+          phoneFrame.style.maxHeight = '932px';
+          phoneFrame.style.minWidth = '430px';
+          phoneFrame.style.minHeight = '932px';
+        }
+        
+        if (screen) {
+          screen.style.maxWidth = '410px';
+          screen.style.maxHeight = '912px';
+        }
+      }
+      
+      // Lock immediately
+      lockDimensions();
+      
+      // Lock after DOM loads
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', lockDimensions);
+      }
+      
+      // Lock after Flutter loads (with delay)
+      setTimeout(lockDimensions, 100);
+      setTimeout(lockDimensions, 500);
+      setTimeout(lockDimensions, 1000);
+      setTimeout(lockDimensions, 2000);
+      
+      // Watch for resize and lock again
+      window.addEventListener('resize', lockDimensions);
+      
+      // Use MutationObserver to catch any style changes
+      const observer = new MutationObserver(function(mutations) {
+        lockDimensions();
+      });
+      
+      // Observe the phone frame for attribute changes
+      const phoneFrame = document.getElementById('phone-frame');
+      if (phoneFrame) {
+        observer.observe(phoneFrame, {
+          attributes: true,
+          attributeFilter: ['style', 'class', 'width', 'height']
+        });
+      }
+    })();
+  </script>
 </body>
 </html>
