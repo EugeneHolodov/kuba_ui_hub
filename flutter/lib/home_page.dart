@@ -3,9 +3,76 @@ import 'material3_test_page.dart';
 import 'ui/dropdown_page.dart';
 import 'ui/date_picker_page.dart';
 import 'ui/input_page.dart';
+import 'pages/startup_page.dart';
+import 'services/storage_service.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  String _avatarLetter = 'A';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadReviewerName();
+  }
+
+  Future<void> _loadReviewerName() async {
+    final reviewerName = await StorageService.getReviewerName();
+    setState(() {
+      if (reviewerName != null && reviewerName.isNotEmpty) {
+        _avatarLetter = reviewerName[0].toUpperCase();
+      } else {
+        _avatarLetter = 'A';
+      }
+    });
+  }
+
+  Future<void> _showFinishReviewSessionDialog(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Finish Review Session'),
+          content: const Text(
+            'Are you sure you want to finish the review session? This will clear your current reviewer information.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Confirm'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed == true) {
+      await _finishReviewSession(context);
+    }
+  }
+
+  Future<void> _finishReviewSession(BuildContext context) async {
+    // Clear reviewer data from StorageService
+    await StorageService.clearReviewer();
+
+    // Navigate to startup page and remove all previous routes
+    if (context.mounted) {
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const StartupPage()),
+        (route) => false,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -13,6 +80,32 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Kuba UI Widgets Hub'),
         centerTitle: true,
+        elevation: 0,
+        scrolledUnderElevation: 4.0,
+        actions: [
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () => _showFinishReviewSessionDialog(context),
+              borderRadius: BorderRadius.circular(20),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: CircleAvatar(
+                  backgroundColor: Theme.of(
+                    context,
+                  ).colorScheme.secondaryContainer,
+                  child: Text(
+                    _avatarLetter,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSecondaryContainer,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
@@ -58,7 +151,7 @@ class HomePage extends StatelessWidget {
             const SizedBox(height: 32),
 
             // Navigation cards
-            const Divider(thickness: 2, height: 32),
+            //const Divider(thickness: 2, height: 32),
 
             // Dropdown Page Card
             Card(
