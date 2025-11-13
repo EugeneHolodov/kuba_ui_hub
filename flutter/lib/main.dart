@@ -23,6 +23,11 @@ class MyApp extends StatelessWidget {
         // - FilledButton, OutlinedButton, TextButton
         // - AppBar, TextField, BottomSheet
         useMaterial3: true,
+        // Helvetica font family
+        // On iOS/macOS: uses system Helvetica
+        // On other platforms: add Helvetica font files to fonts/ directory
+        // or it will fall back to system default sans-serif
+        fontFamily: 'Helvetica',
         colorScheme: ColorScheme(
           brightness: Brightness.light,
           // Primary colors (Purple)
