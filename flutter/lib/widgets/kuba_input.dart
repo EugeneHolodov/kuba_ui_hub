@@ -38,11 +38,14 @@ class KubaInput extends StatefulWidget {
 
 class _KubaInputState extends State<KubaInput> {
   late TextEditingController _controller;
+  late FocusNode _focusNode;
+  bool get _isMultiline => widget.maxLines == null || widget.maxLines! > 1;
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController(text: widget.value ?? '');
+    _focusNode = FocusNode();
   }
 
   @override
@@ -67,7 +70,19 @@ class _KubaInputState extends State<KubaInput> {
   @override
   void dispose() {
     _controller.dispose();
+    _focusNode.dispose();
     super.dispose();
+  }
+
+  void _handleSubmitted(String value) {
+    // Call custom onSubmitted if provided
+    if (widget.onSubmitted != null) {
+      widget.onSubmitted!(value);
+    }
+    // For multiline inputs, always dismiss keyboard when done is pressed
+    if (_isMultiline) {
+      _focusNode.unfocus();
+    }
   }
 
   bool _hasValue() {
@@ -120,6 +135,7 @@ class _KubaInputState extends State<KubaInput> {
           ),
           child: TextField(
             controller: _controller,
+            focusNode: _focusNode,
             onChanged: (text) => widget.onChanged(text.isEmpty ? null : text),
             decoration: InputDecoration(
               labelText: widget.labelText,
@@ -178,8 +194,10 @@ class _KubaInputState extends State<KubaInput> {
             obscureText: widget.obscureText,
             maxLines: widget.maxLines,
             maxLength: widget.maxLength,
-            textInputAction: widget.textInputAction,
-            onSubmitted: widget.onSubmitted,
+            textInputAction:
+                widget.textInputAction ??
+                (_isMultiline ? TextInputAction.done : TextInputAction.next),
+            onSubmitted: _handleSubmitted,
           ),
         ),
       ],

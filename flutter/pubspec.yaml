@@ -88,5 +88,16 @@ flutter:
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
   #
+  # For Helvetica font (currently using system font on iOS/macOS):
+  # To use Helvetica on all platforms, add font files to fonts/ directory and uncomment:
+  # fonts:
+  #   - family: Helvetica
+  #     fonts:
+  #       - asset: fonts/Helvetica-Regular.ttf
+  #       - asset: fonts/Helvetica-Bold.ttf
+  #         weight: 700
+  #       - asset: fonts/Helvetica-Light.ttf
+  #         weight: 300
+  #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
