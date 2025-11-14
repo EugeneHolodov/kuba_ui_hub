@@ -3,7 +3,7 @@ import 'material3_test_page.dart';
 import 'ui/dropdown_page.dart';
 import 'ui/date_picker_page.dart';
 import 'ui/input_page.dart';
-import 'ui/button_page.dart';
+import 'ui/button_comparison_page.dart';
 import 'pages/startup_page.dart';
 import 'services/storage_service.dart';
 
@@ -356,7 +356,9 @@ class _HomePageState extends State<HomePage> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const ButtonPage()),
+                    MaterialPageRoute(
+                      builder: (context) => const ButtonComparisonPage(),
+                    ),
                   );
                 },
                 borderRadius: BorderRadius.circular(16),
@@ -367,16 +369,14 @@ class _HomePageState extends State<HomePage> {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.secondaryContainer,
+                          color: Theme.of(context).colorScheme.primaryContainer,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Icon(
-                          Icons.touch_app,
+                          Icons.compare_arrows,
                           color: Theme.of(
                             context,
-                          ).colorScheme.onSecondaryContainer,
+                          ).colorScheme.onPrimaryContainer,
                           size: 28,
                         ),
                       ),
@@ -392,7 +392,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              'Reusable buttons with multiple modes and sizes',
+                              'Compare two button style variants',
                               style: Theme.of(context).textTheme.bodySmall,
                             ),
                           ],
@@ -400,7 +400,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       Icon(
                         Icons.arrow_forward_ios,
-                        color: Theme.of(context).colorScheme.secondary,
+                        color: Theme.of(context).colorScheme.primary,
                         size: 20,
                       ),
                     ],
