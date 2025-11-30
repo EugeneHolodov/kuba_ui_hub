@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'kuba_bottom_sheet.dart';
+import 'kuba_bottom_sheet/kuba_bottom_sheet.dart';
 
 class KubaDatePicker extends StatelessWidget {
   final DateTime? value;

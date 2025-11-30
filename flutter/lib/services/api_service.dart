@@ -29,7 +29,8 @@ class ApiService {
     // Example: https://your-backend.onrender.com
     const String productionUrl = String.fromEnvironment(
       'API_BASE_URL',
-      defaultValue: 'http://localhost:3000',
+      defaultValue: 'https://kuba-ui-hub-backend.onrender.com',
+      //defaultValue: 'http://localhost:3000',
     );
 
     // In web context, you might want to use relative URLs or detect the host

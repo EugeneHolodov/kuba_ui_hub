@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'kuba_bottom_sheet/kuba_bottom_sheet.dart';
 
-class KubaDropdown extends StatefulWidget {
+class KubaDropdownVariant2 extends StatefulWidget {
   final String? value;
   final List<String>? values;
   final List<String> options;
@@ -9,13 +9,12 @@ class KubaDropdown extends StatefulWidget {
   final ValueChanged<List<String>>? onMultipleChanged;
   final String labelText;
   final String hintText;
-  final String? title;
   final Color accentColor;
   final Color onAccentColor;
   final String bottomSheetTitle;
   final bool multiple;
 
-  const KubaDropdown({
+  const KubaDropdownVariant2({
     super.key,
     this.value,
     this.values,
@@ -24,7 +23,6 @@ class KubaDropdown extends StatefulWidget {
     this.onMultipleChanged,
     this.labelText = 'Select Option',
     this.hintText = 'Tap to open',
-    this.title,
     required this.accentColor,
     required this.onAccentColor,
     this.bottomSheetTitle = 'Select an Option',
@@ -36,14 +34,14 @@ class KubaDropdown extends StatefulWidget {
        );
 
   @override
-  State<KubaDropdown> createState() => _KubaDropdownState();
+  State<KubaDropdownVariant2> createState() => _KubaDropdownVariant2State();
 }
 
-class _KubaDropdownState extends State<KubaDropdown> {
+class _KubaDropdownVariant2State extends State<KubaDropdownVariant2> {
   void _showBottomSheetDropdown(BuildContext context) {
     if (widget.multiple) {
       // Multiple selection mode - use action buttons
-      List<String> selectedValues = List<String>.from(widget.values ?? []);
+      final selectedValues = List<String>.from(widget.values ?? []);
 
       KubaBottomSheet.show(
         context: context,
@@ -170,143 +168,106 @@ class _KubaDropdownState extends State<KubaDropdown> {
     }
   }
 
+  Widget _buildStatusIcon(bool hasValue) {
+    return AnimatedOpacity(
+      opacity: hasValue ? 1 : 0,
+      duration: const Duration(milliseconds: 200),
+      child: hasValue
+          ? Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: widget.accentColor,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: widget.accentColor.withOpacity(0.2),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Icon(Icons.check, size: 18, color: widget.onAccentColor),
+            )
+          : const SizedBox(width: 32, height: 32),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final hasValue = _hasValue();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        if (widget.title != null) ...[
-          Row(
-            children: [
-              Text(
-                widget.title!,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+        Expanded(
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: widget.accentColor.withOpacity(0.15),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
                 ),
-              ),
-              const Spacer(),
-              SizedBox(
-                width: 24,
-                height: 24,
-                child: AnimatedOpacity(
-                  opacity: hasValue ? 1 : 0,
-                  duration: const Duration(milliseconds: 200),
-                  child: hasValue
-                      ? Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            color: widget.accentColor,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            Icons.check,
-                            size: 16,
-                            color: widget.onAccentColor,
-                          ),
-                        )
-                      : const SizedBox.shrink(),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-        ] else ...[
-          Row(
-            children: [
-              const Spacer(),
-              SizedBox(
-                width: 24,
-                height: 24,
-                child: AnimatedOpacity(
-                  opacity: hasValue ? 1 : 0,
-                  duration: const Duration(milliseconds: 200),
-                  child: hasValue
-                      ? Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            color: widget.accentColor,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            Icons.check,
-                            size: 16,
-                            color: widget.onAccentColor,
-                          ),
-                        )
-                      : const SizedBox.shrink(),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-        ],
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: widget.accentColor.withOpacity(0.15),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: TextField(
-            readOnly: true,
-            controller: TextEditingController(text: _getDisplayText()),
-            decoration: InputDecoration(
-              labelText: widget.labelText,
-              labelStyle: const TextStyle(color: Colors.black87),
-              hintText: widget.hintText,
-              filled: true,
-              fillColor: Theme.of(context).colorScheme.surface,
-              suffixIcon: hasValue
-                  ? Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.arrow_drop_down, color: Colors.grey[600]),
-                        IconButton(
-                          icon: const Icon(Icons.close),
-                          color: Colors.grey[600],
-                          onPressed: () {
-                            if (widget.multiple) {
-                              widget.onMultipleChanged!([]);
-                            } else {
-                              widget.onChanged!(null);
-                            }
-                          },
-                        ),
-                      ],
-                    )
-                  : Icon(Icons.arrow_drop_down, color: Colors.grey[600]),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: BorderSide(
-                  color: Theme.of(context).colorScheme.outline,
-                ),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: BorderSide(
-                  color: Theme.of(context).colorScheme.outline,
-                ),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: BorderSide(
-                  color: _hasValue()
-                      ? widget.accentColor
-                      : Theme.of(context).colorScheme.outline,
-                  width: _hasValue() ? 2 : 1,
-                ),
-              ),
+              ],
             ),
-            onTap: () => _showBottomSheetDropdown(context),
+            child: TextField(
+              readOnly: true,
+              controller: TextEditingController(text: _getDisplayText()),
+              decoration: InputDecoration(
+                labelText: widget.labelText,
+                labelStyle: const TextStyle(color: Colors.black87),
+                hintText: widget.hintText,
+                filled: true,
+                fillColor: Theme.of(context).colorScheme.surface,
+                suffixIcon: hasValue
+                    ? Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.arrow_drop_down, color: Colors.grey[600]),
+                          IconButton(
+                            icon: const Icon(Icons.close),
+                            color: Colors.grey[600],
+                            onPressed: () {
+                              if (widget.multiple) {
+                                widget.onMultipleChanged!([]);
+                              } else {
+                                widget.onChanged!(null);
+                              }
+                            },
+                          ),
+                        ],
+                      )
+                    : Icon(Icons.arrow_drop_down, color: Colors.grey[600]),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide(
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide(
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide(
+                    color: hasValue
+                        ? widget.accentColor
+                        : Theme.of(context).colorScheme.outline,
+                    width: hasValue ? 2 : 1,
+                  ),
+                ),
+              ),
+              onTap: () => _showBottomSheetDropdown(context),
+            ),
           ),
         ),
+        const SizedBox(width: 8),
+        _buildStatusIcon(hasValue),
       ],
     );
   }

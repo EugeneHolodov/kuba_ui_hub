@@ -6,6 +6,7 @@ backend/node_modules/
 # IDE
 .idea/
 .vscode/
+.cursor/
 *.iml
 
 # OS

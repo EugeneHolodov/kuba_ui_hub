@@ -198,7 +198,6 @@ class _StartupPageState extends State<StartupPage> {
                         onChanged: _onReviewerSelected,
                         accentColor: Theme.of(context).colorScheme.primary,
                         onAccentColor: Theme.of(context).colorScheme.onPrimary,
-                        title: 'Select Your Name',
                         labelText: 'Select Your Name',
                         hintText: 'Tap to select',
                         bottomSheetTitle: 'Select Your Name',

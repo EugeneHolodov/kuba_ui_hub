@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
 import '../services/storage_service.dart';
-import 'kuba_bottom_sheet.dart';
+import 'kuba_bottom_sheet/kuba_bottom_sheet.dart';
 
 // Content widget for bottom sheet
 class ReviewInputContent extends StatefulWidget {
