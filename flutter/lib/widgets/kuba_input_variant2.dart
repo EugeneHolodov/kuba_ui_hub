@@ -1,0 +1,243 @@
+import 'package:flutter/material.dart';
+
+class KubaInputVariant2 extends StatefulWidget {
+  final String? value;
+  final ValueChanged<String?> onChanged;
+  final String labelText;
+  final String hintText;
+  final Color accentColor;
+  final Color onAccentColor;
+  final TextInputType? keyboardType;
+  final bool obscureText;
+  final String? errorText;
+  final int? maxLines;
+  final int? maxLength;
+  final TextInputAction? textInputAction;
+  final ValueChanged<String>? onSubmitted;
+
+  const KubaInputVariant2({
+    super.key,
+    required this.value,
+    required this.onChanged,
+    this.labelText = 'Input',
+    this.hintText = 'Enter text',
+    required this.accentColor,
+    required this.onAccentColor,
+    this.keyboardType,
+    this.obscureText = false,
+    this.errorText,
+    this.maxLines = 1,
+    this.maxLength,
+    this.textInputAction,
+    this.onSubmitted,
+  });
+
+  @override
+  State<KubaInputVariant2> createState() => _KubaInputVariant2State();
+}
+
+class _KubaInputVariant2State extends State<KubaInputVariant2> {
+  late TextEditingController _controller;
+  late FocusNode _focusNode;
+  bool get _isMultiline => widget.maxLines == null || widget.maxLines! > 1;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.value ?? '');
+    _focusNode = FocusNode();
+  }
+
+  @override
+  void didUpdateWidget(KubaInputVariant2 oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Only update controller if value changed from external source
+    // Don't update if the controller text matches the new value (user is typing)
+    if (widget.value != oldWidget.value) {
+      final newValue = widget.value ?? '';
+      // Only update if the controller text is different from the new value
+      // This prevents cursor position issues when user is actively typing
+      if (_controller.text != newValue) {
+        _controller.text = newValue;
+        // Move cursor to end to maintain proper position
+        _controller.selection = TextSelection.fromPosition(
+          TextPosition(offset: _controller.text.length),
+        );
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _handleSubmitted(String value) {
+    // Call custom onSubmitted if provided
+    if (widget.onSubmitted != null) {
+      widget.onSubmitted!(value);
+    }
+    // For multiline inputs, always dismiss keyboard when done is pressed
+    if (_isMultiline) {
+      _focusNode.unfocus();
+    }
+  }
+
+  bool _hasValue() {
+    return widget.value != null && widget.value!.isNotEmpty;
+  }
+
+  Widget _buildStatusIcon(bool hasValue) {
+    if (widget.errorText != null) {
+      return AnimatedOpacity(
+        opacity: 1,
+        duration: const Duration(milliseconds: 200),
+        child: Container(
+          width: 32,
+          height: 32,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.error,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: Theme.of(context).colorScheme.error.withOpacity(0.2),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Icon(Icons.priority_high, size: 18, color: Colors.white),
+        ),
+      );
+    } else if (hasValue) {
+      return AnimatedOpacity(
+        opacity: 1,
+        duration: const Duration(milliseconds: 200),
+        child: Container(
+          width: 32,
+          height: 32,
+          decoration: BoxDecoration(
+            color: widget.accentColor,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: widget.accentColor.withOpacity(0.2),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Icon(Icons.check, size: 18, color: widget.onAccentColor),
+        ),
+      );
+    }
+    return const SizedBox.shrink();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final hasValue = _hasValue();
+    final hasError = widget.errorText != null;
+    final showStatusIcon = hasValue || hasError;
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Expanded(
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: widget.accentColor.withOpacity(0.15),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: TextField(
+              controller: _controller,
+              focusNode: _focusNode,
+              onChanged: (text) => widget.onChanged(text.isEmpty ? null : text),
+              decoration: InputDecoration(
+                labelText: widget.labelText,
+                labelStyle: const TextStyle(color: Colors.black87),
+                hintText: widget.hintText,
+                filled: true,
+                fillColor: Theme.of(context).colorScheme.surface,
+                errorText: widget.errorText,
+                counterText: widget.maxLength != null ? null : '',
+                suffixIcon: _hasValue()
+                    ? IconButton(
+                        icon: const Icon(Icons.close),
+                        color: Colors.grey[600],
+                        onPressed: () {
+                          _controller.clear();
+                          widget.onChanged(null);
+                        },
+                      )
+                    : null,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide(
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide(
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide(
+                    color: hasValue
+                        ? widget.accentColor
+                        : Theme.of(context).colorScheme.outline,
+                    width: hasValue ? 2 : 1,
+                  ),
+                ),
+                errorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide(
+                    color: Theme.of(context).colorScheme.error,
+                  ),
+                ),
+                focusedErrorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide(
+                    color: Theme.of(context).colorScheme.error,
+                    width: 2,
+                  ),
+                ),
+              ),
+              keyboardType: widget.keyboardType,
+              obscureText: widget.obscureText,
+              maxLines: widget.maxLines,
+              maxLength: widget.maxLength,
+              textInputAction:
+                  widget.textInputAction ??
+                  (_isMultiline ? TextInputAction.done : TextInputAction.next),
+              onSubmitted: _handleSubmitted,
+            ),
+          ),
+        ),
+        AnimatedSize(
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeInOut,
+          child: showStatusIcon
+              ? Row(
+                  children: [
+                    const SizedBox(width: 8),
+                    _buildStatusIcon(hasValue),
+                  ],
+                )
+              : const SizedBox.shrink(),
+        ),
+      ],
+    );
+  }
+}

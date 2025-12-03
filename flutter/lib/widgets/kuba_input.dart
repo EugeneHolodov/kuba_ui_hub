@@ -97,7 +97,7 @@ class _KubaInputState extends State<KubaInput> {
         Row(
           children: [
             Text(
-              'Input Field',
+              'Input Field Name',
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const Spacer(),

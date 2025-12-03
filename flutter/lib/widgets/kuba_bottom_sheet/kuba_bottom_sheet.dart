@@ -41,6 +41,8 @@ class KubaBottomSheet extends StatelessWidget {
   final bool minimalStyle;
   final String? actionButtonText;
   final VoidCallback? onAction;
+  final bool actionButtonEnabled;
+  final ValueNotifier<bool>? actionButtonEnabledNotifier;
 
   const KubaBottomSheet({
     super.key,
@@ -52,6 +54,8 @@ class KubaBottomSheet extends StatelessWidget {
     this.minimalStyle = false,
     this.actionButtonText,
     this.onAction,
+    this.actionButtonEnabled = true,
+    this.actionButtonEnabledNotifier,
   });
 
   static Future<T?> show<T>({
@@ -64,6 +68,8 @@ class KubaBottomSheet extends StatelessWidget {
     bool minimalStyle = false,
     String? actionButtonText,
     VoidCallback? onAction,
+    bool actionButtonEnabled = true,
+    ValueNotifier<bool>? actionButtonEnabledNotifier,
   }) {
     return showModalBottomSheet<T>(
       context: context,
@@ -83,6 +89,8 @@ class KubaBottomSheet extends StatelessWidget {
           minimalStyle: minimalStyle,
           actionButtonText: actionButtonText,
           onAction: onAction,
+          actionButtonEnabled: actionButtonEnabled,
+          actionButtonEnabledNotifier: actionButtonEnabledNotifier,
         );
       },
     );
@@ -121,6 +129,8 @@ class KubaBottomSheet extends StatelessWidget {
                 actionButtonText: actionButtonText!,
                 onAction: onAction,
                 useSecondaryStyle: useSecondaryStyle,
+                actionButtonEnabled: actionButtonEnabled,
+                actionButtonEnabledNotifier: actionButtonEnabledNotifier,
               ),
           ],
         ),

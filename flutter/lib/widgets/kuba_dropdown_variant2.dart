@@ -9,8 +9,7 @@ class KubaDropdownVariant2 extends StatefulWidget {
   final ValueChanged<List<String>>? onMultipleChanged;
   final String labelText;
   final String hintText;
-  final Color accentColor;
-  final Color onAccentColor;
+  final bool isPrimary;
   final String bottomSheetTitle;
   final bool multiple;
 
@@ -23,8 +22,7 @@ class KubaDropdownVariant2 extends StatefulWidget {
     this.onMultipleChanged,
     this.labelText = 'Select Option',
     this.hintText = 'Tap to open',
-    required this.accentColor,
-    required this.onAccentColor,
+    this.isPrimary = true,
     this.bottomSheetTitle = 'Select an Option',
     this.multiple = false,
   }) : assert(
@@ -38,6 +36,18 @@ class KubaDropdownVariant2 extends StatefulWidget {
 }
 
 class _KubaDropdownVariant2State extends State<KubaDropdownVariant2> {
+  Color _getAccentColor(BuildContext context) {
+    return widget.isPrimary
+        ? Theme.of(context).colorScheme.primary
+        : Theme.of(context).colorScheme.secondary;
+  }
+
+  Color _getOnAccentColor(BuildContext context) {
+    return widget.isPrimary
+        ? Theme.of(context).colorScheme.onPrimary
+        : Theme.of(context).colorScheme.onSecondary;
+  }
+
   void _showBottomSheetDropdown(BuildContext context) {
     if (widget.multiple) {
       // Multiple selection mode - use action buttons
@@ -50,8 +60,7 @@ class _KubaDropdownVariant2State extends State<KubaDropdownVariant2> {
         onAction: () {
           widget.onMultipleChanged!(selectedValues);
         },
-        useSecondaryStyle:
-            widget.accentColor == Theme.of(context).colorScheme.secondary,
+        useSecondaryStyle: !widget.isPrimary,
         child: StatefulBuilder(
           builder: (context, setModalState) {
             final screenHeight = MediaQuery.of(context).size.height;
@@ -82,7 +91,7 @@ class _KubaDropdownVariant2State extends State<KubaDropdownVariant2> {
                           },
                           title: Text(option),
                           subtitle: Text('Description for $option'),
-                          activeColor: Theme.of(context).colorScheme.primary,
+                          activeColor: _getAccentColor(context),
                         ),
                         if (index < widget.options.length - 1)
                           Divider(
@@ -104,8 +113,7 @@ class _KubaDropdownVariant2State extends State<KubaDropdownVariant2> {
       KubaBottomSheet.show(
         context: context,
         title: widget.bottomSheetTitle,
-        useSecondaryStyle:
-            widget.accentColor == Theme.of(context).colorScheme.secondary,
+        useSecondaryStyle: !widget.isPrimary,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: ListView.builder(
@@ -128,7 +136,7 @@ class _KubaDropdownVariant2State extends State<KubaDropdownVariant2> {
                     },
                     title: Text(option),
                     subtitle: Text('Description for $option'),
-                    activeColor: Theme.of(context).colorScheme.primary,
+                    activeColor: _getAccentColor(context),
                   ),
                   if (index < widget.options.length - 1)
                     Divider(
@@ -168,7 +176,9 @@ class _KubaDropdownVariant2State extends State<KubaDropdownVariant2> {
     }
   }
 
-  Widget _buildStatusIcon(bool hasValue) {
+  Widget _buildStatusIcon(BuildContext context, bool hasValue) {
+    final accentColor = _getAccentColor(context);
+    final onAccentColor = _getOnAccentColor(context);
     return AnimatedOpacity(
       opacity: hasValue ? 1 : 0,
       duration: const Duration(milliseconds: 200),
@@ -177,17 +187,17 @@ class _KubaDropdownVariant2State extends State<KubaDropdownVariant2> {
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: widget.accentColor,
+                color: accentColor,
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: widget.accentColor.withOpacity(0.2),
+                    color: accentColor.withOpacity(0.2),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
                 ],
               ),
-              child: Icon(Icons.check, size: 18, color: widget.onAccentColor),
+              child: Icon(Icons.check, size: 18, color: onAccentColor),
             )
           : const SizedBox(width: 32, height: 32),
     );
@@ -196,6 +206,7 @@ class _KubaDropdownVariant2State extends State<KubaDropdownVariant2> {
   @override
   Widget build(BuildContext context) {
     final hasValue = _hasValue();
+    final accentColor = _getAccentColor(context);
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -206,7 +217,7 @@ class _KubaDropdownVariant2State extends State<KubaDropdownVariant2> {
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: widget.accentColor.withOpacity(0.15),
+                  color: accentColor.withOpacity(0.15),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -256,7 +267,7 @@ class _KubaDropdownVariant2State extends State<KubaDropdownVariant2> {
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide(
                     color: hasValue
-                        ? widget.accentColor
+                        ? accentColor
                         : Theme.of(context).colorScheme.outline,
                     width: hasValue ? 2 : 1,
                   ),
@@ -267,7 +278,7 @@ class _KubaDropdownVariant2State extends State<KubaDropdownVariant2> {
           ),
         ),
         const SizedBox(width: 8),
-        _buildStatusIcon(hasValue),
+        _buildStatusIcon(context, hasValue),
       ],
     );
   }

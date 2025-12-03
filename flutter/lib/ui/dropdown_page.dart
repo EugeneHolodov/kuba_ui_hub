@@ -55,8 +55,7 @@ class _DropdownPageState extends State<DropdownPage> {
                   _variant1SecondaryValue = value;
                 });
               },
-              accentColor: Theme.of(context).colorScheme.secondary,
-              onAccentColor: Theme.of(context).colorScheme.onSecondary,
+              isPrimary: false,
               title: 'Dropdown 1 (Single)',
               labelText: 'Dropdown 1 (Single)',
               bottomSheetTitle: 'Dropdown 1 (Single)',
@@ -72,8 +71,7 @@ class _DropdownPageState extends State<DropdownPage> {
                   _variant1PrimaryValue = value;
                 });
               },
-              accentColor: Theme.of(context).colorScheme.primary,
-              onAccentColor: Theme.of(context).colorScheme.onPrimary,
+              isPrimary: true,
               title: 'Dropdown 1 (Single)',
               labelText: 'Dropdown 1 (Single)',
               bottomSheetTitle: 'Dropdown 1 (Single)',
@@ -90,8 +88,7 @@ class _DropdownPageState extends State<DropdownPage> {
                   _variant1SecondaryMultiple = values;
                 });
               },
-              accentColor: Theme.of(context).colorScheme.secondary,
-              onAccentColor: Theme.of(context).colorScheme.onSecondary,
+              isPrimary: false,
               title: 'Dropdown 1 (Multiple)',
               labelText: 'Dropdown 1 (Multiple)',
               bottomSheetTitle: 'Dropdown 1 (Multiple)',
@@ -108,8 +105,7 @@ class _DropdownPageState extends State<DropdownPage> {
                   _variant1PrimaryMultiple = values;
                 });
               },
-              accentColor: Theme.of(context).colorScheme.primary,
-              onAccentColor: Theme.of(context).colorScheme.onPrimary,
+              isPrimary: true,
               title: 'Dropdown 1 (Multiple)',
               labelText: 'Dropdown 1 (Multiple)',
               bottomSheetTitle: 'Dropdown 1 (Multiple)',
@@ -127,8 +123,7 @@ class _DropdownPageState extends State<DropdownPage> {
                   _variant2SecondaryValue = value;
                 });
               },
-              accentColor: Theme.of(context).colorScheme.secondary,
-              onAccentColor: Theme.of(context).colorScheme.onSecondary,
+              isPrimary: false,
               bottomSheetTitle: 'Dropdown 2 (Single)',
             ),
             const SizedBox(height: 32),
@@ -142,8 +137,7 @@ class _DropdownPageState extends State<DropdownPage> {
                   _variant2PrimaryValue = value;
                 });
               },
-              accentColor: Theme.of(context).colorScheme.primary,
-              onAccentColor: Theme.of(context).colorScheme.onPrimary,
+              isPrimary: true,
               bottomSheetTitle: 'Dropdown 2 (Single)',
             ),
             const SizedBox(height: 32),
@@ -158,8 +152,7 @@ class _DropdownPageState extends State<DropdownPage> {
                   _variant2SecondaryMultiple = values;
                 });
               },
-              accentColor: Theme.of(context).colorScheme.secondary,
-              onAccentColor: Theme.of(context).colorScheme.onSecondary,
+              isPrimary: false,
               labelText: 'Dropdown 2 (Multiple)',
               bottomSheetTitle: 'Dropdown 2 (Multiple)',
             ),
@@ -175,8 +168,7 @@ class _DropdownPageState extends State<DropdownPage> {
                   _variant2PrimaryMultiple = values;
                 });
               },
-              accentColor: Theme.of(context).colorScheme.primary,
-              onAccentColor: Theme.of(context).colorScheme.onPrimary,
+              isPrimary: true,
               labelText: 'Dropdown 2 (Multiple)',
               bottomSheetTitle: 'Dropdown 2 (Multiple)',
             ),
@@ -193,8 +185,7 @@ class _DropdownPageState extends State<DropdownPage> {
                   _variant3SecondaryValue = value;
                 });
               },
-              accentColor: Theme.of(context).colorScheme.secondary,
-              onAccentColor: Theme.of(context).colorScheme.onSecondary,
+              isPrimary: false,
               bottomSheetTitle: 'Bottom Sheet 3 (Single)',
             ),
             const SizedBox(height: 32),
@@ -208,8 +199,7 @@ class _DropdownPageState extends State<DropdownPage> {
                   _variant3PrimaryValue = value;
                 });
               },
-              accentColor: Theme.of(context).colorScheme.primary,
-              onAccentColor: Theme.of(context).colorScheme.onPrimary,
+              isPrimary: true,
               bottomSheetTitle: 'Dropdown 3 (Single)',
             ),
             const SizedBox(height: 32),
@@ -224,8 +214,7 @@ class _DropdownPageState extends State<DropdownPage> {
                   _variant3SecondaryMultiple = values;
                 });
               },
-              accentColor: Theme.of(context).colorScheme.secondary,
-              onAccentColor: Theme.of(context).colorScheme.onSecondary,
+              isPrimary: false,
               labelText: 'Dropdown 3 (Multiple)',
               bottomSheetTitle: 'Dropdown 3 (Multiple)',
             ),
@@ -241,8 +230,7 @@ class _DropdownPageState extends State<DropdownPage> {
                   _variant3PrimaryMultiple = values;
                 });
               },
-              accentColor: Theme.of(context).colorScheme.primary,
-              onAccentColor: Theme.of(context).colorScheme.onPrimary,
+              isPrimary: true,
               labelText: 'Dropdown 3 (Multiple)',
               bottomSheetTitle: 'Dropdown 3 (Multiple)',
             ),

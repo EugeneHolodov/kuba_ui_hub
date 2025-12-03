@@ -77,14 +77,14 @@ class _ButtonComparisonPageState extends State<ButtonComparisonPage> {
                       context,
                       'Primary',
                       v1.KubaButton(
-                        text: 'Primary Button',
+                        text: 'Primary',
                         onPressed: () {},
                         mode: v1.KubaButtonMode.primary,
                         accentColor: Theme.of(context).colorScheme.primary,
                         onAccentColor: Theme.of(context).colorScheme.onPrimary,
                       ),
                       v2.KubaButtonSecondVersion(
-                        text: 'Primary Button',
+                        text: 'Primary',
                         onPressed: () {},
                         mode: v2.KubaButtonMode.primary,
                         accentColor: Theme.of(context).colorScheme.primary,
@@ -93,9 +93,9 @@ class _ButtonComparisonPageState extends State<ButtonComparisonPage> {
                     ),
                     _buildButtonRow(
                       context,
-                      'Secondary',
+                      'Second',
                       v1.KubaButton(
-                        text: 'Secondary',
+                        text: 'Second',
                         prefixIcon: Icons.star,
                         onPressed: () {},
                         mode: v1.KubaButtonMode.secondary,
@@ -105,7 +105,7 @@ class _ButtonComparisonPageState extends State<ButtonComparisonPage> {
                         ).colorScheme.onSecondary,
                       ),
                       v2.KubaButtonSecondVersion(
-                        text: 'Secondary',
+                        text: 'Second',
                         prefixIcon: Icons.star,
                         onPressed: () {},
                         mode: v2.KubaButtonMode.secondary,

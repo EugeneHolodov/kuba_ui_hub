@@ -10,8 +10,7 @@ class KubaDropdown extends StatefulWidget {
   final String labelText;
   final String hintText;
   final String? title;
-  final Color accentColor;
-  final Color onAccentColor;
+  final bool isPrimary;
   final String bottomSheetTitle;
   final bool multiple;
 
@@ -25,8 +24,7 @@ class KubaDropdown extends StatefulWidget {
     this.labelText = 'Select Option',
     this.hintText = 'Tap to open',
     this.title,
-    required this.accentColor,
-    required this.onAccentColor,
+    this.isPrimary = true,
     this.bottomSheetTitle = 'Select an Option',
     this.multiple = false,
   }) : assert(
@@ -40,6 +38,18 @@ class KubaDropdown extends StatefulWidget {
 }
 
 class _KubaDropdownState extends State<KubaDropdown> {
+  Color _getAccentColor(BuildContext context) {
+    return widget.isPrimary
+        ? Theme.of(context).colorScheme.primary
+        : Theme.of(context).colorScheme.secondary;
+  }
+
+  Color _getOnAccentColor(BuildContext context) {
+    return widget.isPrimary
+        ? Theme.of(context).colorScheme.onPrimary
+        : Theme.of(context).colorScheme.onSecondary;
+  }
+
   void _showBottomSheetDropdown(BuildContext context) {
     if (widget.multiple) {
       // Multiple selection mode - use action buttons
@@ -52,8 +62,7 @@ class _KubaDropdownState extends State<KubaDropdown> {
         onAction: () {
           widget.onMultipleChanged!(selectedValues);
         },
-        useSecondaryStyle:
-            widget.accentColor == Theme.of(context).colorScheme.secondary,
+        useSecondaryStyle: !widget.isPrimary,
         child: StatefulBuilder(
           builder: (context, setModalState) {
             final screenHeight = MediaQuery.of(context).size.height;
@@ -84,7 +93,7 @@ class _KubaDropdownState extends State<KubaDropdown> {
                           },
                           title: Text(option),
                           subtitle: Text('Description for $option'),
-                          activeColor: Theme.of(context).colorScheme.primary,
+                          activeColor: _getAccentColor(context),
                         ),
                         if (index < widget.options.length - 1)
                           Divider(
@@ -106,8 +115,7 @@ class _KubaDropdownState extends State<KubaDropdown> {
       KubaBottomSheet.show(
         context: context,
         title: widget.bottomSheetTitle,
-        useSecondaryStyle:
-            widget.accentColor == Theme.of(context).colorScheme.secondary,
+        useSecondaryStyle: !widget.isPrimary,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: ListView.builder(
@@ -130,7 +138,7 @@ class _KubaDropdownState extends State<KubaDropdown> {
                     },
                     title: Text(option),
                     subtitle: Text('Description for $option'),
-                    activeColor: Theme.of(context).colorScheme.primary,
+                    activeColor: _getAccentColor(context),
                   ),
                   if (index < widget.options.length - 1)
                     Divider(
@@ -173,6 +181,8 @@ class _KubaDropdownState extends State<KubaDropdown> {
   @override
   Widget build(BuildContext context) {
     final hasValue = _hasValue();
+    final accentColor = _getAccentColor(context);
+    final onAccentColor = _getOnAccentColor(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -198,13 +208,13 @@ class _KubaDropdownState extends State<KubaDropdown> {
                       ? Container(
                           padding: const EdgeInsets.all(4),
                           decoration: BoxDecoration(
-                            color: widget.accentColor,
+                            color: accentColor,
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
                             Icons.check,
                             size: 16,
-                            color: widget.onAccentColor,
+                            color: onAccentColor,
                           ),
                         )
                       : const SizedBox.shrink(),
@@ -227,13 +237,13 @@ class _KubaDropdownState extends State<KubaDropdown> {
                       ? Container(
                           padding: const EdgeInsets.all(4),
                           decoration: BoxDecoration(
-                            color: widget.accentColor,
+                            color: accentColor,
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
                             Icons.check,
                             size: 16,
-                            color: widget.onAccentColor,
+                            color: onAccentColor,
                           ),
                         )
                       : const SizedBox.shrink(),
@@ -248,7 +258,7 @@ class _KubaDropdownState extends State<KubaDropdown> {
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: widget.accentColor.withOpacity(0.15),
+                color: accentColor.withOpacity(0.15),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -298,7 +308,7 @@ class _KubaDropdownState extends State<KubaDropdown> {
                 borderRadius: BorderRadius.circular(16),
                 borderSide: BorderSide(
                   color: _hasValue()
-                      ? widget.accentColor
+                      ? accentColor
                       : Theme.of(context).colorScheme.outline,
                   width: _hasValue() ? 2 : 1,
                 ),
