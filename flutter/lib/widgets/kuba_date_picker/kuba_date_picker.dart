@@ -284,6 +284,7 @@ class RangeCalendarPicker extends StatefulWidget {
   final ValueChanged<DateTime?> onEndDateChanged;
 
   const RangeCalendarPicker({
+    super.key,
     required this.startDate,
     required this.endDate,
     required this.firstDate,
@@ -339,8 +340,9 @@ class _RangeCalendarPickerState extends State<RangeCalendarPicker> {
   }
 
   bool _isInRange(DateTime date) {
-    if (!widget.isRange)
+    if (!widget.isRange) {
       return false; // No range highlighting in single date mode
+    }
     if (widget.startDate == null || widget.endDate == null) return false;
     final start = DateTime(
       widget.startDate!.year,

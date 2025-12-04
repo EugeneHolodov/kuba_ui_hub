@@ -125,7 +125,7 @@ class _Material3TestPageState extends State<Material3TestPage> {
                     padding: EdgeInsets.all(16.0),
                     child: Text('This is a Material 3 card with content.'),
                   ),
-                  ButtonBar(
+                  OverflowBar(
                     children: [
                       TextButton(
                         onPressed: () {},
@@ -143,7 +143,7 @@ class _Material3TestPageState extends State<Material3TestPage> {
             const SizedBox(height: 8),
             Card(
               elevation: 0,
-              color: Theme.of(context).colorScheme.surfaceVariant,
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
               child: const ListTile(
                 leading: Icon(Icons.info),
                 title: Text('Filled Card'),
@@ -257,7 +257,7 @@ class _Material3TestPageState extends State<Material3TestPage> {
               },
               menuStyle: MenuStyle(
                 backgroundColor: WidgetStateProperty.all(
-                  Theme.of(context).colorScheme.surfaceVariant,
+                  Theme.of(context).colorScheme.surfaceContainerHighest,
                 ),
               ),
               dropdownMenuEntries: _options.map<DropdownMenuEntry<String>>((

@@ -192,7 +192,9 @@ class _ReviewInputContentState extends State<ReviewInputContent> {
                     labelText: 'Your Comment',
                     hintText: 'What do you think about this widget?',
                     filled: true,
-                    fillColor: Theme.of(context).colorScheme.surfaceVariant,
+                    fillColor: Theme.of(
+                      context,
+                    ).colorScheme.surfaceContainerHighest,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(

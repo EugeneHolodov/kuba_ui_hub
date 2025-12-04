@@ -48,11 +48,8 @@ class MyApp extends StatelessWidget {
           // Surface colors
           surface: Colors.white,
           onSurface: Colors.black87,
-          surfaceVariant: Colors.grey.shade100,
+          surfaceContainerHighest: Colors.grey.shade100,
           onSurfaceVariant: Colors.black87,
-          // Background colors
-          background: Colors.white,
-          onBackground: Colors.black87,
           // Outline colors
           outline: Colors.grey.shade400,
           outlineVariant: Colors.grey.shade300,

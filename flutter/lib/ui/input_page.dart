@@ -37,13 +37,13 @@ class _InputPageState extends State<InputPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Variant 1 Block
-            _buildSectionTitle('Variant 1 (Original)'),
+            _buildDividerWithTag('Variant 1 (Original)'),
             const SizedBox(height: 12),
             _buildVariant1Block(),
             const SizedBox(height: 32),
 
             // Variant 2 Block
-            _buildSectionTitle('Variant 2 (No Label, Icon Right)'),
+            _buildDividerWithTag('Variant 2 (No Label, Icon Right)'),
             const SizedBox(height: 12),
             _buildVariant2Block(),
             // Add bottom padding to prevent content from being hidden behind floating button
@@ -57,22 +57,10 @@ class _InputPageState extends State<InputPage> {
     );
   }
 
-  Widget _buildSectionTitle(String title) {
-    return Text(
-      title,
-      style: TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
-        color: Theme.of(context).colorScheme.primary,
-      ),
-    );
-  }
-
   Widget _buildVariant1Block() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildDividerWithTag('Primary Input'),
         KubaInput(
           value: _primaryInput,
           onChanged: (String? value) {
@@ -86,7 +74,6 @@ class _InputPageState extends State<InputPage> {
           onAccentColor: Theme.of(context).colorScheme.onPrimary,
         ),
         const SizedBox(height: 24),
-        _buildDividerWithTag('Secondary Input'),
         KubaInput(
           value: _secondaryInput,
           onChanged: (String? value) {
@@ -100,7 +87,7 @@ class _InputPageState extends State<InputPage> {
           onAccentColor: Theme.of(context).colorScheme.onSecondary,
         ),
         const SizedBox(height: 24),
-        _buildDividerWithTag('Multiline Input'),
+
         KubaInput(
           value: _multilineInput,
           onChanged: (String? value) {
@@ -115,7 +102,7 @@ class _InputPageState extends State<InputPage> {
           onAccentColor: Theme.of(context).colorScheme.onPrimary,
         ),
         const SizedBox(height: 24),
-        _buildDividerWithTag('Input with Error'),
+
         KubaInput(
           value: _errorInput,
           onChanged: (String? value) {
@@ -139,7 +126,6 @@ class _InputPageState extends State<InputPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildDividerWithTag('Primary Input'),
         KubaInputVariant2(
           value: _primaryInputV2,
           onChanged: (String? value) {
@@ -153,7 +139,6 @@ class _InputPageState extends State<InputPage> {
           onAccentColor: Theme.of(context).colorScheme.onPrimary,
         ),
         const SizedBox(height: 24),
-        _buildDividerWithTag('Secondary Input'),
         KubaInputVariant2(
           value: _secondaryInputV2,
           onChanged: (String? value) {
@@ -167,7 +152,7 @@ class _InputPageState extends State<InputPage> {
           onAccentColor: Theme.of(context).colorScheme.onSecondary,
         ),
         const SizedBox(height: 24),
-        _buildDividerWithTag('Multiline Input'),
+
         KubaInputVariant2(
           value: _multilineInputV2,
           onChanged: (String? value) {
@@ -182,7 +167,7 @@ class _InputPageState extends State<InputPage> {
           onAccentColor: Theme.of(context).colorScheme.onPrimary,
         ),
         const SizedBox(height: 24),
-        _buildDividerWithTag('Input with Error'),
+
         KubaInputVariant2(
           value: _errorInputV2,
           onChanged: (String? value) {

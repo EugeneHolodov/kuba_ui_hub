@@ -83,7 +83,6 @@ class KubaBottomSheet extends StatelessWidget {
         return KubaBottomSheet(
           title: title,
           subtitle: subtitle,
-          child: child,
           onClose: onClose,
           useSecondaryStyle: useSecondaryStyle,
           minimalStyle: minimalStyle,
@@ -91,6 +90,7 @@ class KubaBottomSheet extends StatelessWidget {
           onAction: onAction,
           actionButtonEnabled: actionButtonEnabled,
           actionButtonEnabledNotifier: actionButtonEnabledNotifier,
+          child: child,
         );
       },
     );
