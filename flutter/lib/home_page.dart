@@ -6,7 +6,7 @@ import 'ui/date_picker_page.dart';
 import 'ui/input_page.dart';
 import 'ui/button_comparison_page.dart';
 import 'ui/checklist_page.dart';
-import 'ui/search_bar_page.dart';
+import 'ui/search_bar_menu_page.dart';
 import 'ui/fab_menu_page.dart';
 import 'pages/startup_page.dart';
 import 'services/storage_service.dart';
@@ -427,7 +427,7 @@ class _HomePageState extends State<HomePage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const SearchBarPage(),
+                      builder: (context) => const SearchBarMenuPage(),
                     ),
                   );
                 },
