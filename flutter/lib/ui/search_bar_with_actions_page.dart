@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../widgets/kuba_search_bar_bottom.dart';
 
-class SearchBarPage extends StatefulWidget {
-  const SearchBarPage({super.key});
+class SearchBarWithActionsPage extends StatefulWidget {
+  const SearchBarWithActionsPage({super.key});
 
   @override
-  State<SearchBarPage> createState() => _SearchBarPageState();
+  State<SearchBarWithActionsPage> createState() =>
+      _SearchBarWithActionsPageState();
 }
 
-class _SearchBarPageState extends State<SearchBarPage> {
+class _SearchBarWithActionsPageState extends State<SearchBarWithActionsPage> {
   String? _searchQuery;
 
   // Sample data for search
@@ -104,7 +105,10 @@ class _SearchBarPageState extends State<SearchBarPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      appBar: AppBar(title: const Text('Search Bar Bottom'), centerTitle: true),
+      appBar: AppBar(
+        title: const Text('Search Bar + Action Buttons'),
+        centerTitle: true,
+      ),
       body: Column(
         children: [
           // Results count
@@ -288,6 +292,15 @@ class _SearchBarPageState extends State<SearchBarPage> {
         onSearch: () {
           // Optional: handle search action
           FocusScope.of(context).unfocus();
+        },
+        actionButtonIcon: Icons.add,
+        onActionButtonPressed: () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Sort button pressed'),
+              duration: Duration(seconds: 1),
+            ),
+          );
         },
         filterOptions: [
           SearchBarFilterOption(

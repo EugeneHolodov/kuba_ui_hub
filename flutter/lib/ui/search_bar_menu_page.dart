@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'search_bar_page.dart';
+import 'search_bar_with_actions_page.dart';
+import 'search_bar_toggle_page.dart';
 import 'widget_menu_page.dart';
 
 class SearchBarMenuPage extends StatelessWidget {
@@ -20,6 +22,33 @@ class SearchBarMenuPage extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const SearchBarPage()),
+            );
+          },
+        ),
+        WidgetVariantItem(
+          title: 'Search Bar + Action Buttons',
+          description: 'Search bar with filter menu and optional action button',
+          icon: Icons.tune,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const SearchBarWithActionsPage(),
+              ),
+            );
+          },
+        ),
+        WidgetVariantItem(
+          title: 'Search Bar with Toggle',
+          description:
+              'Search bar with toggle button to switch between search and date picker',
+          icon: Icons.swap_horiz,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const SearchBarTogglePage(),
+              ),
             );
           },
         ),

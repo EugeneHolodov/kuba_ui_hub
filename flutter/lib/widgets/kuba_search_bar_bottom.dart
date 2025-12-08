@@ -1,4 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'kuba_fab_menu.dart';
+
+/// Represents a filter menu option
+class SearchBarFilterOption {
+  final IconData icon;
+  final String label;
+  final VoidCallback onPressed;
+
+  const SearchBarFilterOption({
+    required this.icon,
+    required this.label,
+    required this.onPressed,
+  });
+
+  /// Convert to FabMenuItem for use with KubaFabMenu
+  FabMenuItem toFabMenuItem() {
+    return FabMenuItem(icon: icon, label: label, onPressed: onPressed);
+  }
+}
 
 class KubaSearchBarBottom extends StatefulWidget {
   final String? value;
@@ -9,6 +29,18 @@ class KubaSearchBarBottom extends StatefulWidget {
   final VoidCallback? onClear;
   final List<Widget>? actions;
   final bool showClearButton;
+  final IconData? leftButtonIcon;
+  final VoidCallback? onLeftButtonPressed;
+  final IconData? rightButtonIcon;
+  final VoidCallback? onRightButtonPressed;
+  final List<SearchBarFilterOption>? filterOptions;
+  final IconData? actionButtonIcon;
+  final VoidCallback? onActionButtonPressed;
+  final IconData? toggleInputIcon;
+  final VoidCallback? onToggleInput;
+  final DateTimeRange? dateValue;
+  final ValueChanged<DateTimeRange?>? onDateChanged;
+  final String? dateHintText;
 
   const KubaSearchBarBottom({
     super.key,
@@ -20,6 +52,18 @@ class KubaSearchBarBottom extends StatefulWidget {
     this.onClear,
     this.actions,
     this.showClearButton = true,
+    this.leftButtonIcon,
+    this.onLeftButtonPressed,
+    this.rightButtonIcon,
+    this.onRightButtonPressed,
+    this.filterOptions,
+    this.actionButtonIcon,
+    this.onActionButtonPressed,
+    this.toggleInputIcon,
+    this.onToggleInput,
+    this.dateValue,
+    this.onDateChanged,
+    this.dateHintText,
   });
 
   @override
@@ -29,6 +73,9 @@ class KubaSearchBarBottom extends StatefulWidget {
 class _KubaSearchBarBottomState extends State<KubaSearchBarBottom> {
   late TextEditingController _controller;
   late FocusNode _focusNode;
+  OverlayEntry? _overlayEntry;
+  bool _isMenuOpen = false;
+  bool _isDatePickerMode = false;
 
   Color _getAccentColor(BuildContext context) {
     return widget.isPrimary
@@ -59,6 +106,9 @@ class _KubaSearchBarBottomState extends State<KubaSearchBarBottom> {
 
   @override
   void dispose() {
+    // Remove overlay without calling setState during dispose
+    _overlayEntry?.remove();
+    _overlayEntry = null;
     _controller.dispose();
     _focusNode.dispose();
     super.dispose();
@@ -77,14 +127,134 @@ class _KubaSearchBarBottomState extends State<KubaSearchBarBottom> {
     }
   }
 
-  void _handleSearch() {
-    _focusNode.unfocus();
-    if (widget.onSearch != null) {
-      widget.onSearch!();
+  bool get _hasValue => _controller.text.isNotEmpty;
+
+  void _toggleMenu() {
+    if (_isMenuOpen) {
+      _removeOverlay();
+    } else {
+      _showOverlay();
     }
   }
 
-  bool get _hasValue => _controller.text.isNotEmpty;
+  void _showOverlay() {
+    if (_overlayEntry != null) return;
+
+    final overlay = Overlay.of(context);
+    final safeAreaBottom = MediaQuery.of(context).padding.bottom;
+    final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+    // Search bar height: top padding (12) + text field (~48) + bottom padding (12) = ~72px
+    final searchBarHeight = 72.0;
+    final menuBottomOffset =
+        safeAreaBottom +
+        keyboardHeight +
+        searchBarHeight +
+        8; // 8px gap above search bar
+
+    _overlayEntry = OverlayEntry(
+      builder: (context) => Stack(
+        children: [
+          // Scrim overlay
+          Positioned.fill(
+            child: GestureDetector(
+              onTap: _toggleMenu,
+              child: Container(color: Colors.black.withOpacity(0.3)),
+            ),
+          ),
+          // Filter menu positioned above search bar
+          Positioned(
+            right: 16,
+            bottom: menuBottomOffset,
+            child: Material(
+              elevation: 8,
+              borderRadius: BorderRadius.circular(16),
+              child: Container(
+                constraints: const BoxConstraints(maxWidth: 200),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    for (int i = 0; i < widget.filterOptions!.length; i++)
+                      _buildFilterOption(
+                        context,
+                        option: widget.filterOptions![i],
+                        isFirst: i == 0,
+                        isLast: i == widget.filterOptions!.length - 1,
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    overlay.insert(_overlayEntry!);
+    setState(() {
+      _isMenuOpen = true;
+    });
+  }
+
+  void _removeOverlay() {
+    _overlayEntry?.remove();
+    _overlayEntry = null;
+    if (mounted) {
+      setState(() {
+        _isMenuOpen = false;
+      });
+    }
+  }
+
+  Widget _buildFilterOption(
+    BuildContext context, {
+    required SearchBarFilterOption option,
+    required bool isFirst,
+    required bool isLast,
+  }) {
+    return InkWell(
+      onTap: () {
+        _toggleMenu();
+        option.onPressed();
+      },
+      borderRadius: BorderRadius.vertical(
+        top: isFirst ? const Radius.circular(16) : Radius.zero,
+        bottom: isLast ? const Radius.circular(16) : Radius.zero,
+      ),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          border: isLast
+              ? null
+              : Border(
+                  bottom: BorderSide(
+                    color: Theme.of(context).colorScheme.outlineVariant,
+                    width: 1,
+                  ),
+                ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              option.icon,
+              size: 20,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            const SizedBox(width: 12),
+            Text(
+              option.label,
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -128,87 +298,296 @@ class _KubaSearchBarBottomState extends State<KubaSearchBarBottom> {
                       ),
                     ],
                   ),
-                  child: TextField(
-                    controller: _controller,
-                    focusNode: _focusNode,
-                    onChanged: _handleChanged,
-                    onSubmitted: (_) => _handleSearch(),
-                    decoration: InputDecoration(
-                      hintText: widget.hintText,
-                      filled: true,
-                      fillColor: Theme.of(context).colorScheme.surface,
-                      prefixIcon: Icon(Icons.search, color: accentColor),
-                      suffixIcon: widget.showClearButton && hasValue
-                          ? IconButton(
-                              icon: const Icon(Icons.close),
-                              color: Colors.grey[600],
-                              onPressed: _handleClear,
-                            )
-                          : null,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        borderSide: BorderSide(
-                          color: Theme.of(context).colorScheme.outline,
+                  child: _isDatePickerMode && widget.onDateChanged != null
+                      ? _buildDatePickerInput(context, accentColor)
+                      : TextField(
+                          controller: _controller,
+                          focusNode: _focusNode,
+                          onChanged: _handleChanged,
+                          onSubmitted: (_) {
+                            if (widget.onSearch != null) {
+                              widget.onSearch!();
+                            }
+                          },
+                          decoration: InputDecoration(
+                            hintText: widget.hintText,
+                            filled: true,
+                            fillColor: Theme.of(context).colorScheme.surface,
+                            prefixIcon: Icon(Icons.search, color: accentColor),
+                            suffixIcon: _buildSearchSuffixIcon(
+                              context,
+                              accentColor,
+                              hasValue,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide(
+                                color: Theme.of(context).colorScheme.outline,
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide(
+                                color: Theme.of(context).colorScheme.outline,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide(
+                                color: hasValue
+                                    ? accentColor
+                                    : Theme.of(context).colorScheme.outline,
+                                width: hasValue ? 2 : 1,
+                              ),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                          ),
+                          textInputAction: TextInputAction.search,
                         ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        borderSide: BorderSide(
-                          color: Theme.of(context).colorScheme.outline,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        borderSide: BorderSide(
-                          color: hasValue
-                              ? accentColor
-                              : Theme.of(context).colorScheme.outline,
-                          width: hasValue ? 2 : 1,
-                        ),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                    ),
-                    textInputAction: TextInputAction.search,
-                  ),
                 ),
               ),
+              // Left optional button
+              if (widget.leftButtonIcon != null &&
+                  widget.onLeftButtonPressed != null) ...[
+                const SizedBox(width: 8),
+                IconButton(
+                  icon: Icon(widget.leftButtonIcon),
+                  color: accentColor,
+                  onPressed: widget.onLeftButtonPressed,
+                  tooltip: 'Left action',
+                ),
+              ],
+              // Right optional button (filter menu if filterOptions provided, otherwise custom button)
+              if (widget.filterOptions != null &&
+                  widget.filterOptions!.isNotEmpty) ...[
+                const SizedBox(width: 8),
+                _buildPrimaryButton(
+                  context,
+                  icon: Icons.sort,
+                  onPressed: _toggleMenu,
+                  accentColor: accentColor,
+                ),
+              ] else if (widget.rightButtonIcon != null &&
+                  widget.onRightButtonPressed != null) ...[
+                const SizedBox(width: 8),
+                IconButton(
+                  icon: Icon(widget.rightButtonIcon),
+                  color: accentColor,
+                  onPressed: widget.onRightButtonPressed,
+                  tooltip: 'Right action',
+                ),
+              ],
+              // Action button (if provided) - appears after filter button
+              if (widget.actionButtonIcon != null &&
+                  widget.onActionButtonPressed != null) ...[
+                const SizedBox(width: 8),
+                _buildPrimaryButton(
+                  context,
+                  icon: widget.actionButtonIcon!,
+                  onPressed: widget.onActionButtonPressed!,
+                  accentColor: accentColor,
+                ),
+              ],
               // Actions
               if (widget.actions != null && widget.actions!.isNotEmpty) ...[
                 const SizedBox(width: 8),
                 ...widget.actions!,
-              ],
-              // Search button (if no custom actions)
-              if (widget.actions == null || widget.actions!.isEmpty) ...[
-                const SizedBox(width: 8),
-                FilledButton(
-                  onPressed: hasValue ? _handleSearch : null,
-                  style: FilledButton.styleFrom(
-                    backgroundColor: accentColor,
-                    foregroundColor: _getOnAccentColor(context),
-                    disabledBackgroundColor: Theme.of(
-                      context,
-                    ).colorScheme.surfaceContainerHighest,
-                    disabledForegroundColor: Theme.of(
-                      context,
-                    ).colorScheme.onSurface.withOpacity(0.38),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 12,
-                    ),
-                  ),
-                  child: const Text('Search'),
-                ),
               ],
             ],
           ),
         ),
       ),
     );
+  }
+
+  Widget _buildPrimaryButton(
+    BuildContext context, {
+    required IconData icon,
+    required VoidCallback onPressed,
+    required Color accentColor,
+  }) {
+    return Container(
+      width: 48,
+      height: 48,
+      decoration: BoxDecoration(
+        color: accentColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: accentColor.withOpacity(0.3),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: BorderRadius.circular(16),
+          child: Center(
+            child: Icon(icon, color: _getOnAccentColor(context), size: 24),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDatePickerInput(BuildContext context, Color accentColor) {
+    final dateText = widget.dateValue != null
+        ? _formatDateRange(widget.dateValue!)
+        : widget.dateHintText ?? 'Tap to select date';
+
+    return TextField(
+      readOnly: true,
+      controller: TextEditingController(text: dateText),
+      onTap: () => _showDatePicker(context),
+      decoration: InputDecoration(
+        hintText: widget.dateHintText ?? 'Tap to select date',
+        filled: true,
+        fillColor: Theme.of(context).colorScheme.surface,
+        prefixIcon: Icon(Icons.calendar_today, color: accentColor),
+        suffixIcon: _buildDatePickerSuffixIcon(context, accentColor),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: accentColor, width: 2),
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 12,
+        ),
+      ),
+    );
+  }
+
+  void _showDatePicker(BuildContext context) async {
+    final DateTimeRange? picked = await showDateRangePicker(
+      context: context,
+      initialDateRange: widget.dateValue,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+      helpText: 'Select Date Range',
+      cancelText: 'Cancel',
+      confirmText: 'Confirm',
+      builder: (BuildContext context, Widget? child) {
+        final accentColor = _getAccentColor(context);
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: Theme.of(context).colorScheme.copyWith(
+              primary: accentColor,
+              secondary: accentColor,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (picked != null && widget.onDateChanged != null) {
+      widget.onDateChanged!(picked);
+    }
+  }
+
+  String _formatDateRange(DateTimeRange range) {
+    final startFormat = DateFormat('MMM dd, yyyy');
+    final endFormat = DateFormat('MMM dd, yyyy');
+    return '${startFormat.format(range.start)} - ${endFormat.format(range.end)}';
+  }
+
+  Widget? _buildSearchSuffixIcon(
+    BuildContext context,
+    Color accentColor,
+    bool hasValue,
+  ) {
+    final List<Widget> icons = [];
+
+    // Clear button
+    if (widget.showClearButton && hasValue) {
+      icons.add(
+        IconButton(
+          icon: const Icon(Icons.close),
+          color: Colors.grey[600],
+          onPressed: _handleClear,
+        ),
+      );
+    }
+
+    // Toggle button
+    if (widget.toggleInputIcon != null && widget.onToggleInput != null) {
+      icons.add(
+        IconButton(
+          icon: Icon(widget.toggleInputIcon),
+          color: accentColor,
+          onPressed: () {
+            setState(() {
+              _isDatePickerMode = !_isDatePickerMode;
+            });
+            if (widget.onToggleInput != null) {
+              widget.onToggleInput!();
+            }
+          },
+        ),
+      );
+    }
+
+    if (icons.isEmpty) return null;
+    if (icons.length == 1) return icons.first;
+
+    // If multiple icons, wrap in Row
+    return Row(mainAxisSize: MainAxisSize.min, children: icons);
+  }
+
+  Widget? _buildDatePickerSuffixIcon(BuildContext context, Color accentColor) {
+    final List<Widget> icons = [];
+
+    // Clear button
+    if (widget.dateValue != null) {
+      icons.add(
+        IconButton(
+          icon: const Icon(Icons.close),
+          color: Colors.grey[600],
+          onPressed: () {
+            if (widget.onDateChanged != null) {
+              widget.onDateChanged!(null);
+            }
+          },
+        ),
+      );
+    }
+
+    // Toggle button
+    if (widget.toggleInputIcon != null && widget.onToggleInput != null) {
+      icons.add(
+        IconButton(
+          icon: Icon(widget.toggleInputIcon),
+          color: accentColor,
+          onPressed: () {
+            setState(() {
+              _isDatePickerMode = !_isDatePickerMode;
+            });
+            if (widget.onToggleInput != null) {
+              widget.onToggleInput!();
+            }
+          },
+        ),
+      );
+    }
+
+    if (icons.isEmpty) return null;
+    if (icons.length == 1) return icons.first;
+
+    // If multiple icons, wrap in Row
+    return Row(mainAxisSize: MainAxisSize.min, children: icons);
   }
 }

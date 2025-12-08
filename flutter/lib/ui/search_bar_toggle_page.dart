@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../widgets/kuba_search_bar_bottom.dart';
 
-class SearchBarPage extends StatefulWidget {
-  const SearchBarPage({super.key});
+class SearchBarTogglePage extends StatefulWidget {
+  const SearchBarTogglePage({super.key});
 
   @override
-  State<SearchBarPage> createState() => _SearchBarPageState();
+  State<SearchBarTogglePage> createState() => _SearchBarTogglePageState();
 }
 
-class _SearchBarPageState extends State<SearchBarPage> {
+class _SearchBarTogglePageState extends State<SearchBarTogglePage> {
   String? _searchQuery;
+  DateTimeRange? _selectedDateRange;
 
   // Sample data for search
   final List<Map<String, dynamic>> _items = [
@@ -89,26 +90,47 @@ class _SearchBarPageState extends State<SearchBarPage> {
   ];
 
   List<Map<String, dynamic>> get _filteredItems {
-    if (_searchQuery == null || _searchQuery!.isEmpty) {
-      return _items;
+    List<Map<String, dynamic>> items = _items;
+
+    // Filter by search query
+    if (_searchQuery != null && _searchQuery!.isNotEmpty) {
+      final query = _searchQuery!.toLowerCase();
+      items = items.where((item) {
+        return item['title'].toString().toLowerCase().contains(query) ||
+            item['description'].toString().toLowerCase().contains(query) ||
+            item['category'].toString().toLowerCase().contains(query);
+      }).toList();
     }
-    final query = _searchQuery!.toLowerCase();
-    return _items.where((item) {
-      return item['title'].toString().toLowerCase().contains(query) ||
-          item['description'].toString().toLowerCase().contains(query) ||
-          item['category'].toString().toLowerCase().contains(query);
-    }).toList();
+
+    // Filter by date range
+    if (_selectedDateRange != null) {
+      items = items.where((item) {
+        final deadline = item['deadline'] as DateTime;
+        return deadline.isAfter(
+              _selectedDateRange!.start.subtract(const Duration(days: 1)),
+            ) &&
+            deadline.isBefore(
+              _selectedDateRange!.end.add(const Duration(days: 1)),
+            );
+      }).toList();
+    }
+
+    return items;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      appBar: AppBar(title: const Text('Search Bar Bottom'), centerTitle: true),
+      appBar: AppBar(
+        title: const Text('Search Bar with Toggle'),
+        centerTitle: true,
+      ),
       body: Column(
         children: [
           // Results count
-          if (_searchQuery != null && _searchQuery!.isNotEmpty)
+          if ((_searchQuery != null && _searchQuery!.isNotEmpty) ||
+              _selectedDateRange != null)
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               color: Theme.of(context).colorScheme.surfaceContainerHighest,
@@ -126,6 +148,21 @@ class _SearchBarPageState extends State<SearchBarPage> {
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
+                  if (_selectedDateRange != null) ...[
+                    const SizedBox(width: 16),
+                    Icon(
+                      Icons.calendar_today,
+                      size: 16,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${DateFormat('MMM dd').format(_selectedDateRange!.start)} - ${DateFormat('MMM dd, yyyy').format(_selectedDateRange!.end)}',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -153,7 +190,7 @@ class _SearchBarPageState extends State<SearchBarPage> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Try a different search term',
+                          'Try a different search term or date range',
                           style: Theme.of(context).textTheme.bodyMedium
                               ?.copyWith(
                                 color: Theme.of(
@@ -286,9 +323,19 @@ class _SearchBarPageState extends State<SearchBarPage> {
         isPrimary: true,
         hintText: 'Search products...',
         onSearch: () {
-          // Optional: handle search action
           FocusScope.of(context).unfocus();
         },
+        toggleInputIcon: Icons.swap_horiz,
+        onToggleInput: () {
+          // Optional: handle toggle action
+        },
+        dateValue: _selectedDateRange,
+        onDateChanged: (range) {
+          setState(() {
+            _selectedDateRange = range;
+          });
+        },
+        dateHintText: 'Select date range',
         filterOptions: [
           SearchBarFilterOption(
             icon: Icons.category,
