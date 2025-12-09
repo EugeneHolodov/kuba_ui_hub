@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'kuba_fab_menu.dart';
@@ -36,11 +37,9 @@ class KubaSearchBarBottom extends StatefulWidget {
   final List<SearchBarFilterOption>? filterOptions;
   final IconData? actionButtonIcon;
   final VoidCallback? onActionButtonPressed;
-  final IconData? toggleInputIcon;
-  final VoidCallback? onToggleInput;
-  final DateTimeRange? dateValue;
+  final bool isToggle;
   final ValueChanged<DateTimeRange?>? onDateChanged;
-  final String? dateHintText;
+  final DateTimeRange? dateValue;
 
   const KubaSearchBarBottom({
     super.key,
@@ -59,11 +58,9 @@ class KubaSearchBarBottom extends StatefulWidget {
     this.filterOptions,
     this.actionButtonIcon,
     this.onActionButtonPressed,
-    this.toggleInputIcon,
-    this.onToggleInput,
-    this.dateValue,
+    this.isToggle = false,
     this.onDateChanged,
-    this.dateHintText,
+    this.dateValue,
   });
 
   @override
@@ -76,6 +73,7 @@ class _KubaSearchBarBottomState extends State<KubaSearchBarBottom> {
   OverlayEntry? _overlayEntry;
   bool _isMenuOpen = false;
   bool _isDatePickerMode = false;
+  DateTimeRange? _internalDateValue;
 
   Color _getAccentColor(BuildContext context) {
     return widget.isPrimary
@@ -94,6 +92,7 @@ class _KubaSearchBarBottomState extends State<KubaSearchBarBottom> {
     super.initState();
     _controller = TextEditingController(text: widget.value ?? '');
     _focusNode = FocusNode();
+    _internalDateValue = widget.dateValue;
   }
 
   @override
@@ -101,6 +100,9 @@ class _KubaSearchBarBottomState extends State<KubaSearchBarBottom> {
     super.didUpdateWidget(oldWidget);
     if (widget.value != oldWidget.value) {
       _controller.text = widget.value ?? '';
+    }
+    if (widget.dateValue != oldWidget.dateValue) {
+      _internalDateValue = widget.dateValue;
     }
   }
 
@@ -263,140 +265,162 @@ class _KubaSearchBarBottomState extends State<KubaSearchBarBottom> {
     // Get keyboard height to adjust padding when keyboard is visible
     final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        top: false,
-        child: Padding(
-          padding: EdgeInsets.only(
-            left: 16.0,
-            right: 16.0,
-            top: 12.0,
-            bottom: 12.0 + keyboardHeight,
-          ),
-          child: Row(
-            children: [
-              // Search field
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: accentColor.withOpacity(0.15),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: _isDatePickerMode && widget.onDateChanged != null
-                      ? _buildDatePickerInput(context, accentColor)
-                      : TextField(
-                          controller: _controller,
-                          focusNode: _focusNode,
-                          onChanged: _handleChanged,
-                          onSubmitted: (_) {
-                            if (widget.onSearch != null) {
-                              widget.onSearch!();
-                            }
-                          },
-                          decoration: InputDecoration(
-                            hintText: widget.hintText,
-                            filled: true,
-                            fillColor: Theme.of(context).colorScheme.surface,
-                            prefixIcon: Icon(Icons.search, color: accentColor),
-                            suffixIcon: _buildSearchSuffixIcon(
-                              context,
-                              accentColor,
-                              hasValue,
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(16),
-                              borderSide: BorderSide(
-                                color: Theme.of(context).colorScheme.outline,
-                              ),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(16),
-                              borderSide: BorderSide(
-                                color: Theme.of(context).colorScheme.outline,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(16),
-                              borderSide: BorderSide(
-                                color: hasValue
-                                    ? accentColor
-                                    : Theme.of(context).colorScheme.outline,
-                                width: hasValue ? 2 : 1,
-                              ),
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 12,
-                            ),
-                          ),
-                          textInputAction: TextInputAction.search,
-                        ),
-                ),
+    return ClipRect(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface.withOpacity(0.85),
+            border: Border(
+              top: BorderSide(
+                color: Theme.of(
+                  context,
+                ).colorScheme.outlineVariant.withOpacity(0.2),
+                width: 0.5,
               ),
-              // Left optional button
-              if (widget.leftButtonIcon != null &&
-                  widget.onLeftButtonPressed != null) ...[
-                const SizedBox(width: 8),
-                IconButton(
-                  icon: Icon(widget.leftButtonIcon),
-                  color: accentColor,
-                  onPressed: widget.onLeftButtonPressed,
-                  tooltip: 'Left action',
-                ),
-              ],
-              // Right optional button (filter menu if filterOptions provided, otherwise custom button)
-              if (widget.filterOptions != null &&
-                  widget.filterOptions!.isNotEmpty) ...[
-                const SizedBox(width: 8),
-                _buildPrimaryButton(
-                  context,
-                  icon: Icons.sort,
-                  onPressed: _toggleMenu,
-                  accentColor: accentColor,
-                ),
-              ] else if (widget.rightButtonIcon != null &&
-                  widget.onRightButtonPressed != null) ...[
-                const SizedBox(width: 8),
-                IconButton(
-                  icon: Icon(widget.rightButtonIcon),
-                  color: accentColor,
-                  onPressed: widget.onRightButtonPressed,
-                  tooltip: 'Right action',
-                ),
-              ],
-              // Action button (if provided) - appears after filter button
-              if (widget.actionButtonIcon != null &&
-                  widget.onActionButtonPressed != null) ...[
-                const SizedBox(width: 8),
-                _buildPrimaryButton(
-                  context,
-                  icon: widget.actionButtonIcon!,
-                  onPressed: widget.onActionButtonPressed!,
-                  accentColor: accentColor,
-                ),
-              ],
-              // Actions
-              if (widget.actions != null && widget.actions!.isNotEmpty) ...[
-                const SizedBox(width: 8),
-                ...widget.actions!,
-              ],
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.08),
+                blurRadius: 16,
+                offset: const Offset(0, -4),
+              ),
             ],
+          ),
+          child: SafeArea(
+            top: false,
+            child: Padding(
+              padding: EdgeInsets.only(
+                left: 16.0,
+                right: 16.0,
+                top: 12.0,
+                bottom: 12.0 + keyboardHeight,
+              ),
+              child: Row(
+                children: [
+                  // Search field
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: accentColor.withOpacity(0.15),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: _isDatePickerMode && widget.isToggle
+                          ? _buildDatePickerInput(context, accentColor)
+                          : TextField(
+                              controller: _controller,
+                              focusNode: _focusNode,
+                              onChanged: _handleChanged,
+                              onSubmitted: (_) {
+                                if (widget.onSearch != null) {
+                                  widget.onSearch!();
+                                }
+                              },
+                              decoration: InputDecoration(
+                                hintText: widget.hintText,
+                                filled: true,
+                                fillColor: Theme.of(
+                                  context,
+                                ).colorScheme.surface,
+                                prefixIcon: Icon(
+                                  Icons.search,
+                                  color: accentColor,
+                                ),
+                                suffixIcon: _buildSearchSuffixIcon(
+                                  context,
+                                  accentColor,
+                                  hasValue,
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                  borderSide: BorderSide(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.outline,
+                                  ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                  borderSide: BorderSide(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.outline,
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                  borderSide: BorderSide(
+                                    color: hasValue
+                                        ? accentColor
+                                        : Theme.of(context).colorScheme.outline,
+                                    width: hasValue ? 2 : 1,
+                                  ),
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 12,
+                                ),
+                              ),
+                              textInputAction: TextInputAction.search,
+                            ),
+                    ),
+                  ),
+                  // Left optional button
+                  if (widget.leftButtonIcon != null &&
+                      widget.onLeftButtonPressed != null) ...[
+                    const SizedBox(width: 8),
+                    IconButton(
+                      icon: Icon(widget.leftButtonIcon),
+                      color: accentColor,
+                      onPressed: widget.onLeftButtonPressed,
+                      tooltip: 'Left action',
+                    ),
+                  ],
+                  // Right optional button (filter menu if filterOptions provided, otherwise custom button)
+                  if (widget.filterOptions != null &&
+                      widget.filterOptions!.isNotEmpty) ...[
+                    const SizedBox(width: 8),
+                    _buildPrimaryButton(
+                      context,
+                      icon: Icons.sort,
+                      onPressed: _toggleMenu,
+                      accentColor: accentColor,
+                    ),
+                  ] else if (widget.rightButtonIcon != null &&
+                      widget.onRightButtonPressed != null) ...[
+                    const SizedBox(width: 8),
+                    IconButton(
+                      icon: Icon(widget.rightButtonIcon),
+                      color: accentColor,
+                      onPressed: widget.onRightButtonPressed,
+                      tooltip: 'Right action',
+                    ),
+                  ],
+                  // Action button (if provided) - appears after filter button
+                  if (widget.actionButtonIcon != null &&
+                      widget.onActionButtonPressed != null) ...[
+                    const SizedBox(width: 8),
+                    _buildPrimaryButton(
+                      context,
+                      icon: widget.actionButtonIcon!,
+                      onPressed: widget.onActionButtonPressed!,
+                      accentColor: accentColor,
+                    ),
+                  ],
+                  // Actions
+                  if (widget.actions != null && widget.actions!.isNotEmpty) ...[
+                    const SizedBox(width: 8),
+                    ...widget.actions!,
+                  ],
+                ],
+              ),
+            ),
           ),
         ),
       ),
@@ -437,35 +461,43 @@ class _KubaSearchBarBottomState extends State<KubaSearchBarBottom> {
   }
 
   Widget _buildDatePickerInput(BuildContext context, Color accentColor) {
-    final dateText = widget.dateValue != null
-        ? _formatDateRange(widget.dateValue!)
-        : widget.dateHintText ?? 'Tap to select date';
+    final dateText = _internalDateValue != null
+        ? _formatDateRange(_internalDateValue!)
+        : 'Tap to select date range';
+    final hasValue = _internalDateValue != null;
+    final suffixIcon = _buildDatePickerSuffixIcon(context, accentColor);
 
-    return TextField(
-      readOnly: true,
-      controller: TextEditingController(text: dateText),
+    return InkWell(
       onTap: () => _showDatePicker(context),
-      decoration: InputDecoration(
-        hintText: widget.dateHintText ?? 'Tap to select date',
-        filled: true,
-        fillColor: Theme.of(context).colorScheme.surface,
-        prefixIcon: Icon(Icons.calendar_today, color: accentColor),
-        suffixIcon: _buildDatePickerSuffixIcon(context, accentColor),
-        border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
+          border: Border.all(
+            color: hasValue
+                ? accentColor
+                : Theme.of(context).colorScheme.outline,
+            width: hasValue ? 2 : 1,
+          ),
         ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: accentColor, width: 2),
-        ),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 12,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
+          children: [
+            Icon(Icons.calendar_today, color: accentColor),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                dateText,
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: hasValue
+                      ? Theme.of(context).colorScheme.onSurface
+                      : Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ),
+            if (suffixIcon != null) suffixIcon,
+          ],
         ),
       ),
     );
@@ -474,7 +506,7 @@ class _KubaSearchBarBottomState extends State<KubaSearchBarBottom> {
   void _showDatePicker(BuildContext context) async {
     final DateTimeRange? picked = await showDateRangePicker(
       context: context,
-      initialDateRange: widget.dateValue,
+      initialDateRange: _internalDateValue,
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
       helpText: 'Select Date Range',
@@ -494,8 +526,13 @@ class _KubaSearchBarBottomState extends State<KubaSearchBarBottom> {
       },
     );
 
-    if (picked != null && widget.onDateChanged != null) {
-      widget.onDateChanged!(picked);
+    if (picked != null) {
+      setState(() {
+        _internalDateValue = picked;
+      });
+      if (widget.onDateChanged != null) {
+        widget.onDateChanged!(picked);
+      }
     }
   }
 
@@ -524,18 +561,20 @@ class _KubaSearchBarBottomState extends State<KubaSearchBarBottom> {
     }
 
     // Toggle button
-    if (widget.toggleInputIcon != null && widget.onToggleInput != null) {
+    if (widget.isToggle) {
       icons.add(
         IconButton(
-          icon: Icon(widget.toggleInputIcon),
+          icon: const Icon(Icons.swap_horiz),
           color: accentColor,
           onPressed: () {
             setState(() {
               _isDatePickerMode = !_isDatePickerMode;
+              // Clear search when switching to date picker
+              if (_isDatePickerMode) {
+                _controller.clear();
+                widget.onChanged(null);
+              }
             });
-            if (widget.onToggleInput != null) {
-              widget.onToggleInput!();
-            }
           },
         ),
       );
@@ -552,12 +591,15 @@ class _KubaSearchBarBottomState extends State<KubaSearchBarBottom> {
     final List<Widget> icons = [];
 
     // Clear button
-    if (widget.dateValue != null) {
+    if (_internalDateValue != null) {
       icons.add(
         IconButton(
           icon: const Icon(Icons.close),
           color: Colors.grey[600],
           onPressed: () {
+            setState(() {
+              _internalDateValue = null;
+            });
             if (widget.onDateChanged != null) {
               widget.onDateChanged!(null);
             }
@@ -567,18 +609,22 @@ class _KubaSearchBarBottomState extends State<KubaSearchBarBottom> {
     }
 
     // Toggle button
-    if (widget.toggleInputIcon != null && widget.onToggleInput != null) {
+    if (widget.isToggle) {
       icons.add(
         IconButton(
-          icon: Icon(widget.toggleInputIcon),
+          icon: const Icon(Icons.swap_horiz),
           color: accentColor,
           onPressed: () {
             setState(() {
               _isDatePickerMode = !_isDatePickerMode;
+              // Clear date when switching to search
+              if (!_isDatePickerMode) {
+                _internalDateValue = null;
+                if (widget.onDateChanged != null) {
+                  widget.onDateChanged!(null);
+                }
+              }
             });
-            if (widget.onToggleInput != null) {
-              widget.onToggleInput!();
-            }
           },
         ),
       );

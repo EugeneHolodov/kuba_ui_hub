@@ -325,17 +325,17 @@ class _SearchBarTogglePageState extends State<SearchBarTogglePage> {
         onSearch: () {
           FocusScope.of(context).unfocus();
         },
-        toggleInputIcon: Icons.swap_horiz,
-        onToggleInput: () {
-          // Optional: handle toggle action
-        },
+        isToggle: true,
         dateValue: _selectedDateRange,
         onDateChanged: (range) {
           setState(() {
             _selectedDateRange = range;
+            // Clear search query when date is selected
+            if (range != null) {
+              _searchQuery = null;
+            }
           });
         },
-        dateHintText: 'Select date range',
         filterOptions: [
           SearchBarFilterOption(
             icon: Icons.category,

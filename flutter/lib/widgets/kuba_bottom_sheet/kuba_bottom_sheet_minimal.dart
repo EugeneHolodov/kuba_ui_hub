@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Reusable bottom sheet widget with regular header style (gradient background).
+/// Reusable bottom sheet widget with minimal header style (simple divider).
 ///
 /// **Action Button Pattern:**
 /// When using action buttons with state management:
@@ -13,7 +13,7 @@ import 'package:flutter/material.dart';
 /// Example:
 /// ```dart
 /// List<String> selectedValues = [];
-/// KubaBottomSheet.show(
+/// KubaBottomSheetMinimal.show(
 ///   context: context,
 ///   title: 'Select Items',
 ///   actionButtonText: 'Confirm',
@@ -29,7 +29,7 @@ import 'package:flutter/material.dart';
 ///   ),
 /// );
 /// ```
-class KubaBottomSheet extends StatelessWidget {
+class KubaBottomSheetMinimal extends StatelessWidget {
   final String title;
   final String? subtitle;
   final Widget child;
@@ -40,7 +40,7 @@ class KubaBottomSheet extends StatelessWidget {
   final bool actionButtonEnabled;
   final ValueNotifier<bool>? actionButtonEnabledNotifier;
 
-  const KubaBottomSheet({
+  const KubaBottomSheetMinimal({
     super.key,
     required this.title,
     this.subtitle,
@@ -74,7 +74,7 @@ class KubaBottomSheet extends StatelessWidget {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (BuildContext context) {
-        return KubaBottomSheet(
+        return KubaBottomSheetMinimal(
           title: title,
           subtitle: subtitle,
           onClose: onClose,
@@ -90,97 +90,79 @@ class KubaBottomSheet extends StatelessWidget {
   }
 
   Widget _buildHeader(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: useSecondaryStyle
-              ? [
-                  Theme.of(context).colorScheme.secondary,
-                  Theme.of(context).colorScheme.secondaryContainer,
-                ]
-              : [
-                  Theme.of(context).colorScheme.primary,
-                  Theme.of(context).colorScheme.primaryContainer,
-                ],
-        ),
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      child: Column(
-        children: [
-          // Handle bar
-          Container(
-            margin: const EdgeInsets.only(top: 8, bottom: 8),
-            width: 40,
-            height: 4,
-            decoration: BoxDecoration(
-              color: useSecondaryStyle
-                  ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).colorScheme.secondary,
-              borderRadius: BorderRadius.circular(2),
-            ),
+    return Column(
+      children: [
+        // Handle bar (small line)
+        Container(
+          margin: const EdgeInsets.only(top: 8, bottom: 8),
+          width: 40,
+          height: 4,
+          decoration: BoxDecoration(
+            color: useSecondaryStyle
+                ? Theme.of(context).colorScheme.secondary
+                : Theme.of(context).colorScheme.primary,
+            borderRadius: BorderRadius.circular(2),
           ),
-          // Title row
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
+        ),
+        // Title row
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        color: useSecondaryStyle
+                            ? Colors.black
+                            : Theme.of(context).colorScheme.onSurface,
+                        fontWeight: useSecondaryStyle
+                            ? FontWeight.w500
+                            : FontWeight.w600,
+                      ),
+                    ),
+                    if (subtitle != null) ...[
+                      const SizedBox(height: 4),
                       Text(
-                        title,
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        subtitle!,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: useSecondaryStyle
-                              ? Colors.black
-                              : Theme.of(context).colorScheme.onPrimary,
-                          fontWeight: useSecondaryStyle
-                              ? FontWeight.w500
-                              : FontWeight.w500,
+                              ? Colors.black87
+                              : Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withOpacity(0.7),
+                          fontSize: 14,
                         ),
                       ),
-                      if (subtitle != null) ...[
-                        const SizedBox(height: 4),
-                        Text(
-                          subtitle!,
-                          style: Theme.of(context).textTheme.bodyMedium
-                              ?.copyWith(
-                                color: useSecondaryStyle
-                                    ? Colors.black87
-                                    : Theme.of(
-                                        context,
-                                      ).colorScheme.onPrimary.withOpacity(0.9),
-                                fontSize: 14,
-                              ),
-                        ),
-                      ],
                     ],
-                  ),
+                  ],
                 ),
-                IconButton(
-                  icon: Icon(
-                    Icons.close,
-                    color: useSecondaryStyle
-                        ? Colors.black
-                        : Theme.of(context).colorScheme.onPrimary,
-                  ),
-                  onPressed: () {
-                    if (onClose != null) {
-                      onClose!();
-                    } else {
-                      Navigator.pop(context);
-                    }
-                  },
+              ),
+              IconButton(
+                icon: Icon(
+                  Icons.close,
+                  color: useSecondaryStyle
+                      ? Colors.black
+                      : Theme.of(context).colorScheme.onSurface,
                 ),
-              ],
-            ),
+                onPressed: () {
+                  if (onClose != null) {
+                    onClose!();
+                  } else {
+                    Navigator.pop(context);
+                  }
+                },
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+        // Divider between header and content
+        Container(height: 1, color: Theme.of(context).colorScheme.outline),
+      ],
     );
   }
 
