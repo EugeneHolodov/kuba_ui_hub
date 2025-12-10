@@ -113,7 +113,9 @@ async function seedReviewers(client) {
     { id: 4, name: 'Benjamin' },
     { id: 5, name: 'Anita' },
     { id: 6, name: 'Eugene' },
-    { id: 7, name: 'Gest' }
+    { id: 7, name: 'Gest' },
+    { id: 8, name: 'Ragul' },
+    { id: 9, name: 'Vijay' }
   ];
 
   for (const reviewer of reviewers) {
