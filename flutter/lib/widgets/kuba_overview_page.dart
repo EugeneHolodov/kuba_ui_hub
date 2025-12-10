@@ -138,18 +138,19 @@ class KubaOverviewPage extends StatelessWidget {
     double responsiveSpacing;
     int optimalCrossAxisCount;
 
-    if (screenWidth >= 500) {
-      // Wide screens/horizontal orientation (500-600px): 3 columns, large icons
+    if (screenWidth >= 501) {
+      // Wide screens/horizontal orientation (501-600px): 3 columns, large icons
       aspectRatio = 1.2;
       iconSize = 40.0;
       responsiveSpacing = customSpacing ?? 18.0;
       optimalCrossAxisCount = 3;
     } else if (screenWidth >= 400) {
-      // Medium-wide screens (400-500px): 2-3 columns, larger icons
+      // Medium-wide screens (400-500px): 2 columns, progressively larger icons
       aspectRatio = 1.15;
-      iconSize = 36.0;
+      // Icons scale from 34px to 38px based on width
+      iconSize = 34.0 + ((screenWidth - 400) / 100 * 4);
       responsiveSpacing = customSpacing ?? 16.0;
-      optimalCrossAxisCount = (screenWidth > 450) ? 3 : 2;
+      optimalCrossAxisCount = 2;
     } else if (screenWidth >= 320) {
       // Medium screens (320-400px): 2 columns, medium icons
       aspectRatio = 1.0;
