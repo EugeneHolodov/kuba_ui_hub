@@ -66,7 +66,7 @@ class MyApp extends StatelessWidget {
     if (kIsWeb) {
       return Center(
         child: Container(
-          constraints: const BoxConstraints(maxWidth: 500),
+          constraints: const BoxConstraints(maxWidth: 600),
           decoration: BoxDecoration(
             color: Colors.white,
             boxShadow: [
