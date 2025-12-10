@@ -260,6 +260,7 @@ class _AnimatedOverviewPageState extends State<_AnimatedOverviewPage>
     final effectiveCrossAxisCount = responsiveParams.crossAxisCount;
     final aspectRatio = responsiveParams.aspectRatio;
     final effectiveSpacing = responsiveParams.spacing;
+    final iconSize = responsiveParams.iconSize;
 
     final backgroundColor = _usePrimaryToneBackground
         ? theme.colorScheme.primary.withOpacity(0.03)
@@ -282,6 +283,7 @@ class _AnimatedOverviewPageState extends State<_AnimatedOverviewPage>
               crossAxisSpacing: effectiveSpacing,
               mainAxisSpacing: effectiveSpacing,
               childAspectRatio: aspectRatio,
+              iconSize: iconSize,
               metrics: widget.metrics,
               onReorder: widget.onReorder,
               animations: _animations,
@@ -440,85 +442,53 @@ class _AnimatedOverviewPageState extends State<_AnimatedOverviewPage>
     );
   }
 
-  /// Calculate responsive grid parameters based on screen width
-  /// Returns optimal cross axis count, aspect ratio, and spacing for cards
+  /// Calculate responsive grid parameters based on screen width (max 600px)
+  /// Returns optimal cross axis count, aspect ratio, spacing, and icon size for cards
   static _ResponsiveGridParams _calculateResponsiveGridParams(
     double screenWidth,
     int requestedCrossAxisCount,
     double padding,
   ) {
-    // Define card constraints
-    const double minCardWidth = 160.0;
-    const double maxCardWidth = 300.0;
-
-    // Use responsive aspect ratio - smaller screens need taller cards (lower ratio)
-    // Lower aspect ratio = taller cards relative to width
+    // Simplified responsive logic for app width restricted to 600px max
+    // Lower aspect ratio = taller cards (more height relative to width)
     double aspectRatio;
-    if (screenWidth >= 1200) {
-      // Large screens: wider cards can be slightly flatter
-      aspectRatio = 1.5;
-    } else if (screenWidth >= 600) {
-      // Medium screens: balanced ratio
-      aspectRatio = 1.3;
-    } else {
-      // Small screens: taller cards to fit content (1.05 = very tall)
-      aspectRatio = 1.05;
-    }
-
-    // Calculate responsive spacing based on screen width
-    // Larger screens need more spacing to prevent overlap
+    double iconSize;
     double responsiveSpacing;
-    if (screenWidth >= 1400) {
-      // Extra large screens: 24-32px spacing
-      responsiveSpacing = 32.0;
-    } else if (screenWidth >= 1200) {
-      // Large screens (desktop): 20-24px spacing
-      responsiveSpacing = 24.0;
-    } else if (screenWidth >= 900) {
-      // Medium-large screens (tablets landscape): 18-20px spacing
-      responsiveSpacing = 20.0;
-    } else if (screenWidth >= 600) {
-      // Medium screens (tablets portrait): 16-18px spacing
+    int optimalCrossAxisCount;
+
+    if (screenWidth >= 500) {
+      // Wide screens/horizontal orientation (500-600px): 3 columns, large icons
+      aspectRatio = 1.2;
+      iconSize = 40.0;
       responsiveSpacing = 18.0;
-    } else {
-      // Small screens (phones): 16px spacing
+      optimalCrossAxisCount = 3;
+    } else if (screenWidth >= 400) {
+      // Medium-wide screens (400-500px): 2-3 columns, larger icons
+      aspectRatio = 1.15;
+      iconSize = 36.0;
       responsiveSpacing = 16.0;
-    }
-
-    // Calculate optimal column count based on screen width
-    int optimalCrossAxisCount = requestedCrossAxisCount;
-
-    if (screenWidth >= 1400) {
-      // Extra large screens: 5-6 columns
-      optimalCrossAxisCount = (screenWidth / (maxCardWidth + responsiveSpacing))
-          .floor()
-          .clamp(5, 6);
-    } else if (screenWidth >= 1200) {
-      // Large screens (desktop): 4-5 columns
-      optimalCrossAxisCount = (screenWidth / (maxCardWidth + responsiveSpacing))
-          .floor()
-          .clamp(4, 5);
-    } else if (screenWidth >= 900) {
-      // Medium-large screens (tablets landscape): 3-4 columns
-      optimalCrossAxisCount = (screenWidth / (maxCardWidth + responsiveSpacing))
-          .floor()
-          .clamp(3, 4);
-    } else if (screenWidth >= 600) {
-      // Medium screens (tablets portrait): 2-3 columns
-      optimalCrossAxisCount = (screenWidth / (minCardWidth + responsiveSpacing))
-          .floor()
-          .clamp(2, 3);
+      optimalCrossAxisCount = (screenWidth > 450) ? 3 : 2;
+    } else if (screenWidth >= 320) {
+      // Medium screens (320-400px): 2 columns, medium icons
+      aspectRatio = 1.0;
+      iconSize = 32.0;
+      responsiveSpacing = 16.0;
+      optimalCrossAxisCount = 2;
     } else {
-      // Small screens (phones): 2 columns
+      // Small screens (<320px): 2 columns, smaller icons, very tall cards
+      aspectRatio = 0.95;
+      iconSize = 28.0;
+      responsiveSpacing = 14.0;
       optimalCrossAxisCount = 2;
     }
 
-    // Use the responsive aspect ratio to ensure proper card proportions
+    // Use the responsive parameters to ensure proper card proportions
     // This prevents content overflow by guaranteeing adequate height on all screens
     return _ResponsiveGridParams(
       crossAxisCount: optimalCrossAxisCount,
       aspectRatio: aspectRatio,
       spacing: responsiveSpacing,
+      iconSize: iconSize,
     );
   }
 }
@@ -528,11 +498,13 @@ class _ResponsiveGridParams {
   final int crossAxisCount;
   final double aspectRatio;
   final double spacing;
+  final double iconSize;
 
   _ResponsiveGridParams({
     required this.crossAxisCount,
     required this.aspectRatio,
     required this.spacing,
+    required this.iconSize,
   });
 }
 
@@ -541,6 +513,7 @@ class _ReorderableAnimatedGrid extends StatefulWidget {
   final double crossAxisSpacing;
   final double mainAxisSpacing;
   final double childAspectRatio;
+  final double iconSize;
   final List<OverviewMetricCard> metrics;
   final Function(int, int) onReorder;
   final List<Animation<double>> animations;
@@ -552,6 +525,7 @@ class _ReorderableAnimatedGrid extends StatefulWidget {
     required this.crossAxisSpacing,
     required this.mainAxisSpacing,
     required this.childAspectRatio,
+    required this.iconSize,
     required this.metrics,
     required this.onReorder,
     required this.animations,
@@ -721,7 +695,7 @@ class _ReorderableAnimatedGridState extends State<_ReorderableAnimatedGrid> {
 
   Widget _buildStyledCard(BuildContext context, OverviewMetricCard metric) {
     if (!widget.usePrimaryToneCardBackground) {
-      return KubaMetricCard(metric: metric);
+      return KubaMetricCard(metric: metric, iconSize: widget.iconSize);
     }
 
     final theme = Theme.of(context);
@@ -747,14 +721,18 @@ class _ReorderableAnimatedGridState extends State<_ReorderableAnimatedGrid> {
           borderRadius: BorderRadius.circular(12),
           child: Padding(
             padding: const EdgeInsets.all(12.0),
-            child: _buildCardContent(context, metric),
+            child: _buildCardContent(context, metric, widget.iconSize),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildCardContent(BuildContext context, OverviewMetricCard metric) {
+  Widget _buildCardContent(
+    BuildContext context,
+    OverviewMetricCard metric,
+    double iconSize,
+  ) {
     final theme = Theme.of(context);
     final effectiveIconColor = metric.iconColor ?? theme.colorScheme.primary;
 
@@ -779,7 +757,7 @@ class _ReorderableAnimatedGridState extends State<_ReorderableAnimatedGrid> {
                 color: effectiveIconColor,
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Icon(metric.icon, size: 32.0, color: Colors.white),
+              child: Icon(metric.icon, size: iconSize, color: Colors.white),
             ),
             if (metric.badge != null)
               Flexible(

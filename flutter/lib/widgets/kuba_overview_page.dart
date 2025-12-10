@@ -55,6 +55,7 @@ class KubaOverviewPage extends StatelessWidget {
     final effectiveCrossAxisCount = responsiveParams.crossAxisCount;
     final aspectRatio = responsiveParams.aspectRatio;
     final effectiveSpacing = responsiveParams.spacing;
+    final iconSize = responsiveParams.iconSize;
 
     return Container(
       color: backgroundColor ?? theme.colorScheme.surface,
@@ -81,7 +82,10 @@ class KubaOverviewPage extends StatelessWidget {
               ),
               itemCount: metrics.length,
               itemBuilder: (context, index) {
-                return KubaMetricCard(metric: metrics[index]);
+                return KubaMetricCard(
+                  metric: metrics[index],
+                  iconSize: iconSize,
+                );
               },
             ),
             if (footer != null) ...[
@@ -119,89 +123,54 @@ class KubaOverviewPage extends StatelessWidget {
     );
   }
 
-  /// Calculate responsive grid parameters based on screen width
-  /// Returns optimal cross axis count, aspect ratio, and spacing for cards
+  /// Calculate responsive grid parameters based on screen width (max 600px)
+  /// Returns optimal cross axis count, aspect ratio, spacing, and icon size for cards
   static _ResponsiveGridParams _calculateResponsiveGridParams(
     double screenWidth,
     int requestedCrossAxisCount,
     double padding,
     double? customSpacing,
   ) {
-    // Define card constraints
-    const double minCardWidth = 160.0;
-    const double maxCardWidth = 300.0;
-
-    // Use responsive aspect ratio - smaller screens need taller cards (lower ratio)
-    // Lower aspect ratio = taller cards relative to width
+    // Simplified responsive logic for app width restricted to 600px max
+    // Lower aspect ratio = taller cards (more height relative to width)
     double aspectRatio;
-    if (screenWidth >= 1200) {
-      // Large screens: wider cards can be slightly flatter
-      aspectRatio = 1.5;
-    } else if (screenWidth >= 600) {
-      // Medium screens: balanced ratio
-      aspectRatio = 1.3;
-    } else {
-      // Small screens: taller cards to fit content (1.05 = very tall)
-      aspectRatio = 1.05;
-    }
-
-    // Calculate responsive spacing based on screen width
-    // Larger screens need more spacing to prevent overlap
-    // Use custom spacing if provided, otherwise calculate responsive spacing
+    double iconSize;
     double responsiveSpacing;
-    if (customSpacing != null) {
-      responsiveSpacing = customSpacing;
-    } else if (screenWidth >= 1400) {
-      // Extra large screens: 24-32px spacing
-      responsiveSpacing = 32.0;
-    } else if (screenWidth >= 1200) {
-      // Large screens (desktop): 20-24px spacing
-      responsiveSpacing = 24.0;
-    } else if (screenWidth >= 900) {
-      // Medium-large screens (tablets landscape): 18-20px spacing
-      responsiveSpacing = 20.0;
-    } else if (screenWidth >= 600) {
-      // Medium screens (tablets portrait): 16-18px spacing
-      responsiveSpacing = 18.0;
-    } else {
-      // Small screens (phones): 16px spacing
-      responsiveSpacing = 16.0;
-    }
+    int optimalCrossAxisCount;
 
-    // Calculate optimal column count based on screen width
-    int optimalCrossAxisCount = requestedCrossAxisCount;
-
-    if (screenWidth >= 1400) {
-      // Extra large screens: 5-6 columns
-      optimalCrossAxisCount = (screenWidth / (maxCardWidth + responsiveSpacing))
-          .floor()
-          .clamp(5, 6);
-    } else if (screenWidth >= 1200) {
-      // Large screens (desktop): 4-5 columns
-      optimalCrossAxisCount = (screenWidth / (maxCardWidth + responsiveSpacing))
-          .floor()
-          .clamp(4, 5);
-    } else if (screenWidth >= 900) {
-      // Medium-large screens (tablets landscape): 3-4 columns
-      optimalCrossAxisCount = (screenWidth / (maxCardWidth + responsiveSpacing))
-          .floor()
-          .clamp(3, 4);
-    } else if (screenWidth >= 600) {
-      // Medium screens (tablets portrait): 2-3 columns
-      optimalCrossAxisCount = (screenWidth / (minCardWidth + responsiveSpacing))
-          .floor()
-          .clamp(2, 3);
+    if (screenWidth >= 500) {
+      // Wide screens/horizontal orientation (500-600px): 3 columns, large icons
+      aspectRatio = 1.2;
+      iconSize = 40.0;
+      responsiveSpacing = customSpacing ?? 18.0;
+      optimalCrossAxisCount = 3;
+    } else if (screenWidth >= 400) {
+      // Medium-wide screens (400-500px): 2-3 columns, larger icons
+      aspectRatio = 1.15;
+      iconSize = 36.0;
+      responsiveSpacing = customSpacing ?? 16.0;
+      optimalCrossAxisCount = (screenWidth > 450) ? 3 : 2;
+    } else if (screenWidth >= 320) {
+      // Medium screens (320-400px): 2 columns, medium icons
+      aspectRatio = 1.0;
+      iconSize = 32.0;
+      responsiveSpacing = customSpacing ?? 16.0;
+      optimalCrossAxisCount = 2;
     } else {
-      // Small screens (phones): 2 columns
+      // Small screens (<320px): 2 columns, smaller icons, very tall cards
+      aspectRatio = 0.95;
+      iconSize = 28.0;
+      responsiveSpacing = customSpacing ?? 14.0;
       optimalCrossAxisCount = 2;
     }
 
-    // Use the responsive aspect ratio to ensure proper card proportions
+    // Use the responsive parameters to ensure proper card proportions
     // This prevents content overflow by guaranteeing adequate height on all screens
     return _ResponsiveGridParams(
       crossAxisCount: optimalCrossAxisCount,
       aspectRatio: aspectRatio,
       spacing: responsiveSpacing,
+      iconSize: iconSize,
     );
   }
 }
@@ -211,23 +180,25 @@ class _ResponsiveGridParams {
   final int crossAxisCount;
   final double aspectRatio;
   final double spacing;
+  final double iconSize;
 
   _ResponsiveGridParams({
     required this.crossAxisCount,
     required this.aspectRatio,
     required this.spacing,
+    required this.iconSize,
   });
 }
 
 /// Metric card widget for overview page
 class KubaMetricCard extends StatelessWidget {
   // Constants
-  static const double _iconSize = 32.0;
   static const double _padding = 12.0;
 
   final OverviewMetricCard metric;
+  final double iconSize;
 
-  const KubaMetricCard({super.key, required this.metric});
+  const KubaMetricCard({super.key, required this.metric, this.iconSize = 32.0});
 
   @override
   Widget build(BuildContext context) {
@@ -260,7 +231,7 @@ class KubaMetricCard extends StatelessWidget {
                     ),
                     child: Icon(
                       metric.icon,
-                      size: _iconSize,
+                      size: iconSize,
                       color: effectiveIconColor,
                     ),
                   ),
