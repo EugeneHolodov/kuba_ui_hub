@@ -450,7 +450,20 @@ class _AnimatedOverviewPageState extends State<_AnimatedOverviewPage>
     // Define card constraints
     const double minCardWidth = 160.0;
     const double maxCardWidth = 300.0;
-    const double idealCardHeight = 170.0;
+
+    // Use responsive aspect ratio - smaller screens need taller cards (lower ratio)
+    // Lower aspect ratio = taller cards relative to width
+    double aspectRatio;
+    if (screenWidth >= 1200) {
+      // Large screens: wider cards can be slightly flatter
+      aspectRatio = 1.5;
+    } else if (screenWidth >= 600) {
+      // Medium screens: balanced ratio
+      aspectRatio = 1.3;
+    } else {
+      // Small screens: taller cards to fit content (1.05 = very tall)
+      aspectRatio = 1.05;
+    }
 
     // Calculate responsive spacing based on screen width
     // Larger screens need more spacing to prevent overlap
@@ -500,18 +513,8 @@ class _AnimatedOverviewPageState extends State<_AnimatedOverviewPage>
       optimalCrossAxisCount = 2;
     }
 
-    // Calculate actual card width with the optimal column count
-    // This is the ACTUAL width that will be rendered by the grid
-    final actualCardWidth =
-        (screenWidth -
-            (padding * 2) -
-            (responsiveSpacing * (optimalCrossAxisCount - 1))) /
-        optimalCrossAxisCount;
-
-    // Calculate aspect ratio based on ACTUAL card width that will be rendered
-    // This ensures cards have proper height and don't overlap
-    final aspectRatio = actualCardWidth / idealCardHeight;
-
+    // Use the responsive aspect ratio to ensure proper card proportions
+    // This prevents content overflow by guaranteeing adequate height on all screens
     return _ResponsiveGridParams(
       crossAxisCount: optimalCrossAxisCount,
       aspectRatio: aspectRatio,
@@ -762,7 +765,6 @@ class _ReorderableAnimatedGridState extends State<_ReorderableAnimatedGrid> {
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
         // Icon and optional badge
@@ -780,29 +782,36 @@ class _ReorderableAnimatedGridState extends State<_ReorderableAnimatedGrid> {
               child: Icon(metric.icon, size: 32.0, color: Colors.white),
             ),
             if (metric.badge != null)
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  metric.badge!.text,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: metric.badge!.color ?? theme.colorScheme.primary,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 11,
+              Flexible(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    metric.badge!.text,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: metric.badge!.color ?? theme.colorScheme.primary,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 11,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
                   ),
                 ),
               ),
           ],
         ),
+        const Spacer(),
         // Value and text section
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            const SizedBox(height: 8),
             // Value
             Text(
               metric.value,
