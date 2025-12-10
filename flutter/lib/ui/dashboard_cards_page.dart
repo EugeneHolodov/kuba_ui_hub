@@ -188,7 +188,6 @@ class _AnimatedOverviewPage extends StatefulWidget {
 class _AnimatedOverviewPageState extends State<_AnimatedOverviewPage>
     with TickerProviderStateMixin {
   static const double _defaultPadding = 16.0;
-  static const double _defaultSpacing = 16.0;
 
   late List<AnimationController> _controllers;
   late List<Animation<double>> _animations;
@@ -249,7 +248,6 @@ class _AnimatedOverviewPageState extends State<_AnimatedOverviewPage>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final effectivePadding = _defaultPadding;
-    final effectiveSpacing = _defaultSpacing;
 
     // Calculate responsive grid parameters
     final screenWidth = MediaQuery.of(context).size.width;
@@ -257,11 +255,11 @@ class _AnimatedOverviewPageState extends State<_AnimatedOverviewPage>
       screenWidth,
       widget.crossAxisCount,
       effectivePadding,
-      effectiveSpacing,
     );
 
     final effectiveCrossAxisCount = responsiveParams.crossAxisCount;
     final aspectRatio = responsiveParams.aspectRatio;
+    final effectiveSpacing = responsiveParams.spacing;
 
     final backgroundColor = _usePrimaryToneBackground
         ? theme.colorScheme.primary.withOpacity(0.03)
@@ -443,39 +441,58 @@ class _AnimatedOverviewPageState extends State<_AnimatedOverviewPage>
   }
 
   /// Calculate responsive grid parameters based on screen width
-  /// Returns optimal cross axis count and aspect ratio for cards
+  /// Returns optimal cross axis count, aspect ratio, and spacing for cards
   static _ResponsiveGridParams _calculateResponsiveGridParams(
     double screenWidth,
     int requestedCrossAxisCount,
     double padding,
-    double spacing,
   ) {
     // Define card constraints
     const double minCardWidth = 160.0;
     const double maxCardWidth = 300.0;
     const double idealCardHeight = 170.0;
 
+    // Calculate responsive spacing based on screen width
+    // Larger screens need more spacing to prevent overlap
+    double responsiveSpacing;
+    if (screenWidth >= 1400) {
+      // Extra large screens: 24-32px spacing
+      responsiveSpacing = 32.0;
+    } else if (screenWidth >= 1200) {
+      // Large screens (desktop): 20-24px spacing
+      responsiveSpacing = 24.0;
+    } else if (screenWidth >= 900) {
+      // Medium-large screens (tablets landscape): 18-20px spacing
+      responsiveSpacing = 20.0;
+    } else if (screenWidth >= 600) {
+      // Medium screens (tablets portrait): 16-18px spacing
+      responsiveSpacing = 18.0;
+    } else {
+      // Small screens (phones): 16px spacing
+      responsiveSpacing = 16.0;
+    }
+
     // Calculate optimal column count based on screen width
     int optimalCrossAxisCount = requestedCrossAxisCount;
 
     if (screenWidth >= 1400) {
       // Extra large screens: 5-6 columns
-      optimalCrossAxisCount = (screenWidth / (maxCardWidth + spacing))
+      optimalCrossAxisCount = (screenWidth / (maxCardWidth + responsiveSpacing))
           .floor()
           .clamp(5, 6);
     } else if (screenWidth >= 1200) {
       // Large screens (desktop): 4-5 columns
-      optimalCrossAxisCount = (screenWidth / (maxCardWidth + spacing))
+      optimalCrossAxisCount = (screenWidth / (maxCardWidth + responsiveSpacing))
           .floor()
           .clamp(4, 5);
     } else if (screenWidth >= 900) {
       // Medium-large screens (tablets landscape): 3-4 columns
-      optimalCrossAxisCount = (screenWidth / (maxCardWidth + spacing))
+      optimalCrossAxisCount = (screenWidth / (maxCardWidth + responsiveSpacing))
           .floor()
           .clamp(3, 4);
     } else if (screenWidth >= 600) {
       // Medium screens (tablets portrait): 2-3 columns
-      optimalCrossAxisCount = (screenWidth / (minCardWidth + spacing))
+      optimalCrossAxisCount = (screenWidth / (minCardWidth + responsiveSpacing))
           .floor()
           .clamp(2, 3);
     } else {
@@ -488,7 +505,7 @@ class _AnimatedOverviewPageState extends State<_AnimatedOverviewPage>
     final actualCardWidth =
         (screenWidth -
             (padding * 2) -
-            (spacing * (optimalCrossAxisCount - 1))) /
+            (responsiveSpacing * (optimalCrossAxisCount - 1))) /
         optimalCrossAxisCount;
 
     // Calculate aspect ratio based on ACTUAL card width that will be rendered
@@ -498,6 +515,7 @@ class _AnimatedOverviewPageState extends State<_AnimatedOverviewPage>
     return _ResponsiveGridParams(
       crossAxisCount: optimalCrossAxisCount,
       aspectRatio: aspectRatio,
+      spacing: responsiveSpacing,
     );
   }
 }
@@ -506,10 +524,12 @@ class _AnimatedOverviewPageState extends State<_AnimatedOverviewPage>
 class _ResponsiveGridParams {
   final int crossAxisCount;
   final double aspectRatio;
+  final double spacing;
 
   _ResponsiveGridParams({
     required this.crossAxisCount,
     required this.aspectRatio,
+    required this.spacing,
   });
 }
 
