@@ -27,25 +27,108 @@ class _InputPageState extends State<InputPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      appBar: AppBar(
-        title: const Text('Input Variants Comparison'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Input'), centerTitle: true),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Variant 1 Block
-            _buildDividerWithTag('Variant 1 (Original)'),
-            const SizedBox(height: 12),
+            const Text(
+              'Input Variant 1',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Standard input field with label above the input. Supports primary and secondary color styles.',
+              style: TextStyle(fontSize: 13, color: Colors.grey),
+            ),
+            const SizedBox(height: 16),
             _buildVariant1Block(),
             const SizedBox(height: 32),
-
-            // Variant 2 Block
-            _buildDividerWithTag('Variant 2 (No Label, Icon Right)'),
-            const SizedBox(height: 12),
+            const Divider(),
+            const SizedBox(height: 24),
+            const Text(
+              'Input Variant 2',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Input field without label, with icon positioned on the right side. Cleaner, more compact design.',
+              style: TextStyle(fontSize: 13, color: Colors.grey),
+            ),
+            const SizedBox(height: 16),
             _buildVariant2Block(),
+            const SizedBox(height: 32),
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.info_outline,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        const SizedBox(width: 8),
+                        const Text(
+                          'About Input Variants',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    const Text(
+                      'Variant 1: Standard input field with label positioned above the input field. Provides clear context for what the user should enter. Supports both single-line and multiline input modes.',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Variant 2: Input field without a visible label, with icon positioned on the right side. More compact design suitable for forms with limited space. Also supports multiline and error states.',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    const SizedBox(height: 12),
+                    const Divider(),
+                    const SizedBox(height: 12),
+                    const Text(
+                      'Features:',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      '• Single-line and multiline input support\n'
+                      '• Error state with error message display\n'
+                      '• Primary and secondary color styles\n'
+                      '• Customizable accent colors',
+                      style: TextStyle(fontSize: 13),
+                    ),
+                    const SizedBox(height: 12),
+                    const Divider(),
+                    const SizedBox(height: 12),
+                    const Text(
+                      'Color Styles:',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      '• Primary: Uses primary color scheme for focus indicators and accents\n'
+                      '• Secondary: Uses secondary color scheme for a different visual style',
+                      style: TextStyle(fontSize: 13),
+                    ),
+                  ],
+                ),
+              ),
+            ),
             // Add bottom padding to prevent content from being hidden behind floating button
             const SizedBox(height: 80),
           ],
@@ -87,7 +170,6 @@ class _InputPageState extends State<InputPage> {
           onAccentColor: Theme.of(context).colorScheme.onSecondary,
         ),
         const SizedBox(height: 24),
-
         KubaInput(
           value: _multilineInput,
           onChanged: (String? value) {
@@ -102,7 +184,6 @@ class _InputPageState extends State<InputPage> {
           onAccentColor: Theme.of(context).colorScheme.onPrimary,
         ),
         const SizedBox(height: 24),
-
         KubaInput(
           value: _errorInput,
           onChanged: (String? value) {
@@ -152,7 +233,6 @@ class _InputPageState extends State<InputPage> {
           onAccentColor: Theme.of(context).colorScheme.onSecondary,
         ),
         const SizedBox(height: 24),
-
         KubaInputVariant2(
           value: _multilineInputV2,
           onChanged: (String? value) {
@@ -167,7 +247,6 @@ class _InputPageState extends State<InputPage> {
           onAccentColor: Theme.of(context).colorScheme.onPrimary,
         ),
         const SizedBox(height: 24),
-
         KubaInputVariant2(
           value: _errorInputV2,
           onChanged: (String? value) {
@@ -184,29 +263,6 @@ class _InputPageState extends State<InputPage> {
           onAccentColor: Theme.of(context).colorScheme.onSecondary,
         ),
       ],
-    );
-  }
-
-  Widget _buildDividerWithTag(String tag) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12.0),
-      child: Row(
-        children: [
-          Expanded(child: Divider(thickness: 1, color: Colors.grey[300])),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0),
-            child: Text(
-              tag,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: Colors.grey[600],
-              ),
-            ),
-          ),
-          Expanded(child: Divider(thickness: 1, color: Colors.grey[300])),
-        ],
-      ),
     );
   }
 }

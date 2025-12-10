@@ -4,6 +4,7 @@ import 'nav_bar_tabs_navigation_bar_page.dart';
 import 'nav_bar_tabs_navigation_bar_top_page.dart';
 import 'nav_bar_tabs_segmented_buttons_page.dart';
 import 'widget_menu_page.dart';
+import '../widgets/review_input.dart';
 
 class NavBarTabsMenuPage extends StatelessWidget {
   const NavBarTabsMenuPage({super.key});
@@ -14,6 +15,9 @@ class NavBarTabsMenuPage extends StatelessWidget {
       widgetName: 'Nav Bar Tabs',
       description: 'Explore different navbar tabs implementations',
       icon: Icons.tab,
+      floatingActionButton: ReviewInput(
+        widgetName: 'kuba_nav_bar_tabs',
+      ).buildFloatingActionButton(context),
       variants: [
         WidgetVariantItem(
           title: 'Variant 1 - Overview with Lists',

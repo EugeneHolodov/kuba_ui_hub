@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/kuba_attachment.dart';
+import '../widgets/review_input.dart';
 
 class AttachmentPage extends StatefulWidget {
   const AttachmentPage({super.key});
@@ -17,59 +18,40 @@ class _AttachmentPageState extends State<AttachmentPage> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Attachment Widget'),
-        centerTitle: true,
-        elevation: 0,
-      ),
+      appBar: AppBar(title: const Text('Attachment'), centerTitle: true),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Overview section
-            Card(
-              elevation: 0,
-              color: theme.colorScheme.primaryContainer,
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  children: [
-                    Icon(
-                      Icons.attach_file,
-                      size: 48,
-                      color: theme.colorScheme.onPrimaryContainer,
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'Attachment Widget',
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        color: theme.colorScheme.onPrimaryContainer,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Reusable Material 3 attachment widget with support for multiple file types and optional multiple selection',
-                      textAlign: TextAlign.center,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onPrimaryContainer,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            const Text(
+              'Attachment 1: Different File Types',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
-            const SizedBox(height: 24),
-
-            // Different attachment types
-            _buildSectionTitle(context, 'Different Attachment Types'),
-            const SizedBox(height: 12),
-
+            const SizedBox(height: 8),
+            const Text(
+              'Attachments with different file types (image, video, PDF, document). Swipe right to share.',
+              style: TextStyle(fontSize: 13, color: Colors.grey),
+            ),
+            const SizedBox(height: 16),
             KubaAttachment(
               fileName: 'vacation_photo.jpg',
               type: AttachmentType.image,
               fileSize: '2.4 MB',
+              rightSwipeAction: SwipeAction(
+                label: 'Share',
+                icon: Icons.share,
+                backgroundColor: theme.colorScheme.primary,
+                iconColor: Colors.white,
+                onAction: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const Text('Image shared'),
+                      backgroundColor: theme.colorScheme.primary,
+                    ),
+                  );
+                },
+              ),
               onTap: () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Image attachment tapped')),
@@ -77,11 +59,24 @@ class _AttachmentPageState extends State<AttachmentPage> {
               },
             ),
             const SizedBox(height: 12),
-
             KubaAttachment(
               fileName: 'presentation.mp4',
               type: AttachmentType.video,
               fileSize: '45.2 MB',
+              rightSwipeAction: SwipeAction(
+                label: 'Share',
+                icon: Icons.share,
+                backgroundColor: theme.colorScheme.primary,
+                iconColor: Colors.white,
+                onAction: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const Text('Video shared'),
+                      backgroundColor: theme.colorScheme.primary,
+                    ),
+                  );
+                },
+              ),
               onTap: () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Video attachment tapped')),
@@ -89,23 +84,24 @@ class _AttachmentPageState extends State<AttachmentPage> {
               },
             ),
             const SizedBox(height: 12),
-
-            KubaAttachment(
-              fileName: 'podcast_episode.mp3',
-              type: AttachmentType.audio,
-              fileSize: '12.8 MB',
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Audio attachment tapped')),
-                );
-              },
-            ),
-            const SizedBox(height: 12),
-
             KubaAttachment(
               fileName: 'report.pdf',
               type: AttachmentType.pdf,
               fileSize: '3.1 MB',
+              rightSwipeAction: SwipeAction(
+                label: 'Share',
+                icon: Icons.share,
+                backgroundColor: theme.colorScheme.primary,
+                iconColor: Colors.white,
+                onAction: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const Text('PDF shared'),
+                      backgroundColor: theme.colorScheme.primary,
+                    ),
+                  );
+                },
+              ),
               onTap: () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('PDF attachment tapped')),
@@ -113,61 +109,42 @@ class _AttachmentPageState extends State<AttachmentPage> {
               },
             ),
             const SizedBox(height: 12),
-
             KubaAttachment(
               fileName: 'document.docx',
               type: AttachmentType.doc,
               fileSize: '1.2 MB',
+              rightSwipeAction: SwipeAction(
+                label: 'Share',
+                icon: Icons.share,
+                backgroundColor: theme.colorScheme.primary,
+                iconColor: Colors.white,
+                onAction: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const Text('Document shared'),
+                      backgroundColor: theme.colorScheme.primary,
+                    ),
+                  );
+                },
+              ),
               onTap: () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Document attachment tapped')),
                 );
               },
             ),
-            const SizedBox(height: 12),
-
-            KubaAttachment(
-              fileName: 'data.xlsx',
-              type: AttachmentType.xlsx,
-              fileSize: '856 KB',
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Spreadsheet attachment tapped'),
-                  ),
-                );
-              },
-            ),
-            const SizedBox(height: 12),
-
-            KubaAttachment(
-              fileName: 'article.txt',
-              type: AttachmentType.article,
-              fileSize: '45 KB',
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Article attachment tapped')),
-                );
-              },
-            ),
-            const SizedBox(height: 12),
-
-            KubaAttachment(
-              fileName: 'generic_file.zip',
-              type: AttachmentType.file,
-              fileSize: '5.6 MB',
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Generic file attachment tapped'),
-                  ),
-                );
-              },
-            ),
+            const SizedBox(height: 32),
+            const Divider(),
             const SizedBox(height: 24),
-
-            // Multiple selection mode
-            _buildSectionTitle(context, 'Multiple Selection Mode'),
+            const Text(
+              'Attachment 2: Multiple Selection Mode',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Attachments with checkboxes for multiple selection. Swipe left to remove.',
+              style: TextStyle(fontSize: 13, color: Colors.grey),
+            ),
             const SizedBox(height: 8),
             Text(
               'Selected: ${_selectedAttachments.length}',
@@ -177,7 +154,6 @@ class _AttachmentPageState extends State<AttachmentPage> {
               ),
             ),
             const SizedBox(height: 12),
-
             KubaAttachment(
               fileName: 'photo1.jpg',
               type: AttachmentType.image,
@@ -193,9 +169,22 @@ class _AttachmentPageState extends State<AttachmentPage> {
                   }
                 });
               },
+              leftSwipeAction: SwipeAction(
+                label: 'Remove',
+                icon: Icons.delete,
+                backgroundColor: Colors.red,
+                iconColor: Colors.white,
+                onAction: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Photo removed'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                },
+              ),
             ),
             const SizedBox(height: 12),
-
             KubaAttachment(
               fileName: 'photo2.png',
               type: AttachmentType.image,
@@ -211,9 +200,22 @@ class _AttachmentPageState extends State<AttachmentPage> {
                   }
                 });
               },
+              leftSwipeAction: SwipeAction(
+                label: 'Remove',
+                icon: Icons.delete,
+                backgroundColor: Colors.red,
+                iconColor: Colors.white,
+                onAction: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Photo removed'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                },
+              ),
             ),
             const SizedBox(height: 12),
-
             KubaAttachment(
               fileName: 'document.pdf',
               type: AttachmentType.pdf,
@@ -229,9 +231,22 @@ class _AttachmentPageState extends State<AttachmentPage> {
                   }
                 });
               },
+              leftSwipeAction: SwipeAction(
+                label: 'Remove',
+                icon: Icons.delete,
+                backgroundColor: Colors.red,
+                iconColor: Colors.white,
+                onAction: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Document removed'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                },
+              ),
             ),
             const SizedBox(height: 12),
-
             KubaAttachment(
               fileName: 'video.mp4',
               type: AttachmentType.video,
@@ -247,41 +262,49 @@ class _AttachmentPageState extends State<AttachmentPage> {
                   }
                 });
               },
-            ),
-            const SizedBox(height: 24),
-
-            // Without file size
-            _buildSectionTitle(context, 'Without File Size'),
-            const SizedBox(height: 12),
-
-            KubaAttachment(
-              fileName: 'simple_document.pdf',
-              type: AttachmentType.pdf,
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Attachment without size tapped'),
-                  ),
-                );
-              },
-            ),
-            const SizedBox(height: 24),
-
-            // Swipeable attachments
-            _buildSectionTitle(context, 'Swipeable Attachments'),
-            const SizedBox(height: 8),
-            Text(
-              'Swipe left to remove, swipe right to share',
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
+              leftSwipeAction: SwipeAction(
+                label: 'Remove',
+                icon: Icons.delete,
+                backgroundColor: Colors.red,
+                iconColor: Colors.white,
+                onAction: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Video removed'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                },
               ),
             ),
-            const SizedBox(height: 12),
-
+            const SizedBox(height: 32),
+            const Divider(),
+            const SizedBox(height: 24),
+            const Text(
+              'Attachment 3: Full Featured',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Attachment with all features enabled. Swipe both ways: left to remove, right to share.',
+              style: TextStyle(fontSize: 13, color: Colors.grey),
+            ),
+            const SizedBox(height: 16),
             KubaAttachment(
-              fileName: 'document_to_remove.pdf',
+              fileName: 'complete_example.pdf',
               type: AttachmentType.pdf,
-              fileSize: '2.1 MB',
+              fileSize: '5.2 MB',
+              showCheckbox: true,
+              isSelected: _selectedAttachments.contains('complete_example.pdf'),
+              onSelectionChanged: (selected) {
+                setState(() {
+                  if (selected) {
+                    _selectedAttachments.add('complete_example.pdf');
+                  } else {
+                    _selectedAttachments.remove('complete_example.pdf');
+                  }
+                });
+              },
               leftSwipeAction: SwipeAction(
                 label: 'Remove',
                 icon: Icons.delete,
@@ -310,97 +333,112 @@ class _AttachmentPageState extends State<AttachmentPage> {
                   );
                 },
               ),
-            ),
-            const SizedBox(height: 12),
-
-            KubaAttachment(
-              fileName: 'photo_to_share.jpg',
-              type: AttachmentType.image,
-              fileSize: '3.5 MB',
-              leftSwipeAction: SwipeAction(
-                label: 'Remove',
-                icon: Icons.delete,
-                backgroundColor: Colors.red,
-                iconColor: Colors.white,
-                onAction: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Photo removed'),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                },
-              ),
-              rightSwipeAction: SwipeAction(
-                label: 'Share',
-                icon: Icons.share,
-                backgroundColor: theme.colorScheme.primary,
-                iconColor: Colors.white,
-                onAction: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: const Text('Photo shared'),
-                      backgroundColor: theme.colorScheme.primary,
-                    ),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 12),
-
-            KubaAttachment(
-              fileName: 'video_only_remove.mp4',
-              type: AttachmentType.video,
-              fileSize: '45.2 MB',
-              leftSwipeAction: SwipeAction(
-                label: 'Remove',
-                icon: Icons.delete,
-                backgroundColor: Colors.red,
-                iconColor: Colors.white,
-                onAction: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Video removed'),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 12),
-
-            KubaAttachment(
-              fileName: 'audio_only_share.mp3',
-              type: AttachmentType.audio,
-              fileSize: '8.3 MB',
-              rightSwipeAction: SwipeAction(
-                label: 'Share',
-                icon: Icons.share,
-                backgroundColor: theme.colorScheme.primary,
-                iconColor: Colors.white,
-                onAction: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: const Text('Audio shared'),
-                      backgroundColor: theme.colorScheme.primary,
-                    ),
-                  );
-                },
-              ),
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Full featured attachment tapped'),
+                  ),
+                );
+              },
             ),
             const SizedBox(height: 32),
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.info_outline,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        const SizedBox(width: 8),
+                        const Text(
+                          'About Attachments',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    const Text(
+                      'Attachment widgets are reusable components for displaying file attachments with support for various file types, multiple selection, and swipe actions.',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    const SizedBox(height: 12),
+                    const Divider(),
+                    const SizedBox(height: 12),
+                    const Text(
+                      'Supported File Types:',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      '• Image (JPG, PNG, etc.)\n'
+                      '• Video (MP4, AVI, etc.)\n'
+                      '• Audio (MP3, WAV, etc.)\n'
+                      '• PDF documents\n'
+                      '• Word documents (DOC, DOCX)\n'
+                      '• Excel spreadsheets (XLSX)\n'
+                      '• Articles (TXT)\n'
+                      '• Generic files',
+                      style: TextStyle(fontSize: 13),
+                    ),
+                    const SizedBox(height: 12),
+                    const Divider(),
+                    const SizedBox(height: 12),
+                    const Text(
+                      'Features:',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      '• File type detection with appropriate icons\n'
+                      '• File size display (optional)\n'
+                      '• Multiple selection with checkboxes\n'
+                      '• Swipe left action (e.g., Remove)\n'
+                      '• Swipe right action (e.g., Share)\n'
+                      '• Both swipe actions can be enabled simultaneously',
+                      style: TextStyle(fontSize: 13),
+                    ),
+                    const SizedBox(height: 12),
+                    const Divider(),
+                    const SizedBox(height: 12),
+                    const Text(
+                      'Swipe Actions:',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      '• Swipe left: Remove/Delete action (optional)\n'
+                      '• Swipe right: Share action (optional)\n'
+                      '• Both actions can be enabled simultaneously',
+                      style: TextStyle(fontSize: 13),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 80),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildSectionTitle(BuildContext context, String title) {
-    return Text(
-      title,
-      style: Theme.of(
-        context,
-      ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+      floatingActionButton: ReviewInput(
+        widgetName: 'kuba_attachment',
+      ).buildFloatingActionButton(context),
     );
   }
 }

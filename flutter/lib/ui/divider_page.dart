@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/kuba_divider_titled.dart';
 import '../widgets/kuba_list_item_card.dart';
+import '../widgets/review_input.dart';
 
 class DividerPage extends StatefulWidget {
   const DividerPage({super.key});
@@ -15,52 +16,22 @@ class _DividerPageState extends State<DividerPage> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Divider Widget'),
-        centerTitle: true,
-        elevation: 0,
-      ),
+      appBar: AppBar(title: const Text('Divider'), centerTitle: true),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Overview section
-            Card(
-              elevation: 0,
-              color: theme.colorScheme.primaryContainer,
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  children: [
-                    Icon(
-                      Icons.horizontal_rule,
-                      size: 48,
-                      color: theme.colorScheme.onPrimaryContainer,
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'Divider Widget',
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        color: theme.colorScheme.onPrimaryContainer,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Reusable Material 3 divider with tagged title for dividing page sections',
-                      textAlign: TextAlign.center,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onPrimaryContainer,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            const Text(
+              'Divider Variant 1: Centered',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
-            const SizedBox(height: 24),
-
-            // First group of 3 list items
+            const SizedBox(height: 8),
+            const Text(
+              'Title tag centered between divider lines. Best for major section breaks.',
+              style: TextStyle(fontSize: 13, color: Colors.grey),
+            ),
+            const SizedBox(height: 16),
             ..._buildListItemGroup(context, theme, [
               {
                 'title': 'Task Item 1',
@@ -72,22 +43,13 @@ class _DividerPageState extends State<DividerPage> {
                 'subtitle': 'Second item in the list',
                 'icon': Icons.assignment,
               },
-              {
-                'title': 'Task Item 3',
-                'subtitle': 'Third item in the list',
-                'icon': Icons.check_circle,
-              },
             ]),
             const SizedBox(height: 16),
-
-            // Centered divider
             KubaDividerTitled(
               title: 'Section',
               variant: DividerVariant.centered,
             ),
             const SizedBox(height: 16),
-
-            // Second group of 3 list items
             ..._buildListItemGroup(context, theme, [
               {
                 'title': 'Document Item 1',
@@ -99,22 +61,20 @@ class _DividerPageState extends State<DividerPage> {
                 'subtitle': 'Second document item',
                 'icon': Icons.folder,
               },
-              {
-                'title': 'Document Item 3',
-                'subtitle': 'Third document item',
-                'icon': Icons.insert_drive_file,
-              },
             ]),
-            const SizedBox(height: 16),
-
-            // Left divider
-            KubaDividerTitled(
-              title: 'New Section',
-              variant: DividerVariant.left,
+            const SizedBox(height: 32),
+            const Divider(),
+            const SizedBox(height: 24),
+            const Text(
+              'Divider Variant 2: Left Aligned',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Title tag aligned to the left. Useful for subsections and categories.',
+              style: TextStyle(fontSize: 13, color: Colors.grey),
             ),
             const SizedBox(height: 16),
-
-            // Third group of 3 list items
             ..._buildListItemGroup(context, theme, [
               {
                 'title': 'Notification Item 1',
@@ -126,22 +86,13 @@ class _DividerPageState extends State<DividerPage> {
                 'subtitle': 'Second notification',
                 'icon': Icons.notification_important,
               },
-              {
-                'title': 'Notification Item 3',
-                'subtitle': 'Third notification',
-                'icon': Icons.alarm,
-              },
             ]),
             const SizedBox(height: 16),
-
-            // Right divider
             KubaDividerTitled(
-              title: 'More Info',
-              variant: DividerVariant.right,
+              title: 'New Section',
+              variant: DividerVariant.left,
             ),
             const SizedBox(height: 16),
-
-            // Fourth group of 3 list items
             ..._buildListItemGroup(context, theme, [
               {
                 'title': 'Settings Item 1',
@@ -153,47 +104,173 @@ class _DividerPageState extends State<DividerPage> {
                 'subtitle': 'Second settings item',
                 'icon': Icons.tune,
               },
+            ]),
+            const SizedBox(height: 32),
+            const Divider(),
+            const SizedBox(height: 24),
+            const Text(
+              'Divider Variant 3: Right Aligned',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Title tag aligned to the right. Alternative layout for visual variety.',
+              style: TextStyle(fontSize: 13, color: Colors.grey),
+            ),
+            const SizedBox(height: 16),
+            ..._buildListItemGroup(context, theme, [
               {
-                'title': 'Settings Item 3',
-                'subtitle': 'Third settings item',
-                'icon': Icons.build,
+                'title': 'Event Item 1',
+                'subtitle': 'First event item',
+                'icon': Icons.event,
+              },
+              {
+                'title': 'Event Item 2',
+                'subtitle': 'Second event item',
+                'icon': Icons.calendar_today,
               },
             ]),
             const SizedBox(height: 16),
-
-            // Full width divider
+            KubaDividerTitled(
+              title: 'More Info',
+              variant: DividerVariant.right,
+            ),
+            const SizedBox(height: 16),
+            ..._buildListItemGroup(context, theme, [
+              {
+                'title': 'Info Item 1',
+                'subtitle': 'First info item',
+                'icon': Icons.info,
+              },
+              {
+                'title': 'Info Item 2',
+                'subtitle': 'Second info item',
+                'icon': Icons.help_outline,
+              },
+            ]),
+            const SizedBox(height: 32),
+            const Divider(),
+            const SizedBox(height: 24),
+            const Text(
+              'Divider Variant 4: Full Width',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Title tag spans full width with divider line above. Best for major section headers.',
+              style: TextStyle(fontSize: 13, color: Colors.grey),
+            ),
+            const SizedBox(height: 16),
+            ..._buildListItemGroup(context, theme, [
+              {
+                'title': 'Additional Item 1',
+                'subtitle': 'First additional item',
+                'icon': Icons.add_circle,
+              },
+              {
+                'title': 'Additional Item 2',
+                'subtitle': 'Second additional item',
+                'icon': Icons.extension,
+              },
+            ]),
+            const SizedBox(height: 16),
             KubaDividerTitled(
               title: 'Additional Details',
               variant: DividerVariant.fullWidth,
             ),
-            const SizedBox(height: 24),
-
-            // Usage example
+            const SizedBox(height: 16),
+            ..._buildListItemGroup(context, theme, [
+              {
+                'title': 'Details Item 1',
+                'subtitle': 'First details item',
+                'icon': Icons.details,
+              },
+              {
+                'title': 'Details Item 2',
+                'subtitle': 'Second details item',
+                'icon': Icons.more_horiz,
+              },
+            ]),
+            const SizedBox(height: 32),
             Card(
-              elevation: 0,
-              color: theme.colorScheme.surfaceContainerHighest,
               child: Padding(
-                padding: const EdgeInsets.all(20.0),
+                padding: const EdgeInsets.all(16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.code, color: theme.colorScheme.primary),
+                        Icon(
+                          Icons.info_outline,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
                         const SizedBox(width: 8),
-                        Text(
-                          'Usage Example',
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
+                        const Text(
+                          'About Dividers',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 12),
+                    const Text(
+                      'Dividers with titled tags are reusable components for visually separating sections of content. They provide clear visual breaks while maintaining context with labeled tags.',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    const SizedBox(height: 12),
+                    const Divider(),
+                    const SizedBox(height: 12),
+                    const Text(
+                      'Divider Variants:',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      '• Centered: Title tag centered between divider lines\n'
+                      '• Left: Title tag aligned to the left side\n'
+                      '• Right: Title tag aligned to the right side\n'
+                      '• Full Width: Title tag spans full width with divider above',
+                      style: TextStyle(fontSize: 13),
+                    ),
+                    const SizedBox(height: 12),
+                    const Divider(),
+                    const SizedBox(height: 12),
+                    const Text(
+                      'Customization Options:',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      '• Custom tag background and text colors\n'
+                      '• Adjustable spacing and thickness\n'
+                      '• Material 3 design system compliant',
+                      style: TextStyle(fontSize: 13),
+                    ),
+                    const SizedBox(height: 12),
+                    const Divider(),
+                    const SizedBox(height: 12),
+                    const Text(
+                      'Usage Example:',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.surface,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainerHighest,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: SelectableText(
@@ -211,7 +288,7 @@ KubaDividerTitled(
   spacing: 32.0,
   thickness: 2.0,
 )''',
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           fontFamily: 'monospace',
                         ),
                       ),
@@ -220,10 +297,13 @@ KubaDividerTitled(
                 ),
               ),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 80),
           ],
         ),
       ),
+      floatingActionButton: ReviewInput(
+        widgetName: 'kuba_divider_titled',
+      ).buildFloatingActionButton(context),
     );
   }
 

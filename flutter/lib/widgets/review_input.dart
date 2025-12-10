@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../services/api_service.dart';
 import '../services/storage_service.dart';
 import 'kuba_bottom_sheet/kuba_bottom_sheet.dart';
+import 'kuba_divider_titled.dart';
 
 // Content widget for bottom sheet
 class ReviewInputContent extends StatefulWidget {
@@ -21,10 +22,13 @@ class _ReviewInputContentState extends State<ReviewInputContent> {
   bool _isSubmitting = false;
   bool _isSubmitted = false;
   String? _errorMessage;
+  bool _isQuickPositive = false;
+  String _reviewerName = 'User';
 
   @override
   void initState() {
     super.initState();
+    _loadReviewerName();
     // Scroll to text field when it gains focus
     _commentFocusNode.addListener(() {
       if (_commentFocusNode.hasFocus) {
@@ -43,6 +47,15 @@ class _ReviewInputContentState extends State<ReviewInputContent> {
     });
   }
 
+  Future<void> _loadReviewerName() async {
+    final reviewerName = await StorageService.getReviewerName();
+    if (mounted && reviewerName != null && reviewerName.isNotEmpty) {
+      setState(() {
+        _reviewerName = reviewerName;
+      });
+    }
+  }
+
   @override
   void dispose() {
     _commentController.dispose();
@@ -52,13 +65,24 @@ class _ReviewInputContentState extends State<ReviewInputContent> {
   }
 
   Future<void> _submitReview() async {
-    // Validate comment
+    // Validate: either comment or quick positive must be selected
     final comment = _commentController.text.trim();
-    if (comment.isEmpty) {
+    if (comment.isEmpty && !_isQuickPositive) {
       setState(() {
-        _errorMessage = 'Please enter a comment';
+        _errorMessage = 'Please enter a comment or mark as positive feedback';
       });
       return;
+    }
+
+    // Build final comment: if both are present, append the positive text to comment
+    // If only checkbox, use the static positive text
+    String finalComment;
+    if (_isQuickPositive && comment.isEmpty) {
+      finalComment = 'Completely like it 5+';
+    } else if (_isQuickPositive && comment.isNotEmpty) {
+      finalComment = '$comment\n\nCompletely like it 5+';
+    } else {
+      finalComment = comment;
     }
 
     // Get reviewer ID from storage
@@ -79,13 +103,14 @@ class _ReviewInputContentState extends State<ReviewInputContent> {
       await ApiService.submitReview(
         reviewerId: reviewerId,
         widgetName: widget.widgetName,
-        comment: comment,
+        comment: finalComment,
       );
 
       setState(() {
         _isSubmitting = false;
         _isSubmitted = true;
         _commentController.clear();
+        _isQuickPositive = false;
       });
 
       // Get ScaffoldMessenger and MediaQuery before closing bottom sheet
@@ -228,6 +253,68 @@ class _ReviewInputContentState extends State<ReviewInputContent> {
                         width: 2,
                       ),
                     ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                // Divider with "or" tag
+                KubaDividerTitled(
+                  title: 'or',
+                  variant: DividerVariant.centered,
+                  spacing: 0,
+                ),
+                const SizedBox(height: 20),
+
+                // Quick Positive Feedback Switch
+                Card(
+                  elevation: 0,
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    side: BorderSide(
+                      color: _isQuickPositive
+                          ? Theme.of(context).colorScheme.primary
+                          : Theme.of(
+                              context,
+                            ).colorScheme.outline.withOpacity(0.2),
+                      width: _isQuickPositive ? 2 : 1,
+                    ),
+                  ),
+                  child: SwitchListTile(
+                    value: _isQuickPositive,
+                    onChanged: _isSubmitting || _isSubmitted
+                        ? null
+                        : (value) {
+                            setState(() {
+                              _isQuickPositive = value;
+                              _errorMessage = null;
+                            });
+                          },
+                    title: RichText(
+                      text: TextSpan(
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w500,
+                        ),
+                        children: [
+                          const TextSpan(
+                            text: 'If you completely like it, just click ',
+                          ),
+                          TextSpan(
+                            text: '"Good Job $_reviewerName"',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    secondary: Icon(
+                      Icons.sentiment_very_satisfied,
+                      color: Theme.of(context).colorScheme.primary,
+                      size: 28,
+                    ),
+                    activeColor: Theme.of(context).colorScheme.primary,
                   ),
                 ),
               ],

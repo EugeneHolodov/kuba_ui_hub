@@ -3,8 +3,8 @@ const router = express.Router();
 const { getDB } = require('../database/db');
 
 // POST create new review
-router.post('/', (req, res) => {
-  const db = getDB();
+router.post('/', async (req, res) => {
+  const pool = getDB();
   const { reviewer_id, widget_name, comment } = req.body;
   
   // Validate required fields
@@ -23,70 +23,52 @@ router.post('/', (req, res) => {
     return;
   }
   
-  // First verify that the reviewer_id exists
-  db.get('SELECT id, name FROM reviewers WHERE id = ?', [reviewer_id], (err, reviewer) => {
-    if (err) {
-      res.status(500).json({ error: err.message });
-      db.close();
+  try {
+    // First verify that the reviewer_id exists
+    const reviewerResult = await pool.query(
+      'SELECT id, name FROM reviewers WHERE id = $1',
+      [reviewer_id]
+    );
+    
+    if (reviewerResult.rows.length === 0) {
+      res.status(400).json({ error: `Reviewer with id ${reviewer_id} does not exist` });
       return;
     }
     
-    if (!reviewer) {
-      res.status(400).json({ error: `Reviewer with id ${reviewer_id} does not exist` });
-      db.close();
-      return;
-    }
+    const reviewer = reviewerResult.rows[0];
     
     // Insert the review
-    db.run(
-      'INSERT INTO reviews (reviewer_id, widget_name, comment) VALUES (?, ?, ?)',
-      [reviewer_id, widget_name.trim(), comment.trim()],
-      function(insertErr) {
-        if (insertErr) {
-          res.status(500).json({ error: insertErr.message });
-          db.close();
-          return;
-        }
-        
-        res.status(201).json({ 
-          success: true,
-          review: { 
-            id: this.lastID, 
-            reviewer_id,
-            reviewer_name: reviewer.name,
-            widget_name: widget_name.trim(),
-            comment: comment.trim(),
-            created_at: new Date().toISOString()
-          } 
-        });
-        db.close();
-      }
+    const insertResult = await pool.query(
+      'INSERT INTO reviews (reviewer_id, widget_name, comment) VALUES ($1, $2, $3) RETURNING *',
+      [reviewer_id, widget_name.trim(), comment.trim()]
     );
-  });
+    
+    const newReview = insertResult.rows[0];
+    
+    res.status(201).json({ 
+      success: true,
+      review: { 
+        id: newReview.id, 
+        reviewer_id: newReview.reviewer_id,
+        reviewer_name: reviewer.name,
+        widget_name: newReview.widget_name,
+        comment: newReview.comment,
+        created_at: newReview.created_at
+      } 
+    });
+  } catch (err) {
+    console.error('Error creating review:', err);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // GET all reviews (for developers to see comments)
-router.get('/', (req, res) => {
-  const db = getDB();
+router.get('/', async (req, res) => {
+  const pool = getDB();
   const widgetName = req.query.widget_name;
   
-  let query = `
-    SELECT 
-      r.id,
-      r.reviewer_id,
-      rev.name as reviewer_name,
-      r.widget_name,
-      r.comment,
-      r.created_at
-    FROM reviews r
-    INNER JOIN reviewers rev ON r.reviewer_id = rev.id
-    ORDER BY r.created_at DESC
-  `;
-  
-  let params = [];
-  
-  if (widgetName) {
-    query = `
+  try {
+    let query = `
       SELECT 
         r.id,
         r.reviewer_id,
@@ -96,64 +78,74 @@ router.get('/', (req, res) => {
         r.created_at
       FROM reviews r
       INNER JOIN reviewers rev ON r.reviewer_id = rev.id
-      WHERE r.widget_name = ?
       ORDER BY r.created_at DESC
     `;
-    params = [widgetName];
-  }
-  
-  db.all(query, params, (err, rows) => {
-    if (err) {
-      res.status(500).json({ error: err.message });
-      db.close();
-      return;
+    
+    let params = [];
+    
+    if (widgetName) {
+      query = `
+        SELECT 
+          r.id,
+          r.reviewer_id,
+          rev.name as reviewer_name,
+          r.widget_name,
+          r.comment,
+          r.created_at
+        FROM reviews r
+        INNER JOIN reviewers rev ON r.reviewer_id = rev.id
+        WHERE r.widget_name = $1
+        ORDER BY r.created_at DESC
+      `;
+      params = [widgetName];
     }
-    res.json({ reviews: rows });
-    db.close();
-  });
+    
+    const result = await pool.query(query, params);
+    res.json({ reviews: result.rows });
+  } catch (err) {
+    console.error('Error fetching reviews:', err);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // GET reviews by widget name
-router.get('/widget/:widget_name', (req, res) => {
-  const db = getDB();
+router.get('/widget/:widget_name', async (req, res) => {
+  const pool = getDB();
   const widgetName = req.params.widget_name;
   
-  db.all(`
-    SELECT 
-      r.id,
-      r.reviewer_id,
-      rev.name as reviewer_name,
-      r.widget_name,
-      r.comment,
-      r.created_at
-    FROM reviews r
-    INNER JOIN reviewers rev ON r.reviewer_id = rev.id
-    WHERE r.widget_name = ?
-    ORDER BY r.created_at DESC
-  `, [widgetName], (err, rows) => {
-    if (err) {
-      res.status(500).json({ error: err.message });
-      db.close();
-      return;
-    }
-    res.json({ reviews: rows });
-    db.close();
-  });
+  try {
+    const result = await pool.query(`
+      SELECT 
+        r.id,
+        r.reviewer_id,
+        rev.name as reviewer_name,
+        r.widget_name,
+        r.comment,
+        r.created_at
+      FROM reviews r
+      INNER JOIN reviewers rev ON r.reviewer_id = rev.id
+      WHERE r.widget_name = $1
+      ORDER BY r.created_at DESC
+    `, [widgetName]);
+    
+    res.json({ reviews: result.rows });
+  } catch (err) {
+    console.error('Error fetching widget reviews:', err);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // GET all reviewers (helper endpoint)
-router.get('/reviewers', (req, res) => {
-  const db = getDB();
+router.get('/reviewers', async (req, res) => {
+  const pool = getDB();
   
-  db.all('SELECT id, name FROM reviewers ORDER BY id', [], (err, rows) => {
-    if (err) {
-      res.status(500).json({ error: err.message });
-      db.close();
-      return;
-    }
-    res.json({ reviewers: rows });
-    db.close();
-  });
+  try {
+    const result = await pool.query('SELECT id, name FROM reviewers ORDER BY id');
+    res.json({ reviewers: result.rows });
+  } catch (err) {
+    console.error('Error fetching reviewers:', err);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 module.exports = router;

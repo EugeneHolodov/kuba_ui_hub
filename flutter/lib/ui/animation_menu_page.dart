@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'animation_overview_page.dart';
 import 'animation_demo_page.dart';
 import '../widgets/kuba_animated_item.dart';
+import '../widgets/review_input.dart';
 
 class AnimationMenuPage extends StatelessWidget {
   const AnimationMenuPage({super.key});
@@ -153,6 +154,19 @@ class AnimationMenuPage extends StatelessWidget {
             const SizedBox(height: 32),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        heroTag: 'review_button_animations',
+        onPressed: () {
+          ReviewInput.showBottomSheet(
+            context: context,
+            widgetName: 'kuba_animations',
+          );
+        },
+        tooltip: 'Leave a Review',
+        backgroundColor: theme.colorScheme.primary,
+        foregroundColor: theme.colorScheme.onPrimary,
+        child: const Icon(Icons.rate_review),
       ),
     );
   }

@@ -366,10 +366,6 @@ class _KubaSearchBarWithNavTabsState extends State<KubaSearchBarWithNavTabs> {
           onPressed: () {
             setState(() {
               _isDatePickerMode = !_isDatePickerMode;
-              if (_isDatePickerMode) {
-                _controller.clear();
-                widget.onSearchChanged(null);
-              }
             });
           },
         ),
@@ -410,12 +406,6 @@ class _KubaSearchBarWithNavTabsState extends State<KubaSearchBarWithNavTabs> {
           onPressed: () {
             setState(() {
               _isDatePickerMode = !_isDatePickerMode;
-              if (!_isDatePickerMode) {
-                _internalDateValue = null;
-                if (widget.onDateChanged != null) {
-                  widget.onDateChanged!(null);
-                }
-              }
             });
           },
         ),

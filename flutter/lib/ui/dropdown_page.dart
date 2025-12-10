@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../widgets/kuba_dropdown.dart';
-import '../widgets/kuba_dropdown_variant2.dart';
 import '../widgets/kuba_dropdown_variant3.dart';
 import '../widgets/review_input.dart';
 
@@ -16,11 +15,6 @@ class _DropdownPageState extends State<DropdownPage> {
   String? _variant1PrimaryValue;
   List<String> _variant1SecondaryMultiple = [];
   List<String> _variant1PrimaryMultiple = [];
-
-  String? _variant2SecondaryValue;
-  String? _variant2PrimaryValue;
-  List<String> _variant2SecondaryMultiple = [];
-  List<String> _variant2PrimaryMultiple = [];
 
   String? _variant3SecondaryValue;
   String? _variant3PrimaryValue;
@@ -46,6 +40,16 @@ class _DropdownPageState extends State<DropdownPage> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const Text(
+              'Dropdown Variant 1',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Standard dropdown with checkboxes for selection. Labeled with text.',
+              style: TextStyle(fontSize: 13, color: Colors.grey),
+            ),
+            const SizedBox(height: 16),
             // Variant 1 - KubaDropdown (Secondary Single)
             KubaDropdown(
               value: _variant1SecondaryValue,
@@ -113,69 +117,16 @@ class _DropdownPageState extends State<DropdownPage> {
             const SizedBox(height: 32),
             const Divider(height: 48),
             const SizedBox(height: 16),
-
-            // Variant 2 - KubaDropdownVariant2 (Secondary Single)
-            KubaDropdownVariant2(
-              value: _variant2SecondaryValue,
-              options: _options,
-              onChanged: (String? value) {
-                setState(() {
-                  _variant2SecondaryValue = value;
-                });
-              },
-              isPrimary: false,
-              bottomSheetTitle: 'Dropdown 2 (Single)',
+            const Text(
+              'Dropdown Variant 2',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
-            const SizedBox(height: 32),
-
-            // Variant 2 - KubaDropdownVariant2 (Primary Single)
-            KubaDropdownVariant2(
-              value: _variant2PrimaryValue,
-              options: _options,
-              onChanged: (String? value) {
-                setState(() {
-                  _variant2PrimaryValue = value;
-                });
-              },
-              isPrimary: true,
-              bottomSheetTitle: 'Dropdown 2 (Single)',
+            const SizedBox(height: 8),
+            const Text(
+              'Card-style dropdown with visual selection indicators. Isn\'t labeled.',
+              style: TextStyle(fontSize: 13, color: Colors.grey),
             ),
-            const SizedBox(height: 32),
-
-            // Variant 2 - KubaDropdownVariant2 (Secondary Multiple)
-            KubaDropdownVariant2(
-              multiple: true,
-              values: _variant2SecondaryMultiple,
-              options: _options,
-              onMultipleChanged: (List<String> values) {
-                setState(() {
-                  _variant2SecondaryMultiple = values;
-                });
-              },
-              isPrimary: false,
-              labelText: 'Dropdown 2 (Multiple)',
-              bottomSheetTitle: 'Dropdown 2 (Multiple)',
-            ),
-            const SizedBox(height: 32),
-
-            // Variant 2 - KubaDropdownVariant2 (Primary Multiple)
-            KubaDropdownVariant2(
-              multiple: true,
-              values: _variant2PrimaryMultiple,
-              options: _options,
-              onMultipleChanged: (List<String> values) {
-                setState(() {
-                  _variant2PrimaryMultiple = values;
-                });
-              },
-              isPrimary: true,
-              labelText: 'Dropdown 2 (Multiple)',
-              bottomSheetTitle: 'Dropdown 2 (Multiple)',
-            ),
-            const SizedBox(height: 32),
-            const Divider(height: 48),
             const SizedBox(height: 16),
-
             // Variant 3 - KubaDropdownVariant3 (Secondary Single)
             KubaDropdownVariant3(
               value: _variant3SecondaryValue,
@@ -186,7 +137,7 @@ class _DropdownPageState extends State<DropdownPage> {
                 });
               },
               isPrimary: false,
-              bottomSheetTitle: 'Bottom Sheet 3 (Single)',
+              bottomSheetTitle: 'Bottom Sheet 2 (Single)',
             ),
             const SizedBox(height: 32),
 
@@ -200,7 +151,7 @@ class _DropdownPageState extends State<DropdownPage> {
                 });
               },
               isPrimary: true,
-              bottomSheetTitle: 'Dropdown 3 (Single)',
+              bottomSheetTitle: 'Dropdown 2 (Single)',
             ),
             const SizedBox(height: 32),
 
@@ -215,8 +166,8 @@ class _DropdownPageState extends State<DropdownPage> {
                 });
               },
               isPrimary: false,
-              labelText: 'Dropdown 3 (Multiple)',
-              bottomSheetTitle: 'Dropdown 3 (Multiple)',
+              labelText: 'Dropdown 2 (Multiple)',
+              bottomSheetTitle: 'Dropdown 2 (Multiple)',
             ),
             const SizedBox(height: 32),
 
@@ -231,8 +182,77 @@ class _DropdownPageState extends State<DropdownPage> {
                 });
               },
               isPrimary: true,
-              labelText: 'Dropdown 3 (Multiple)',
-              bottomSheetTitle: 'Dropdown 3 (Multiple)',
+              labelText: 'Dropdown 2 (Multiple)',
+              bottomSheetTitle: 'Dropdown 2 (Multiple)',
+            ),
+            const SizedBox(height: 32),
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.info_outline,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        const SizedBox(width: 8),
+                        const Text(
+                          'About Dropdown Variants',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    const Text(
+                      'Variant 1: Standard dropdown with checkboxes for selection. Opens a bottom sheet with a list of options. Supports both single and multiple selection modes.',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Variant 2: Card-style dropdown with visual selection indicators. Isn\'t labeled. Opens a bottom sheet with a list of options. Supports both single and multiple selection modes.',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    const SizedBox(height: 12),
+                    const Divider(),
+                    const SizedBox(height: 12),
+                    const Text(
+                      'Color Styles:',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      '• Primary: Uses primary color scheme for buttons and highlights\n'
+                      '• Secondary: Uses secondary color scheme for a different visual style',
+                      style: TextStyle(fontSize: 13),
+                    ),
+                    const SizedBox(height: 12),
+                    const Divider(),
+                    const SizedBox(height: 12),
+                    const Text(
+                      'Selection Modes:',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      '• Single: Select one option at a time\n'
+                      '• Multiple: Select multiple options with checkboxes',
+                      style: TextStyle(fontSize: 13),
+                    ),
+                  ],
+                ),
+              ),
             ),
             // Add bottom padding to prevent content from being hidden behind floating button
             const SizedBox(height: 80),

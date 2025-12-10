@@ -401,10 +401,6 @@ class _NavBarTabsNavigationBarPageState
         onDateChanged: (DateTimeRange? range) {
           setState(() {
             _dateRange = range;
-            // Clear search query when date is selected
-            if (range != null) {
-              _searchQuery = null;
-            }
           });
         },
         destinations: [

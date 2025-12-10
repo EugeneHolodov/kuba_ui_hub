@@ -1,4 +1,5 @@
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'kuba_fab_menu.dart';
@@ -463,41 +464,58 @@ class _KubaSearchBarBottomState extends State<KubaSearchBarBottom> {
   Widget _buildDatePickerInput(BuildContext context, Color accentColor) {
     final dateText = _internalDateValue != null
         ? _formatDateRange(_internalDateValue!)
-        : 'Tap to select date range';
+        : 'Select date range';
     final hasValue = _internalDateValue != null;
     final suffixIcon = _buildDatePickerSuffixIcon(context, accentColor);
 
     return InkWell(
       onTap: () => _showDatePicker(context),
       borderRadius: BorderRadius.circular(16),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: hasValue
-                ? accentColor
-                : Theme.of(context).colorScheme.outline,
-            width: hasValue ? 2 : 1,
+      child: InputDecorator(
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: Theme.of(context).colorScheme.surface,
+          prefixIcon: hasValue
+              ? null
+              : Icon(Icons.calendar_today, color: accentColor),
+          suffixIcon: suffixIcon,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.outline,
+            ),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.outline,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide(
+              color: hasValue
+                  ? accentColor
+                  : Theme.of(context).colorScheme.outline,
+              width: hasValue ? 2 : 1,
+            ),
+          ),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 12,
           ),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Row(
-          children: [
-            Icon(Icons.calendar_today, color: accentColor),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                dateText,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: hasValue
-                      ? Theme.of(context).colorScheme.onSurface
-                      : Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
-              ),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Text(
+            dateText,
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              color: hasValue
+                  ? Theme.of(context).colorScheme.onSurface
+                  : Theme.of(context).colorScheme.onSurfaceVariant,
             ),
-            if (suffixIcon != null) suffixIcon,
-          ],
+            maxLines: 1,
+          ),
         ),
       ),
     );
@@ -569,11 +587,6 @@ class _KubaSearchBarBottomState extends State<KubaSearchBarBottom> {
           onPressed: () {
             setState(() {
               _isDatePickerMode = !_isDatePickerMode;
-              // Clear search when switching to date picker
-              if (_isDatePickerMode) {
-                _controller.clear();
-                widget.onChanged(null);
-              }
             });
           },
         ),
@@ -617,13 +630,6 @@ class _KubaSearchBarBottomState extends State<KubaSearchBarBottom> {
           onPressed: () {
             setState(() {
               _isDatePickerMode = !_isDatePickerMode;
-              // Clear date when switching to search
-              if (!_isDatePickerMode) {
-                _internalDateValue = null;
-                if (widget.onDateChanged != null) {
-                  widget.onDateChanged!(null);
-                }
-              }
             });
           },
         ),

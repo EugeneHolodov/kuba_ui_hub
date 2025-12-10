@@ -44,46 +44,24 @@ class ChartOverviewChartsPage extends StatelessWidget {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Overview section
-            Card(
-              elevation: 0,
-              color: theme.colorScheme.primaryContainer,
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  children: [
-                    Icon(
-                      Icons.show_chart,
-                      size: 48,
-                      color: theme.colorScheme.onPrimaryContainer,
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'Chart Widgets',
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        color: theme.colorScheme.onPrimaryContainer,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Reusable Material 3 chart widgets with brand styling',
-                      textAlign: TextAlign.center,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onPrimaryContainer,
-                      ),
-                    ),
-                  ],
-                ),
+            // Line Chart (Animated)
+            Text(
+              'Line Chart (Animated)',
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
               ),
             ),
-            const SizedBox(height: 24),
-
-            // Line Chart (Animated)
-            _buildSectionTitle(context, 'Line Chart (Animated)'),
-            const SizedBox(height: 8),
+            const SizedBox(height: 4),
+            Text(
+              'Smooth animated line chart with customizable colors and grid',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurface.withOpacity(0.6),
+              ),
+            ),
+            const SizedBox(height: 12),
             KubaChart(
               type: ChartType.line,
               data: lineChartData,
@@ -97,8 +75,21 @@ class ChartOverviewChartsPage extends StatelessWidget {
             const SizedBox(height: 24),
 
             // Bar Chart (Animated)
-            _buildSectionTitle(context, 'Bar Chart (Animated)'),
-            const SizedBox(height: 8),
+            Text(
+              'Bar Chart (Animated)',
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Animated bar chart with bars growing from bottom',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurface.withOpacity(0.6),
+              ),
+            ),
+            const SizedBox(height: 12),
             KubaChart(
               type: ChartType.bar,
               data: barChartData,
@@ -112,11 +103,21 @@ class ChartOverviewChartsPage extends StatelessWidget {
             const SizedBox(height: 24),
 
             // Pie Chart (Animated with Custom Colors)
-            _buildSectionTitle(
-              context,
+            Text(
               'Pie Chart (Animated with Custom Colors)',
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 4),
+            Text(
+              'Animated pie chart with custom colors and legend',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurface.withOpacity(0.6),
+              ),
+            ),
+            const SizedBox(height: 12),
             KubaChart(
               type: ChartType.pie,
               data: pieChartData,
@@ -129,8 +130,21 @@ class ChartOverviewChartsPage extends StatelessWidget {
             const SizedBox(height: 24),
 
             // Line Chart with Custom Colors
-            _buildSectionTitle(context, 'Line Chart (Custom Colors)'),
-            const SizedBox(height: 8),
+            Text(
+              'Line Chart (Custom Colors)',
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Line chart with custom brand colors (secondary and tertiary)',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurface.withOpacity(0.6),
+              ),
+            ),
+            const SizedBox(height: 12),
             KubaChart(
               type: ChartType.line,
               data: lineChartData,
@@ -145,8 +159,21 @@ class ChartOverviewChartsPage extends StatelessWidget {
             const SizedBox(height: 24),
 
             // Bar Chart with Custom Colors
-            _buildSectionTitle(context, 'Bar Chart (Custom Colors)'),
-            const SizedBox(height: 8),
+            Text(
+              'Bar Chart (Custom Colors)',
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Bar chart with alternating primary and secondary colors',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurface.withOpacity(0.6),
+              ),
+            ),
+            const SizedBox(height: 12),
             KubaChart(
               type: ChartType.bar,
               data: barChartData,
@@ -161,8 +188,21 @@ class ChartOverviewChartsPage extends StatelessWidget {
             const SizedBox(height: 24),
 
             // Pie Chart with Custom Colors from Data
-            _buildSectionTitle(context, 'Pie Chart (Custom Colors from Data)'),
-            const SizedBox(height: 8),
+            Text(
+              'Pie Chart (Custom Colors from Data)',
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Pie chart with colors defined per data point',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurface.withOpacity(0.6),
+              ),
+            ),
+            const SizedBox(height: 12),
             KubaChart(
               type: ChartType.pie,
               data: pieChartData,
@@ -175,8 +215,21 @@ class ChartOverviewChartsPage extends StatelessWidget {
             const SizedBox(height: 24),
 
             // Line Chart without Grid
-            _buildSectionTitle(context, 'Line Chart (No Grid)'),
-            const SizedBox(height: 8),
+            Text(
+              'Line Chart (No Grid)',
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Simplified line chart without grid lines',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurface.withOpacity(0.6),
+              ),
+            ),
+            const SizedBox(height: 12),
             KubaChart(
               type: ChartType.line,
               data: lineChartData,
@@ -188,17 +241,50 @@ class ChartOverviewChartsPage extends StatelessWidget {
               labels: lineChartData.map((d) => d.label ?? '').toList(),
             ),
             const SizedBox(height: 32),
+
+            // Info card
+            Card(
+              elevation: 1,
+              color: theme.colorScheme.surfaceContainerHighest,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.info_outline,
+                          color: theme.colorScheme.primary,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Chart Features',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'Chart Types: Line, Bar, and Pie charts with Material 3 styling.\n\n'
+                      'Features: Smooth animations, customizable colors, grid options, and legend support.\n\n'
+                      'Color Styles: Use theme colors (primary, secondary, tertiary) or define custom colors per data point.',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurface.withOpacity(0.7),
+                        height: 1.5,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildSectionTitle(BuildContext context, String title) {
-    final theme = Theme.of(context);
-    return Text(
-      title,
-      style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
     );
   }
 }

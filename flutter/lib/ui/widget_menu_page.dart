@@ -25,6 +25,7 @@ class WidgetMenuPage extends StatelessWidget {
   final String description;
   final IconData icon;
   final List<WidgetVariantItem> variants;
+  final Widget? floatingActionButton;
 
   const WidgetMenuPage({
     super.key,
@@ -32,6 +33,7 @@ class WidgetMenuPage extends StatelessWidget {
     required this.description,
     required this.icon,
     required this.variants,
+    this.floatingActionButton,
   });
 
   @override
@@ -150,6 +152,7 @@ class WidgetMenuPage extends StatelessWidget {
           ],
         ),
       ),
+      floatingActionButton: floatingActionButton,
     );
   }
 }

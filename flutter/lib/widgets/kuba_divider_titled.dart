@@ -255,7 +255,6 @@ class KubaDividerTitled extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8.0),
-        Divider(thickness: thickness, color: dividerColor),
       ],
     );
   }

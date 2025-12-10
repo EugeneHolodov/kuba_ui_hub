@@ -27,6 +27,9 @@ class KubaFabMenu extends StatefulWidget {
   /// Callback when menu state changes
   final ValueChanged<bool>? onMenuStateChanged;
 
+  /// Hero tag for the main FAB button
+  final Object? heroTag;
+
   const KubaFabMenu({
     super.key,
     this.mainIcon = Icons.add,
@@ -37,6 +40,7 @@ class KubaFabMenu extends StatefulWidget {
     this.showScrim = true,
     this.tooltip,
     this.onMenuStateChanged,
+    this.heroTag,
   });
 
   @override
@@ -111,6 +115,7 @@ class _KubaFabMenuState extends State<KubaFabMenu>
 
         // Main FAB (close button)
         FloatingActionButton(
+          heroTag: widget.heroTag,
           onPressed: _toggleMenu,
           tooltip: widget.tooltip,
           shape: _isExpanded

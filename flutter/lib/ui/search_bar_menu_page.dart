@@ -3,6 +3,7 @@ import 'search_bar_page.dart';
 import 'search_bar_with_actions_page.dart';
 import 'search_bar_toggle_page.dart';
 import 'widget_menu_page.dart';
+import '../widgets/review_input.dart';
 
 class SearchBarMenuPage extends StatelessWidget {
   const SearchBarMenuPage({super.key});
@@ -15,7 +16,7 @@ class SearchBarMenuPage extends StatelessWidget {
       icon: Icons.search,
       variants: [
         WidgetVariantItem(
-          title: 'Variant 1 - Default',
+          title: 'Default',
           description: 'Bottom search bar with primary/secondary styling',
           icon: Icons.search,
           onTap: () {
@@ -69,6 +70,9 @@ class SearchBarMenuPage extends StatelessWidget {
         //   },
         // ),
       ],
+      floatingActionButton: ReviewInput(
+        widgetName: 'kuba_search_bar',
+      ).buildFloatingActionButton(context),
     );
   }
 }

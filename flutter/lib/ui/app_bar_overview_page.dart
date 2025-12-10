@@ -9,6 +9,9 @@ class AppBarOverviewPage extends StatefulWidget {
 }
 
 class _AppBarOverviewPageState extends State<AppBarOverviewPage> {
+  bool _showSubtitle = true;
+  bool _showBackButton = true;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -16,7 +19,7 @@ class _AppBarOverviewPageState extends State<AppBarOverviewPage> {
     return Scaffold(
       appBar: KubaAppBar(
         title: 'Label',
-        subtitle: 'Subtitle example',
+        subtitle: _showSubtitle ? 'Subtitle example' : null,
         leadingFlag: Image.asset(
           'assets/icons/norsk.png',
           width: 36,
@@ -31,7 +34,7 @@ class _AppBarOverviewPageState extends State<AppBarOverviewPage> {
             ),
           );
         },
-        showBackButton: true,
+        showBackButton: _showBackButton,
         onBackPressed: () {
           Navigator.of(context).pop();
         },
@@ -50,6 +53,54 @@ class _AppBarOverviewPageState extends State<AppBarOverviewPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            const SizedBox(height: 32),
+            // Toggle controls section
+            Card(
+              elevation: 0,
+              color: theme.colorScheme.surfaceContainerHighest,
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.toggle_on, color: theme.colorScheme.primary),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Toggle Controls',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    SwitchListTile(
+                      title: const Text('Show Subtitle'),
+                      subtitle: const Text('Toggle subtitle visibility'),
+                      value: _showSubtitle,
+                      onChanged: (value) {
+                        setState(() {
+                          _showSubtitle = value;
+                        });
+                      },
+                    ),
+                    const Divider(),
+                    SwitchListTile(
+                      title: const Text('Show Back Button'),
+                      subtitle: const Text('Toggle back arrow visibility'),
+                      value: _showBackButton,
+                      onChanged: (value) {
+                        setState(() {
+                          _showBackButton = value;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
             const SizedBox(height: 32),
             // Usage example section
             Card(
@@ -82,10 +133,10 @@ class _AppBarOverviewPageState extends State<AppBarOverviewPage> {
                       child: SelectableText(
                         '''KubaAppBar(
   title: 'Label',
-  subtitle: 'Subtitle example',
+  subtitle: ${_showSubtitle ? "'Subtitle example'" : "null"},
   leadingFlag: Image.asset('assets/icons/norsk.png'),
   onFlagPressed: () {},
-  showBackButton: true,
+  showBackButton: $_showBackButton,
   onBackPressed: () {},
   showMenuButton: true,
   onMenuPressed: () {},

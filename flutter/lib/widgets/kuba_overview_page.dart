@@ -45,6 +45,18 @@ class KubaOverviewPage extends StatelessWidget {
     final effectivePadding = padding ?? _defaultPadding;
     final effectiveSpacing = spacing ?? _defaultSpacing;
 
+    // Calculate responsive aspect ratio based on screen width
+    final screenWidth = MediaQuery.of(context).size.width;
+    final cardWidth =
+        (screenWidth -
+            (effectivePadding * 2) -
+            (effectiveSpacing * (crossAxisCount - 1))) /
+        crossAxisCount;
+    // Calculate aspect ratio to ensure enough height for content
+    // Base height needed: icon (48) + spacing (12) + value (~30) + label (~20) + subtitle (~16) + padding (32) = ~158
+    final minCardHeight = 160.0;
+    final aspectRatio = cardWidth / minCardHeight;
+
     return Container(
       color: backgroundColor ?? theme.colorScheme.surface,
       child: SingleChildScrollView(
@@ -66,7 +78,7 @@ class KubaOverviewPage extends StatelessWidget {
                 crossAxisCount: crossAxisCount,
                 crossAxisSpacing: effectiveSpacing,
                 mainAxisSpacing: effectiveSpacing,
-                childAspectRatio: 1.2,
+                childAspectRatio: aspectRatio,
               ),
               itemCount: metrics.length,
               itemBuilder: (context, index) {
@@ -113,7 +125,7 @@ class KubaOverviewPage extends StatelessWidget {
 class KubaMetricCard extends StatelessWidget {
   // Constants
   static const double _iconSize = 32.0;
-  static const double _padding = 16.0;
+  static const double _padding = 12.0;
 
   final OverviewMetricCard metric;
 
@@ -135,7 +147,8 @@ class KubaMetricCard extends StatelessWidget {
           padding: const EdgeInsets.all(_padding),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
               // Icon and optional badge
               Row(
@@ -179,39 +192,46 @@ class KubaMetricCard extends StatelessWidget {
                     ),
                 ],
               ),
-              const Spacer(),
-              // Value
-              Text(
-                metric.value,
-                style: theme.textTheme.headlineMedium?.copyWith(
-                  color: metric.valueColor ?? theme.colorScheme.onSurface,
-                  fontWeight: FontWeight.bold,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 4),
-              // Label
-              Text(
-                metric.label,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.7),
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              // Optional subtitle
-              if (metric.subtitle != null) ...[
-                const SizedBox(height: 4),
-                Text(
-                  metric.subtitle!,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.5),
+              // Value and text section
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(height: 8),
+                  // Value
+                  Text(
+                    metric.value,
+                    style: theme.textTheme.headlineMedium?.copyWith(
+                      color: metric.valueColor ?? theme.colorScheme.onSurface,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
+                  const SizedBox(height: 4),
+                  // Label
+                  Text(
+                    metric.label,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  // Optional subtitle
+                  if (metric.subtitle != null) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      metric.subtitle!,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurface.withOpacity(0.5),
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ],
+              ),
             ],
           ),
         ),

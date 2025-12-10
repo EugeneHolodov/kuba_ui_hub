@@ -15,6 +15,7 @@ import 'ui/chart_overview_menu_page.dart';
 import 'ui/animation_menu_page.dart';
 import 'ui/attachment_page.dart';
 import 'ui/divider_page.dart';
+import 'ui/dashboard_cards_menu_page.dart';
 import 'pages/startup_page.dart';
 import 'services/storage_service.dart';
 
@@ -877,6 +878,72 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 16),
 
+            // Dashboard Cards Page Card
+            Card(
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const DashboardCardsMenuPage(),
+                    ),
+                  );
+                },
+                borderRadius: BorderRadius.circular(16),
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.tertiaryContainer,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(
+                          Icons.dashboard,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onTertiaryContainer,
+                          size: 28,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Dashboard Cards',
+                              style: Theme.of(context).textTheme.titleMedium
+                                  ?.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Draggable metric cards with animations and customization',
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Icon(
+                        Icons.arrow_forward_ios,
+                        color: Theme.of(context).colorScheme.tertiary,
+                        size: 20,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+
             // Charts & Overview Page Card
             Card(
               elevation: 2,
@@ -1007,69 +1074,69 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 16),
 
-            // Button Page Card
-            Card(
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const ButtonComparisonPage(),
-                    ),
-                  );
-                },
-                borderRadius: BorderRadius.circular(16),
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primaryContainer,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Icon(
-                          Icons.compare_arrows,
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onPrimaryContainer,
-                          size: 28,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Button',
-                              style: Theme.of(context).textTheme.titleMedium
-                                  ?.copyWith(fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Compare two button style variants',
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                          ],
-                        ),
-                      ),
-                      Icon(
-                        Icons.arrow_forward_ios,
-                        color: Theme.of(context).colorScheme.primary,
-                        size: 20,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
+            // // Button Page Card
+            // Card(
+            //   elevation: 2,
+            //   shape: RoundedRectangleBorder(
+            //     borderRadius: BorderRadius.circular(16),
+            //   ),
+            //   child: InkWell(
+            //     onTap: () {
+            //       Navigator.push(
+            //         context,
+            //         MaterialPageRoute(
+            //           builder: (context) => const ButtonComparisonPage(),
+            //         ),
+            //       );
+            //     },
+            //     borderRadius: BorderRadius.circular(16),
+            //     child: Padding(
+            //       padding: const EdgeInsets.all(20.0),
+            //       child: Row(
+            //         children: [
+            //           Container(
+            //             padding: const EdgeInsets.all(12),
+            //             decoration: BoxDecoration(
+            //               color: Theme.of(context).colorScheme.primaryContainer,
+            //               borderRadius: BorderRadius.circular(12),
+            //             ),
+            //             child: Icon(
+            //               Icons.compare_arrows,
+            //               color: Theme.of(
+            //                 context,
+            //               ).colorScheme.onPrimaryContainer,
+            //               size: 28,
+            //             ),
+            //           ),
+            //           const SizedBox(width: 16),
+            //           Expanded(
+            //             child: Column(
+            //               crossAxisAlignment: CrossAxisAlignment.start,
+            //               children: [
+            //                 Text(
+            //                   'Button',
+            //                   style: Theme.of(context).textTheme.titleMedium
+            //                       ?.copyWith(fontWeight: FontWeight.bold),
+            //                 ),
+            //                 const SizedBox(height: 4),
+            //                 Text(
+            //                   'Compare two button style variants',
+            //                   style: Theme.of(context).textTheme.bodySmall,
+            //                 ),
+            //               ],
+            //             ),
+            //           ),
+            //           Icon(
+            //             Icons.arrow_forward_ios,
+            //             color: Theme.of(context).colorScheme.primary,
+            //             size: 20,
+            //           ),
+            //         ],
+            //       ),
+            //     ),
+            //   ),
+            // ),
+            // const SizedBox(height: 16),
 
             // Checklist Page Card
             Card(
@@ -1137,71 +1204,71 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 16),
 
-            // Material 3 Test Page Card
-            Card(
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const Material3TestPage(),
-                    ),
-                  );
-                },
-                borderRadius: BorderRadius.circular(16),
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.secondaryContainer,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Icon(
-                          Icons.widgets,
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSecondaryContainer,
-                          size: 28,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Material 3 Test Page',
-                              style: Theme.of(context).textTheme.titleMedium
-                                  ?.copyWith(fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Complete Material 3 component showcase',
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                          ],
-                        ),
-                      ),
-                      Icon(
-                        Icons.arrow_forward_ios,
-                        color: Theme.of(context).colorScheme.secondary,
-                        size: 20,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 32),
+            // // Material 3 Test Page Card
+            // Card(
+            //   elevation: 2,
+            //   shape: RoundedRectangleBorder(
+            //     borderRadius: BorderRadius.circular(16),
+            //   ),
+            //   child: InkWell(
+            //     onTap: () {
+            //       Navigator.push(
+            //         context,
+            //         MaterialPageRoute(
+            //           builder: (context) => const Material3TestPage(),
+            //         ),
+            //       );
+            //     },
+            //     borderRadius: BorderRadius.circular(16),
+            //     child: Padding(
+            //       padding: const EdgeInsets.all(20.0),
+            //       child: Row(
+            //         children: [
+            //           Container(
+            //             padding: const EdgeInsets.all(12),
+            //             decoration: BoxDecoration(
+            //               color: Theme.of(
+            //                 context,
+            //               ).colorScheme.secondaryContainer,
+            //               borderRadius: BorderRadius.circular(12),
+            //             ),
+            //             child: Icon(
+            //               Icons.widgets,
+            //               color: Theme.of(
+            //                 context,
+            //               ).colorScheme.onSecondaryContainer,
+            //               size: 28,
+            //             ),
+            //           ),
+            //           const SizedBox(width: 16),
+            //           Expanded(
+            //             child: Column(
+            //               crossAxisAlignment: CrossAxisAlignment.start,
+            //               children: [
+            //                 Text(
+            //                   'Material 3 Test Page',
+            //                   style: Theme.of(context).textTheme.titleMedium
+            //                       ?.copyWith(fontWeight: FontWeight.bold),
+            //                 ),
+            //                 const SizedBox(height: 4),
+            //                 Text(
+            //                   'Complete Material 3 component showcase',
+            //                   style: Theme.of(context).textTheme.bodySmall,
+            //                 ),
+            //               ],
+            //             ),
+            //           ),
+            //           Icon(
+            //             Icons.arrow_forward_ios,
+            //             color: Theme.of(context).colorScheme.secondary,
+            //             size: 20,
+            //           ),
+            //         ],
+            //       ),
+            //     ),
+            //   ),
+            // ),
+            // const SizedBox(height: 32),
 
             // Brand colors info
             Card(

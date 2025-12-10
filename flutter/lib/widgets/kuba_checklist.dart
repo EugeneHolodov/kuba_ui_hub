@@ -38,11 +38,11 @@ class KubaChecklist extends StatelessWidget {
   IconData _getStatusIcon(KubaChecklistStatus status) {
     switch (status) {
       case KubaChecklistStatus.ok:
-        return Icons.check_circle;
+        return Icons.check;
       case KubaChecklistStatus.na:
-        return Icons.remove_circle;
+        return Icons.remove;
       case KubaChecklistStatus.deviation:
-        return Icons.error;
+        return Icons.priority_high;
     }
   }
 

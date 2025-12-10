@@ -3,46 +3,40 @@ const router = express.Router();
 const { getDB } = require('../database/db');
 
 // Admin page to view all reviews
-router.get('/', (req, res) => {
-  const db = getDB();
+router.get('/', async (req, res) => {
+  const pool = getDB();
   
-  // Get all reviews with reviewer names
-  db.all(`
-    SELECT 
-      r.id,
-      r.reviewer_id,
-      rev.name as reviewer_name,
-      r.widget_name,
-      r.comment,
-      r.created_at
-    FROM reviews r
-    INNER JOIN reviewers rev ON r.reviewer_id = rev.id
-    ORDER BY r.created_at DESC
-  `, [], (err, reviews) => {
-    if (err) {
-      res.status(500).send(`<h1>Error</h1><p>${err.message}</p>`);
-      db.close();
-      return;
-    }
+  try {
+    // Get all reviews with reviewer names
+    const reviewsResult = await pool.query(`
+      SELECT 
+        r.id,
+        r.reviewer_id,
+        rev.name as reviewer_name,
+        r.widget_name,
+        r.comment,
+        r.created_at
+      FROM reviews r
+      INNER JOIN reviewers rev ON r.reviewer_id = rev.id
+      ORDER BY r.created_at DESC
+    `);
+    
+    const reviews = reviewsResult.rows;
     
     // Get statistics
-    db.all(`
+    const statsResult = await pool.query(`
       SELECT 
         widget_name,
         COUNT(*) as count
       FROM reviews
       GROUP BY widget_name
       ORDER BY count DESC
-    `, [], (err, stats) => {
-      db.close();
-      
-      if (err) {
-        res.status(500).send(`<h1>Error</h1><p>${err.message}</p>`);
-        return;
-      }
-      
-      // Generate HTML page
-      const html = `
+    `);
+    
+    const stats = statsResult.rows;
+    
+    // Generate HTML page
+    const html = `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -201,9 +195,11 @@ router.get('/', (req, res) => {
 </html>
       `;
       
-      res.send(html);
-    });
-  });
+    res.send(html);
+  } catch (err) {
+    console.error('Error in admin page:', err);
+    res.status(500).send(`<h1>Error</h1><p>${err.message}</p>`);
+  }
 });
 
 // Helper function to escape HTML

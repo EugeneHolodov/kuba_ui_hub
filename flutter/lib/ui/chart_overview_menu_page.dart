@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'chart_overview_charts_page.dart';
-import 'chart_overview_overview_page.dart';
+import '../widgets/review_input.dart';
 
 class ChartOverviewMenuPage extends StatelessWidget {
   const ChartOverviewMenuPage({super.key});
@@ -11,7 +11,7 @@ class ChartOverviewMenuPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Charts & Overview'),
+        title: const Text('Charts'),
         centerTitle: true,
         elevation: 0,
       ),
@@ -35,7 +35,7 @@ class ChartOverviewMenuPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'Charts & Overview',
+                      'Charts',
                       style: theme.textTheme.headlineSmall?.copyWith(
                         color: theme.colorScheme.onPrimaryContainer,
                         fontWeight: FontWeight.bold,
@@ -116,141 +116,21 @@ class ChartOverviewMenuPage extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 16),
-
-            // Overview Page Card
-            Card(
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const ChartOverviewOverviewPage(),
-                    ),
-                  );
-                },
-                borderRadius: BorderRadius.circular(16),
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.secondaryContainer,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Icon(
-                          Icons.dashboard,
-                          color: theme.colorScheme.onSecondaryContainer,
-                          size: 28,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Overview',
-                              style: theme.textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Metric cards and overview dashboard widgets',
-                              style: theme.textTheme.bodySmall,
-                            ),
-                          ],
-                        ),
-                      ),
-                      Icon(
-                        Icons.arrow_forward_ios,
-                        color: theme.colorScheme.secondary,
-                        size: 20,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 32),
-
-            // Info section
-            Card(
-              elevation: 0,
-              color: theme.colorScheme.surfaceContainerHighest,
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.info_outline,
-                          color: theme.colorScheme.primary,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Widget Features',
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    _buildFeatureItem(
-                      context,
-                      Icons.check_circle_outline,
-                      'Material 3 design system',
-                    ),
-                    _buildFeatureItem(
-                      context,
-                      Icons.check_circle_outline,
-                      'Brand color integration',
-                    ),
-                    _buildFeatureItem(
-                      context,
-                      Icons.check_circle_outline,
-                      'Fully reusable components',
-                    ),
-                    _buildFeatureItem(
-                      context,
-                      Icons.check_circle_outline,
-                      'Responsive layouts',
-                    ),
-                    _buildFeatureItem(
-                      context,
-                      Icons.check_circle_outline,
-                      'Customizable styling',
-                    ),
-                  ],
-                ),
-              ),
-            ),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildFeatureItem(BuildContext context, IconData icon, String text) {
-    final theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
-      child: Row(
-        children: [
-          Icon(icon, size: 20, color: theme.colorScheme.primary),
-          const SizedBox(width: 8),
-          Text(text, style: theme.textTheme.bodyMedium),
-        ],
+      floatingActionButton: FloatingActionButton(
+        heroTag: 'review_button_charts',
+        onPressed: () {
+          ReviewInput.showBottomSheet(
+            context: context,
+            widgetName: 'kuba_charts',
+          );
+        },
+        tooltip: 'Leave a Review',
+        backgroundColor: theme.colorScheme.primary,
+        foregroundColor: theme.colorScheme.onPrimary,
+        child: const Icon(Icons.rate_review),
       ),
     );
   }
