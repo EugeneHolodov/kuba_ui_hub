@@ -1,28 +1,45 @@
 # Kuba UI Hub Backend API
 
-A simple REST API backend for the Kuba UI Hub Flutter application, built with Node.js, Express, and SQLite.
+A robust REST API backend for the Kuba UI Hub Flutter application, built with Node.js, Express, and PostgreSQL.
 
 ## Features
 
 - RESTful API endpoints
-- SQLite database for data persistence
+- PostgreSQL database for persistent data storage (cloud-ready!)
 - CORS enabled for Flutter app integration
 - Widget review system for team feedback
+- Admin dashboard for managing reviews
+- Mark reviews as processed/unprocessed
+- Delete reviews functionality
 - User and Item management endpoints
 
 ## Setup
+
+### Local Development
 
 1. Install dependencies:
 ```bash
 npm install
 ```
 
-2. Initialize the database:
+2. Set up PostgreSQL database:
+   - Install PostgreSQL locally, or
+   - Use a cloud service (Supabase, Neon, etc.)
+
+3. Configure environment variables:
+```bash
+# Create .env file
+DATABASE_URL=postgresql://user:password@localhost:5432/kuba_hub
+PORT=3000
+NODE_ENV=development
+```
+
+4. Initialize the database:
 ```bash
 npm run init-db
 ```
 
-3. Start the server:
+5. Start the server:
 ```bash
 npm start
 ```
@@ -33,6 +50,10 @@ npm run dev
 ```
 
 The server will run on `http://localhost:3000` by default.
+
+### Production Deployment
+
+See [POSTGRESQL_SETUP_RU.md](POSTGRESQL_SETUP_RU.md) for detailed deployment instructions to Render.com with PostgreSQL.
 
 ## API Endpoints
 
@@ -54,6 +75,15 @@ The server will run on `http://localhost:3000` by default.
   - Optional query parameter: `?widget_name=kuba_dropdown` to filter by widget
 
 - `GET /api/reviews/widget/:widget_name` - Get all reviews for a specific widget
+
+- `DELETE /api/reviews/:id` - Delete a review (admin only)
+
+- `PATCH /api/reviews/:id/process` - Mark review as processed/unprocessed (admin only)
+  ```json
+  {
+    "is_processed": true
+  }
+  ```
 
 ### Reviewers
 
@@ -90,9 +120,21 @@ The server will run on `http://localhost:3000` by default.
 - `PUT /api/items/:id` - Update item
 - `DELETE /api/items/:id` - Delete item
 
+## Admin Dashboard
+
+Access the admin dashboard at `/admin` to manage reviews:
+- View all reviews with statistics
+- Mark reviews as processed/unprocessed
+- Delete reviews
+- See pending vs. processed counts
+
+**Example:** `https://your-backend.onrender.com/admin`
+
+See [ADMIN_FEATURES.md](ADMIN_FEATURES.md) for detailed documentation.
+
 ## Database
 
-The database file (`kuba_hub.db`) is stored in the `database/` directory. SQLite is used for simplicity and doesn't require a separate database server.
+PostgreSQL is used for persistent, reliable data storage in production.
 
 ### Tables
 
@@ -102,48 +144,75 @@ The database file (`kuba_hub.db`) is stored in the `database/` directory. SQLite
   - Pre-seeded with: Lars (0), Nick (1), Leo (2), Hallvard (3), Benjamin (4), Anita (5), Eugene (6), Gest (7)
 
 - **reviews**: Stores widget reviews and comments
-  - id (INTEGER PRIMARY KEY AUTOINCREMENT)
+  - id (SERIAL PRIMARY KEY)
   - reviewer_id (INTEGER, FOREIGN KEY to reviewers.id)
   - widget_name (TEXT)
   - comment (TEXT)
-  - created_at (DATETIME)
+  - is_processed (BOOLEAN, DEFAULT FALSE) - **NEW!**
+  - created_at (TIMESTAMP)
 
 - **users**: Stores user information
-  - id (INTEGER PRIMARY KEY)
+  - id (SERIAL PRIMARY KEY)
   - name (TEXT)
   - email (TEXT UNIQUE)
-  - created_at (DATETIME)
+  - created_at (TIMESTAMP)
 
 - **items**: Stores items/components
-  - id (INTEGER PRIMARY KEY)
+  - id (SERIAL PRIMARY KEY)
   - title (TEXT)
   - description (TEXT)
   - category (TEXT)
-  - created_at (DATETIME)
-  - updated_at (DATETIME)
+  - created_at (TIMESTAMP)
+  - updated_at (TIMESTAMP)
 
 ## Environment Variables
 
-You can set the following environment variables:
+Required environment variables:
 
+- `DATABASE_URL`: PostgreSQL connection string (required in production)
+  - Example: `postgresql://user:password@host:5432/database`
 - `PORT`: Server port (default: 3000)
+- `NODE_ENV`: Environment mode (`development` or `production`)
 
 ## Project Structure
 
 ```
 backend/
 ├── database/
-│   ├── db.js          # Database connection and initialization
-│   └── kuba_hub.db    # SQLite database file (created on first run)
+│   └── db.js                    # PostgreSQL connection and initialization
 ├── routes/
-│   ├── reviews.js     # Review routes (widget feedback)
-│   ├── reviewers.js    # Reviewer routes
-│   ├── users.js       # User routes
-│   └── items.js       # Item routes
+│   ├── admin.js                 # Admin dashboard (NEW!)
+│   ├── reviews.js               # Review routes (widget feedback)
+│   ├── reviewers.js             # Reviewer routes
+│   ├── users.js                 # User routes
+│   └── items.js                 # Item routes
 ├── scripts/
-│   └── init-db.js    # Database initialization script
-├── server.js          # Main server file
-├── package.json       # Dependencies
-└── README.md         # This file
+│   └── init-db.js              # Database initialization script
+├── server.js                    # Main server file
+├── package.json                 # Dependencies
+├── README.md                    # This file
+├── POSTGRESQL_SETUP_RU.md      # PostgreSQL setup guide (Russian)
+├── ADMIN_FEATURES.md            # Admin dashboard documentation
+└── ADMIN_SETUP_RU.md           # Admin setup guide (Russian)
 ```
+
+## Documentation
+
+- **[POSTGRESQL_SETUP_RU.md](POSTGRESQL_SETUP_RU.md)** - Complete guide for PostgreSQL migration (Russian)
+- **[ADMIN_FEATURES.md](ADMIN_FEATURES.md)** - Admin dashboard features documentation
+- **[ADMIN_SETUP_RU.md](ADMIN_SETUP_RU.md)** - Admin features setup guide (Russian)
+- **[README_MIGRATION.md](README_MIGRATION.md)** - Migration summary (Russian)
+
+## Recent Updates
+
+### v2.0 - PostgreSQL Migration & Admin Features
+- ✅ Migrated from SQLite to PostgreSQL for persistent storage
+- ✅ Added admin dashboard at `/admin`
+- ✅ Mark reviews as processed/unprocessed
+- ✅ Delete reviews functionality
+- ✅ Enhanced statistics (pending vs. processed)
+- ✅ Visual indicators for review status
+- ✅ Auto-refresh admin dashboard
+
+See [ADMIN_SETUP_RU.md](ADMIN_SETUP_RU.md) for details.
 

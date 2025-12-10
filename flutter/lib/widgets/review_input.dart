@@ -124,7 +124,6 @@ class _ReviewInputContentState extends State<ReviewInputContent> {
 
       // Show success toaster message at the top after bottom sheet closes
       Future.delayed(const Duration(milliseconds: 300), () {
-        final screenHeight = mediaQuery.size.height;
         final topPadding = mediaQuery.padding.top;
         scaffoldMessenger.showSnackBar(
           SnackBar(
@@ -145,12 +144,8 @@ class _ReviewInputContentState extends State<ReviewInputContent> {
               ],
             ),
             backgroundColor: Colors.green,
-            behavior: SnackBarBehavior.floating,
-            margin: EdgeInsets.only(
-              bottom: screenHeight - topPadding - 140,
-              left: 16,
-              right: 16,
-            ),
+            behavior: SnackBarBehavior.fixed,
+            margin: EdgeInsets.only(top: topPadding + 8, left: 16, right: 16),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
@@ -175,10 +170,11 @@ class _ReviewInputContentState extends State<ReviewInputContent> {
               ],
             ),
             backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
+            behavior: SnackBarBehavior.fixed,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
+            margin: const EdgeInsets.all(16),
           ),
         );
       }

@@ -62,6 +62,21 @@ git push origin main
 - Neon: https://neon.tech
 - Render Dashboard: https://dashboard.render.com
 - Ваш API: https://kuba-ui-hub-backend.onrender.com
+- Admin Dashboard: https://kuba-ui-hub-backend.onrender.com/admin
+
+---
+
+## 🎯 Новые возможности Admin Dashboard
+
+После миграции на PostgreSQL добавлены новые функции администратора:
+
+### Управление отзывами:
+- ✅ **Пометка как обработанных** - отслеживайте, какие отзывы уже рассмотрены
+- 🗑️ **Удаление отзывов** - удаляйте спам или тестовые записи
+- 📊 **Расширенная статистика** - видите обработанные/необработанные отзывы
+- 🎨 **Визуальные индикаторы** - обработанные отзывы выделены цветом
+
+**Подробности:** см. `ADMIN_FEATURES.md`
 
 ---
 

@@ -45,11 +45,24 @@ async function initDatabase() {
         reviewer_id INTEGER NOT NULL,
         widget_name TEXT NOT NULL,
         comment TEXT NOT NULL,
+        is_processed BOOLEAN DEFAULT FALSE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (reviewer_id) REFERENCES reviewers(id)
       )
     `);
     console.log('Reviews table ready');
+
+    // Add is_processed column if it doesn't exist (for existing databases)
+    try {
+      await client.query(`
+        ALTER TABLE reviews 
+        ADD COLUMN IF NOT EXISTS is_processed BOOLEAN DEFAULT FALSE
+      `);
+      console.log('Added is_processed column to reviews table');
+    } catch (err) {
+      // Column might already exist, ignore error
+      console.log('is_processed column already exists or error adding it');
+    }
 
     // Users table (keeping for backward compatibility)
     await client.query(`

@@ -15,10 +15,11 @@ router.get('/', async (req, res) => {
         rev.name as reviewer_name,
         r.widget_name,
         r.comment,
+        r.is_processed,
         r.created_at
       FROM reviews r
       INNER JOIN reviewers rev ON r.reviewer_id = rev.id
-      ORDER BY r.created_at DESC
+      ORDER BY r.is_processed ASC, r.created_at DESC
     `);
     
     const reviews = reviewsResult.rows;
@@ -34,6 +35,12 @@ router.get('/', async (req, res) => {
     `);
     
     const stats = statsResult.rows;
+    
+    // Get processed count
+    const processedCountResult = await pool.query(`
+      SELECT COUNT(*) as count FROM reviews WHERE is_processed = true
+    `);
+    const processedCount = processedCountResult.rows[0]?.count || 0;
     
     // Generate HTML page
     const html = `
@@ -97,9 +104,14 @@ router.get('/', async (req, res) => {
     .review-item {
       padding: 20px;
       border-bottom: 1px solid #eee;
+      transition: background-color 0.2s;
     }
     .review-item:last-child {
       border-bottom: none;
+    }
+    .review-item.processed {
+      background-color: #f0f9ff;
+      opacity: 0.7;
     }
     .review-header {
       display: flex;
@@ -127,6 +139,68 @@ router.get('/', async (req, res) => {
     .review-date {
       color: #999;
       font-size: 12px;
+    }
+    .review-actions {
+      margin-top: 12px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 500;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .btn:active {
+      transform: translateY(0);
+    }
+    .btn-delete {
+      background: #dc2626;
+      color: white;
+    }
+    .btn-delete:hover {
+      background: #b91c1c;
+    }
+    .btn-process {
+      background: #059669;
+      color: white;
+    }
+    .btn-process:hover {
+      background: #047857;
+    }
+    .btn-unprocess {
+      background: #f59e0b;
+      color: white;
+    }
+    .btn-unprocess:hover {
+      background: #d97706;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .status-processed {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    .status-pending {
+      background: #fed7aa;
+      color: #9a3412;
     }
     .empty {
       text-align: center;
@@ -161,6 +235,14 @@ router.get('/', async (req, res) => {
         <p>Total Reviews</p>
       </div>
       <div class="stat-card">
+        <h3>${processedCount}</h3>
+        <p>Processed Reviews</p>
+      </div>
+      <div class="stat-card">
+        <h3>${reviews.length - processedCount}</h3>
+        <p>Pending Reviews</p>
+      </div>
+      <div class="stat-card">
         <h3>${stats.length}</h3>
         <p>Widgets Reviewed</p>
       </div>
@@ -174,13 +256,32 @@ router.get('/', async (req, res) => {
       ${reviews.length === 0 ? 
         '<div class="empty"><h2>No reviews yet</h2><p>Reviews will appear here once users submit feedback</p></div>' :
         reviews.map(review => `
-          <div class="review-item">
+          <div class="review-item ${review.is_processed ? 'processed' : ''}" id="review-${review.id}">
             <div class="review-header">
-              <span class="reviewer-name">${escapeHtml(review.reviewer_name)}</span>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="reviewer-name">${escapeHtml(review.reviewer_name)}</span>
+                <span class="status-badge ${review.is_processed ? 'status-processed' : 'status-pending'}">
+                  ${review.is_processed ? '✓ Processed' : '⏳ Pending'}
+                </span>
+              </div>
               <span class="widget-name">${escapeHtml(review.widget_name)}</span>
             </div>
             <div class="review-comment">${escapeHtml(review.comment)}</div>
-            <div class="review-date">${formatDate(review.created_at)}</div>
+            <div class="review-date">${formatDate(review.created_at)} • ID: ${review.id}</div>
+            <div class="review-actions">
+              ${review.is_processed ? `
+                <button class="btn btn-unprocess" onclick="toggleProcess(${review.id}, false)">
+                  ↩️ Mark as Unprocessed
+                </button>
+              ` : `
+                <button class="btn btn-process" onclick="toggleProcess(${review.id}, true)">
+                  ✓ Mark as Processed
+                </button>
+              `}
+              <button class="btn btn-delete" onclick="deleteReview(${review.id})">
+                🗑️ Delete
+              </button>
+            </div>
           </div>
         `).join('')
       }
@@ -188,8 +289,69 @@ router.get('/', async (req, res) => {
   </div>
   
   <script>
-    // Auto-refresh every 30 seconds
-    setTimeout(() => location.reload(), 30000);
+    // Delete review
+    async function deleteReview(id) {
+      if (!confirm('Are you sure you want to delete this review? This action cannot be undone.')) {
+        return;
+      }
+      
+      try {
+        const response = await fetch(\`/api/reviews/\${id}\`, {
+          method: 'DELETE',
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          // Remove review from DOM with animation
+          const reviewElement = document.getElementById(\`review-\${id}\`);
+          if (reviewElement) {
+            reviewElement.style.transition = 'all 0.3s';
+            reviewElement.style.opacity = '0';
+            reviewElement.style.transform = 'translateX(-20px)';
+            setTimeout(() => {
+              reviewElement.remove();
+              // Check if no reviews left
+              const reviewsContainer = document.querySelector('.reviews');
+              if (reviewsContainer && reviewsContainer.children.length === 0) {
+                location.reload();
+              }
+            }, 300);
+          }
+        } else {
+          alert('Error: ' + (data.error || 'Failed to delete review'));
+        }
+      } catch (error) {
+        alert('Error: ' + error.message);
+      }
+    }
+    
+    // Toggle processed status
+    async function toggleProcess(id, isProcessed) {
+      try {
+        const response = await fetch(\`/api/reviews/\${id}/process\`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ is_processed: isProcessed }),
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          // Reload page to show updated status
+          location.reload();
+        } else {
+          alert('Error: ' + (data.error || 'Failed to update review status'));
+        }
+      } catch (error) {
+        alert('Error: ' + error.message);
+      }
+    }
+    
+    // Auto-refresh every 60 seconds
+    setTimeout(() => location.reload(), 60000);
   </script>
 </body>
 </html>
