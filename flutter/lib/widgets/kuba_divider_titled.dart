@@ -79,6 +79,8 @@ class KubaDividerTitled extends StatelessWidget {
       padding: effectivePadding,
       child: variant == DividerVariant.fullWidth
           ? dividerWidget
+          : effectiveSpacing == 0
+          ? dividerWidget
           : SizedBox(height: effectiveSpacing, child: dividerWidget),
     );
   }
@@ -136,26 +138,40 @@ class KubaDividerTitled extends StatelessWidget {
     TextStyle titleStyle,
   ) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Expanded(
           child: Divider(thickness: thickness, color: dividerColor),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: _tagPadding,
-              vertical: 4.0,
-            ),
-            constraints: const BoxConstraints(minHeight: _tagHeight),
-            decoration: BoxDecoration(
-              color: tagBackgroundColor,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Center(
+          child: IntrinsicWidth(
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: _tagPadding,
+                vertical: 4.0,
+              ),
+              constraints: const BoxConstraints(
+                minHeight: _tagHeight,
+                minWidth: 32.0,
+              ),
+              decoration: BoxDecoration(
+                color: tagBackgroundColor,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              alignment: Alignment.center,
               child: Text(
-                title,
-                style: titleStyle.copyWith(color: tagTextColor),
+                title.isNotEmpty ? title : 'or',
+                style: TextStyle(
+                  color: tagTextColor,
+                  fontSize: titleStyle.fontSize ?? 12.0,
+                  fontWeight: titleStyle.fontWeight ?? FontWeight.w600,
+                  height: 1.2,
+                ),
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.visible,
+                maxLines: 1,
               ),
             ),
           ),
