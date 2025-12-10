@@ -130,38 +130,48 @@ class KubaOverviewPage extends StatelessWidget {
   ) {
     // Define card constraints
     const double minCardWidth = 160.0;
-    const double maxCardWidth = 280.0;
+    const double maxCardWidth = 300.0;
     const double idealCardHeight = 170.0;
 
     // Calculate optimal column count based on screen width
     int optimalCrossAxisCount = requestedCrossAxisCount;
 
-    if (screenWidth >= 1200) {
-      // Large screens (desktop): 4-6 columns
-      optimalCrossAxisCount = (screenWidth / maxCardWidth).floor().clamp(4, 6);
+    if (screenWidth >= 1400) {
+      // Extra large screens: 5-6 columns
+      optimalCrossAxisCount = (screenWidth / (maxCardWidth + spacing))
+          .floor()
+          .clamp(5, 6);
+    } else if (screenWidth >= 1200) {
+      // Large screens (desktop): 4-5 columns
+      optimalCrossAxisCount = (screenWidth / (maxCardWidth + spacing))
+          .floor()
+          .clamp(4, 5);
     } else if (screenWidth >= 900) {
       // Medium-large screens (tablets landscape): 3-4 columns
-      optimalCrossAxisCount = (screenWidth / maxCardWidth).floor().clamp(3, 4);
+      optimalCrossAxisCount = (screenWidth / (maxCardWidth + spacing))
+          .floor()
+          .clamp(3, 4);
     } else if (screenWidth >= 600) {
       // Medium screens (tablets portrait): 2-3 columns
-      optimalCrossAxisCount = (screenWidth / minCardWidth).floor().clamp(2, 3);
+      optimalCrossAxisCount = (screenWidth / (minCardWidth + spacing))
+          .floor()
+          .clamp(2, 3);
     } else {
       // Small screens (phones): 2 columns
       optimalCrossAxisCount = 2;
     }
 
     // Calculate actual card width with the optimal column count
-    final cardWidth =
+    // This is the ACTUAL width that will be rendered by the grid
+    final actualCardWidth =
         (screenWidth -
             (padding * 2) -
             (spacing * (optimalCrossAxisCount - 1))) /
         optimalCrossAxisCount;
 
-    // Ensure card width is within bounds
-    final constrainedCardWidth = cardWidth.clamp(minCardWidth, maxCardWidth);
-
-    // Calculate aspect ratio based on constrained width
-    final aspectRatio = constrainedCardWidth / idealCardHeight;
+    // Calculate aspect ratio based on ACTUAL card width that will be rendered
+    // This ensures cards have proper height and don't overlap
+    final aspectRatio = actualCardWidth / idealCardHeight;
 
     return _ResponsiveGridParams(
       crossAxisCount: optimalCrossAxisCount,
