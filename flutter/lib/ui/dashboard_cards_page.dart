@@ -250,9 +250,11 @@ class _AnimatedOverviewPageState extends State<_AnimatedOverviewPage>
     final effectivePadding = _defaultPadding;
 
     // Calculate responsive grid parameters
+    // Cap screen width at 600px for consistent sizing on web
     final screenWidth = MediaQuery.of(context).size.width;
+    final effectiveWidth = screenWidth > 600 ? 600.0 : screenWidth;
     final responsiveParams = _calculateResponsiveGridParams(
-      screenWidth,
+      effectiveWidth,
       widget.crossAxisCount,
       effectivePadding,
     );
@@ -458,7 +460,8 @@ class _AnimatedOverviewPageState extends State<_AnimatedOverviewPage>
 
     if (screenWidth >= 501) {
       // Wide screens/horizontal orientation (501-600px): 3 columns, large icons
-      aspectRatio = 1.2;
+      // Lower aspect ratio = taller cards to prevent overflow
+      aspectRatio = 1.05;
       iconSize = 40.0;
       responsiveSpacing = 18.0;
       optimalCrossAxisCount = 3;
@@ -546,12 +549,14 @@ class _ReorderableAnimatedGridState extends State<_ReorderableAnimatedGrid> {
   @override
   Widget build(BuildContext context) {
     // Calculate card dimensions to maintain consistent size during drag
+    // Cap screen width at 600px for consistent sizing on web
     final screenWidth = MediaQuery.of(context).size.width;
+    final effectiveWidth = screenWidth > 600 ? 600.0 : screenWidth;
     final effectivePadding = 16.0;
 
     // Calculate actual card dimensions as rendered by the grid
     final cardWidth =
-        (screenWidth -
+        (effectiveWidth -
             (effectivePadding * 2) -
             (widget.crossAxisSpacing * (widget.crossAxisCount - 1))) /
         widget.crossAxisCount;
@@ -628,12 +633,9 @@ class _ReorderableAnimatedGridState extends State<_ReorderableAnimatedGrid> {
                   child: SizedBox(
                     width: cardWidth,
                     height: cardHeight,
-                    child: Transform.scale(
-                      scale: 1.05,
-                      child: Opacity(
-                        opacity: 0.9,
-                        child: _buildStyledCard(context, metric),
-                      ),
+                    child: Opacity(
+                      opacity: 0.9,
+                      child: _buildStyledCard(context, metric),
                     ),
                   ),
                 ),

@@ -44,9 +44,11 @@ class KubaOverviewPage extends StatelessWidget {
     final effectivePadding = padding ?? _defaultPadding;
 
     // Calculate responsive grid parameters
+    // Cap screen width at 600px for consistent sizing on web
     final screenWidth = MediaQuery.of(context).size.width;
+    final effectiveWidth = screenWidth > 600 ? 600.0 : screenWidth;
     final responsiveParams = _calculateResponsiveGridParams(
-      screenWidth,
+      effectiveWidth,
       crossAxisCount,
       effectivePadding,
       spacing,
@@ -140,7 +142,8 @@ class KubaOverviewPage extends StatelessWidget {
 
     if (screenWidth >= 501) {
       // Wide screens/horizontal orientation (501-600px): 3 columns, large icons
-      aspectRatio = 1.2;
+      // Lower aspect ratio = taller cards to prevent overflow
+      aspectRatio = 1.05;
       iconSize = 40.0;
       responsiveSpacing = customSpacing ?? 18.0;
       optimalCrossAxisCount = 3;
