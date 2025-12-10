@@ -154,10 +154,7 @@ class _DashboardCardsPageState extends State<DashboardCardsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Dashboard Cards'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Dashboard Cards'), centerTitle: true),
       body: _AnimatedOverviewPage(
         title: 'Dashboard Overview',
         subtitle: 'Overview of key business areas and metrics',
@@ -254,15 +251,17 @@ class _AnimatedOverviewPageState extends State<_AnimatedOverviewPage>
     final effectivePadding = _defaultPadding;
     final effectiveSpacing = _defaultSpacing;
 
-    // Calculate responsive aspect ratio
+    // Calculate responsive grid parameters
     final screenWidth = MediaQuery.of(context).size.width;
-    final cardWidth =
-        (screenWidth -
-            (effectivePadding * 2) -
-            (effectiveSpacing * (widget.crossAxisCount - 1))) /
-        widget.crossAxisCount;
-    final minCardHeight = 170.0;
-    final aspectRatio = cardWidth / minCardHeight;
+    final responsiveParams = _calculateResponsiveGridParams(
+      screenWidth,
+      widget.crossAxisCount,
+      effectivePadding,
+      effectiveSpacing,
+    );
+
+    final effectiveCrossAxisCount = responsiveParams.crossAxisCount;
+    final aspectRatio = responsiveParams.aspectRatio;
 
     final backgroundColor = _usePrimaryToneBackground
         ? theme.colorScheme.primary.withOpacity(0.03)
@@ -281,7 +280,7 @@ class _AnimatedOverviewPageState extends State<_AnimatedOverviewPage>
             ],
             // Reorderable grid with animations
             _ReorderableAnimatedGrid(
-              crossAxisCount: widget.crossAxisCount,
+              crossAxisCount: effectiveCrossAxisCount,
               crossAxisSpacing: effectiveSpacing,
               mainAxisSpacing: effectiveSpacing,
               childAspectRatio: aspectRatio,
@@ -442,6 +441,66 @@ class _AnimatedOverviewPageState extends State<_AnimatedOverviewPage>
       ],
     );
   }
+
+  /// Calculate responsive grid parameters based on screen width
+  /// Returns optimal cross axis count and aspect ratio for cards
+  static _ResponsiveGridParams _calculateResponsiveGridParams(
+    double screenWidth,
+    int requestedCrossAxisCount,
+    double padding,
+    double spacing,
+  ) {
+    // Define card constraints
+    const double minCardWidth = 160.0;
+    const double maxCardWidth = 280.0;
+    const double idealCardHeight = 170.0;
+
+    // Calculate optimal column count based on screen width
+    int optimalCrossAxisCount = requestedCrossAxisCount;
+
+    if (screenWidth >= 1200) {
+      // Large screens (desktop): 4-6 columns
+      optimalCrossAxisCount = (screenWidth / maxCardWidth).floor().clamp(4, 6);
+    } else if (screenWidth >= 900) {
+      // Medium-large screens (tablets landscape): 3-4 columns
+      optimalCrossAxisCount = (screenWidth / maxCardWidth).floor().clamp(3, 4);
+    } else if (screenWidth >= 600) {
+      // Medium screens (tablets portrait): 2-3 columns
+      optimalCrossAxisCount = (screenWidth / minCardWidth).floor().clamp(2, 3);
+    } else {
+      // Small screens (phones): 2 columns
+      optimalCrossAxisCount = 2;
+    }
+
+    // Calculate actual card width with the optimal column count
+    final cardWidth =
+        (screenWidth -
+            (padding * 2) -
+            (spacing * (optimalCrossAxisCount - 1))) /
+        optimalCrossAxisCount;
+
+    // Ensure card width is within bounds
+    final constrainedCardWidth = cardWidth.clamp(minCardWidth, maxCardWidth);
+
+    // Calculate aspect ratio based on constrained width
+    final aspectRatio = constrainedCardWidth / idealCardHeight;
+
+    return _ResponsiveGridParams(
+      crossAxisCount: optimalCrossAxisCount,
+      aspectRatio: aspectRatio,
+    );
+  }
+}
+
+/// Helper class to store responsive grid parameters
+class _ResponsiveGridParams {
+  final int crossAxisCount;
+  final double aspectRatio;
+
+  _ResponsiveGridParams({
+    required this.crossAxisCount,
+    required this.aspectRatio,
+  });
 }
 
 class _ReorderableAnimatedGrid extends StatefulWidget {
@@ -479,14 +538,22 @@ class _ReorderableAnimatedGridState extends State<_ReorderableAnimatedGrid> {
   @override
   Widget build(BuildContext context) {
     // Calculate card dimensions to maintain consistent size during drag
+    // Use actual card width based on aspect ratio constraints
+    const double minCardWidth = 160.0;
+    const double maxCardWidth = 280.0;
+    const double idealCardHeight = 170.0;
+
     final screenWidth = MediaQuery.of(context).size.width;
     final effectivePadding = 16.0;
-    final cardWidth =
+    final calculatedCardWidth =
         (screenWidth -
             (effectivePadding * 2) -
             (widget.crossAxisSpacing * (widget.crossAxisCount - 1))) /
         widget.crossAxisCount;
-    final cardHeight = cardWidth / widget.childAspectRatio;
+
+    // Constrain card width to look good on all screens
+    final cardWidth = calculatedCardWidth.clamp(minCardWidth, maxCardWidth);
+    final cardHeight = idealCardHeight;
 
     return GridView.builder(
       shrinkWrap: true,

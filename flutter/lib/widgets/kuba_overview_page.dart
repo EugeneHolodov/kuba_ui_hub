@@ -45,17 +45,17 @@ class KubaOverviewPage extends StatelessWidget {
     final effectivePadding = padding ?? _defaultPadding;
     final effectiveSpacing = spacing ?? _defaultSpacing;
 
-    // Calculate responsive aspect ratio based on screen width
+    // Calculate responsive grid parameters
     final screenWidth = MediaQuery.of(context).size.width;
-    final cardWidth =
-        (screenWidth -
-            (effectivePadding * 2) -
-            (effectiveSpacing * (crossAxisCount - 1))) /
-        crossAxisCount;
-    // Calculate aspect ratio to ensure enough height for content
-    // Base height needed: icon (48) + spacing (12) + value (~30) + label (~20) + subtitle (~16) + padding (32) = ~158
-    final minCardHeight = 160.0;
-    final aspectRatio = cardWidth / minCardHeight;
+    final responsiveParams = _calculateResponsiveGridParams(
+      screenWidth,
+      crossAxisCount,
+      effectivePadding,
+      effectiveSpacing,
+    );
+
+    final effectiveCrossAxisCount = responsiveParams.crossAxisCount;
+    final aspectRatio = responsiveParams.aspectRatio;
 
     return Container(
       color: backgroundColor ?? theme.colorScheme.surface,
@@ -75,7 +75,7 @@ class KubaOverviewPage extends StatelessWidget {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: crossAxisCount,
+                crossAxisCount: effectiveCrossAxisCount,
                 crossAxisSpacing: effectiveSpacing,
                 mainAxisSpacing: effectiveSpacing,
                 childAspectRatio: aspectRatio,
@@ -119,6 +119,66 @@ class KubaOverviewPage extends StatelessWidget {
       ],
     );
   }
+
+  /// Calculate responsive grid parameters based on screen width
+  /// Returns optimal cross axis count and aspect ratio for cards
+  static _ResponsiveGridParams _calculateResponsiveGridParams(
+    double screenWidth,
+    int requestedCrossAxisCount,
+    double padding,
+    double spacing,
+  ) {
+    // Define card constraints
+    const double minCardWidth = 160.0;
+    const double maxCardWidth = 280.0;
+    const double idealCardHeight = 170.0;
+
+    // Calculate optimal column count based on screen width
+    int optimalCrossAxisCount = requestedCrossAxisCount;
+
+    if (screenWidth >= 1200) {
+      // Large screens (desktop): 4-6 columns
+      optimalCrossAxisCount = (screenWidth / maxCardWidth).floor().clamp(4, 6);
+    } else if (screenWidth >= 900) {
+      // Medium-large screens (tablets landscape): 3-4 columns
+      optimalCrossAxisCount = (screenWidth / maxCardWidth).floor().clamp(3, 4);
+    } else if (screenWidth >= 600) {
+      // Medium screens (tablets portrait): 2-3 columns
+      optimalCrossAxisCount = (screenWidth / minCardWidth).floor().clamp(2, 3);
+    } else {
+      // Small screens (phones): 2 columns
+      optimalCrossAxisCount = 2;
+    }
+
+    // Calculate actual card width with the optimal column count
+    final cardWidth =
+        (screenWidth -
+            (padding * 2) -
+            (spacing * (optimalCrossAxisCount - 1))) /
+        optimalCrossAxisCount;
+
+    // Ensure card width is within bounds
+    final constrainedCardWidth = cardWidth.clamp(minCardWidth, maxCardWidth);
+
+    // Calculate aspect ratio based on constrained width
+    final aspectRatio = constrainedCardWidth / idealCardHeight;
+
+    return _ResponsiveGridParams(
+      crossAxisCount: optimalCrossAxisCount,
+      aspectRatio: aspectRatio,
+    );
+  }
+}
+
+/// Helper class to store responsive grid parameters
+class _ResponsiveGridParams {
+  final int crossAxisCount;
+  final double aspectRatio;
+
+  _ResponsiveGridParams({
+    required this.crossAxisCount,
+    required this.aspectRatio,
+  });
 }
 
 /// Metric card widget for overview page
