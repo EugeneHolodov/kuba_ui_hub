@@ -145,6 +145,9 @@ class _KubaInputState extends State<KubaInput> {
               fillColor: Theme.of(context).colorScheme.surface,
               errorText: widget.errorText,
               counterText: widget.maxLength != null ? null : '',
+              // Always reserve space for validation message
+              helperText: widget.errorText == null ? ' ' : null,
+              helperMaxLines: 1,
               suffixIcon: _hasValue()
                   ? IconButton(
                       icon: const Icon(Icons.close),

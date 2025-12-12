@@ -231,6 +231,9 @@ class _KubaDropdownVariant3State extends State<KubaDropdownVariant3>
                 hintText: widget.hintText,
                 filled: true,
                 fillColor: Theme.of(context).colorScheme.surface,
+                // Always reserve space for validation message (for future use)
+                helperText: ' ',
+                helperMaxLines: 1,
                 suffixIcon: hasValue
                     ? Row(
                         mainAxisSize: MainAxisSize.min,
