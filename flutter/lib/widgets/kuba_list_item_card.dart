@@ -169,14 +169,12 @@ class KubaListItemCard extends StatelessWidget {
         Alignment.centerRight,
       );
       // If secondaryBackground is provided but background is not, provide an empty background
-      if (backgroundWidget == null) {
-        backgroundWidget = Container(
-          decoration: BoxDecoration(
-            color: backgroundColor,
-            borderRadius: BorderRadius.circular(12),
-          ),
-        );
-      }
+      backgroundWidget ??= Container(
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          borderRadius: BorderRadius.circular(12),
+        ),
+      );
     }
 
     return Dismissible(

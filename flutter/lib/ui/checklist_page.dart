@@ -13,9 +13,9 @@ class _ChecklistPageState extends State<ChecklistPage> {
   KubaChecklistStatus? _checklist1;
   KubaChecklistStatus? _checklist2;
   KubaChecklistStatus? _checklist3;
-  KubaChecklistStatus? _checklist4 = KubaChecklistStatus.ok;
-  KubaChecklistStatus? _checklist5 = KubaChecklistStatus.na;
-  KubaChecklistStatus? _checklist6 = KubaChecklistStatus.deviation;
+  final KubaChecklistStatus? _checklist4 = KubaChecklistStatus.ok;
+  final KubaChecklistStatus? _checklist5 = KubaChecklistStatus.na;
+  final KubaChecklistStatus? _checklist6 = KubaChecklistStatus.deviation;
 
   @override
   Widget build(BuildContext context) {
