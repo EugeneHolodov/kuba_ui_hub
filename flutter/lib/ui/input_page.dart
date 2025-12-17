@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../widgets/kuba_input.dart';
 import '../widgets/kuba_input_variant2.dart';
 import '../widgets/kuba_number_input.dart';
+import '../widgets/kuba_phone_input.dart';
+import '../widgets/kuba_phone_input_variant2.dart';
 import '../widgets/review_input.dart';
 
 class InputPage extends StatefulWidget {
@@ -30,6 +32,22 @@ class _InputPageState extends State<InputPage> {
   int? _numberWithLimits;
   int? _numberWithError;
   int? _requiredNumber;
+
+  // Phone Input states
+  String? _primaryCountryCode;
+  String? _primaryPhoneNumber;
+  String? _secondaryCountryCode;
+  String? _secondaryPhoneNumber;
+  String? _phoneCountryCode;
+  String? _phonePhoneNumber;
+
+  // Phone Input Variant 2 states
+  String? _primaryCountryCodeV2;
+  String? _primaryPhoneNumberV2;
+  String? _secondaryCountryCodeV2;
+  String? _secondaryPhoneNumberV2;
+  String? _phoneCountryCodeV2;
+  String? _phonePhoneNumberV2;
 
   @override
   Widget build(BuildContext context) {
@@ -81,6 +99,34 @@ class _InputPageState extends State<InputPage> {
             const SizedBox(height: 16),
             _buildNumberInputBlock(),
             const SizedBox(height: 32),
+            const Divider(),
+            const SizedBox(height: 24),
+            const Text(
+              'Phone Input',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Phone number input with separate country code and phone number fields. Supports validation and error states.',
+              style: TextStyle(fontSize: 13, color: Colors.grey),
+            ),
+            const SizedBox(height: 16),
+            _buildPhoneInputBlock(),
+            const SizedBox(height: 32),
+            const Divider(),
+            const SizedBox(height: 24),
+            const Text(
+              'Phone Input Variant 2',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Phone input without label, with country dropdown and validation icon on the right. Compact design similar to Input Variant 2.',
+              style: TextStyle(fontSize: 13, color: Colors.grey),
+            ),
+            const SizedBox(height: 16),
+            _buildPhoneInputVariant2Block(),
+            const SizedBox(height: 32),
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -118,6 +164,16 @@ class _InputPageState extends State<InputPage> {
                       'Number Input: Specialized input field for numeric values with +1/-1 increment/decrement buttons integrated in the prefix area. Features validation icon support (check when valid, error when invalid), min/max value constraints, and customizable step size. Perfect for quantity selectors, counters, and any numeric input that benefits from quick adjustment buttons.',
                       style: TextStyle(fontSize: 14),
                     ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Phone Input: Phone number input widget with separate country code dropdown and phone number fields. The country code dropdown shows flags and codes for easy selection (Norway, Sweden, Denmark, Germany, England, USA, Canada). The phone number field accepts only digits. Both variants support validation states. Perfect for phone number collection in forms.',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Phone Input Variant 2: Compact phone input without label, with country dropdown on the left and validation icon on the right. Similar to Input Variant 2 design - cleaner, more compact layout suitable for forms with limited space.',
+                      style: TextStyle(fontSize: 14),
+                    ),
                     const SizedBox(height: 12),
                     const Divider(),
                     const SizedBox(height: 12),
@@ -136,7 +192,9 @@ class _InputPageState extends State<InputPage> {
                       '• Customizable accent colors\n'
                       '• Number input with +1/-1 buttons\n'
                       '• Min/max value constraints\n'
-                      '• Validation icon support',
+                      '• Validation icon support\n'
+                      '• Phone input with country code dropdown and number fields\n'
+                      '• Phone input variant 2 (compact, without label)',
                       style: TextStyle(fontSize: 13),
                     ),
                     const SizedBox(height: 12),
@@ -372,6 +430,138 @@ class _InputPageState extends State<InputPage> {
               : null,
           accentColor: Theme.of(context).colorScheme.secondary,
           onAccentColor: Theme.of(context).colorScheme.onSecondary,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPhoneInputBlock() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        KubaPhoneInput(
+          countryCode: _primaryCountryCode,
+          phoneNumber: _primaryPhoneNumber,
+          onCountryCodeChanged: (String? value) {
+            setState(() {
+              _primaryCountryCode = value;
+            });
+          },
+          onPhoneNumberChanged: (String? value) {
+            setState(() {
+              _primaryPhoneNumber = value;
+            });
+          },
+          labelText: 'Primary Phone Input',
+          phoneNumberHint: 'Enter phone number',
+          accentColor: Theme.of(context).colorScheme.primary,
+          onAccentColor: Theme.of(context).colorScheme.onPrimary,
+        ),
+        const SizedBox(height: 24),
+        KubaPhoneInput(
+          countryCode: _secondaryCountryCode,
+          phoneNumber: _secondaryPhoneNumber,
+          onCountryCodeChanged: (String? value) {
+            setState(() {
+              _secondaryCountryCode = value;
+            });
+          },
+          onPhoneNumberChanged: (String? value) {
+            setState(() {
+              _secondaryPhoneNumber = value;
+            });
+          },
+          labelText: 'Secondary Phone Input',
+          phoneNumberHint: 'Enter phone number',
+          accentColor: Theme.of(context).colorScheme.secondary,
+          onAccentColor: Theme.of(context).colorScheme.onSecondary,
+        ),
+        const SizedBox(height: 24),
+        KubaPhoneInput(
+          countryCode: _phoneCountryCode,
+          phoneNumber: _phonePhoneNumber,
+          onCountryCodeChanged: (String? value) {
+            setState(() {
+              _phoneCountryCode = value;
+            });
+          },
+          onPhoneNumberChanged: (String? value) {
+            setState(() {
+              _phonePhoneNumber = value;
+            });
+          },
+          labelText: 'Phone Input with Validation',
+          phoneNumberHint: 'Enter phone number',
+          errorText: _phonePhoneNumber != null && _phonePhoneNumber!.length < 10
+              ? 'Phone number must be at least 10 digits'
+              : null,
+          accentColor: Theme.of(context).colorScheme.primary,
+          onAccentColor: Theme.of(context).colorScheme.onPrimary,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPhoneInputVariant2Block() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        KubaPhoneInputVariant2(
+          countryCode: _primaryCountryCodeV2,
+          phoneNumber: _primaryPhoneNumberV2,
+          onCountryCodeChanged: (String? value) {
+            setState(() {
+              _primaryCountryCodeV2 = value;
+            });
+          },
+          onPhoneNumberChanged: (String? value) {
+            setState(() {
+              _primaryPhoneNumberV2 = value;
+            });
+          },
+          hintText: 'Enter phone number',
+          accentColor: Theme.of(context).colorScheme.primary,
+          onAccentColor: Theme.of(context).colorScheme.onPrimary,
+        ),
+        const SizedBox(height: 24),
+        KubaPhoneInputVariant2(
+          countryCode: _secondaryCountryCodeV2,
+          phoneNumber: _secondaryPhoneNumberV2,
+          onCountryCodeChanged: (String? value) {
+            setState(() {
+              _secondaryCountryCodeV2 = value;
+            });
+          },
+          onPhoneNumberChanged: (String? value) {
+            setState(() {
+              _secondaryPhoneNumberV2 = value;
+            });
+          },
+          hintText: 'Enter phone number',
+          accentColor: Theme.of(context).colorScheme.secondary,
+          onAccentColor: Theme.of(context).colorScheme.onSecondary,
+        ),
+        const SizedBox(height: 24),
+        KubaPhoneInputVariant2(
+          countryCode: _phoneCountryCodeV2,
+          phoneNumber: _phonePhoneNumberV2,
+          onCountryCodeChanged: (String? value) {
+            setState(() {
+              _phoneCountryCodeV2 = value;
+            });
+          },
+          onPhoneNumberChanged: (String? value) {
+            setState(() {
+              _phonePhoneNumberV2 = value;
+            });
+          },
+          hintText: 'Enter phone number',
+          errorText:
+              _phonePhoneNumberV2 != null && _phonePhoneNumberV2!.length < 10
+              ? 'Phone number must be at least 10 digits'
+              : null,
+          accentColor: Theme.of(context).colorScheme.primary,
+          onAccentColor: Theme.of(context).colorScheme.onPrimary,
         ),
       ],
     );
