@@ -188,120 +188,146 @@ class _KubaSignatureInputState extends State<KubaSignatureInput> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Container(
-                          height: 120,
-                          decoration: BoxDecoration(
-                            color: colorScheme.surfaceContainerHighest,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: _signatureData != null
-                              ? ClipRRect(
-                                  borderRadius: BorderRadius.circular(12),
-                                  child: Image.memory(
-                                    _signatureData!,
-                                    fit: BoxFit.contain,
+                        Stack(
+                          children: [
+                            Container(
+                              height: 120,
+                              decoration: BoxDecoration(
+                                color: _signatureData != null
+                                    ? Colors.white
+                                    : colorScheme.surfaceContainerHighest,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: _signatureData != null
+                                  ? ClipRRect(
+                                      borderRadius: BorderRadius.circular(12),
+                                      child: Center(
+                                        child: Image.memory(
+                                          _signatureData!,
+                                          fit: BoxFit.contain,
+                                        ),
+                                      ),
+                                    )
+                                  : Center(
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            Icons.draw_outlined,
+                                            size: 40,
+                                            color: colorScheme.onSurfaceVariant
+                                                .withValues(alpha: 0.5),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Text(
+                                            widget.hint ?? 'No signature yet',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium
+                                                ?.copyWith(
+                                                  color: colorScheme
+                                                      .onSurfaceVariant
+                                                      .withValues(alpha: 0.7),
+                                                ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                            ),
+                            // Pencil icon at top right (only when signature exists)
+                            if (_signatureData != null)
+                              Positioned(
+                                top: 8,
+                                right: 8,
+                                child: Icon(
+                                  Icons.edit,
+                                  size: 20,
+                                  color: colorScheme.primary,
+                                ),
+                              ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        // Reserved space for timestamp and delete button
+                        SizedBox(
+                          height: 32,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              if (_timestamp != null)
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 6,
                                   ),
-                                )
-                              : Center(
-                                  child: Column(
+                                  decoration: BoxDecoration(
+                                    color: colorScheme.primary.withValues(
+                                      alpha: 0.12,
+                                    ),
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      color: colorScheme.primary.withValues(
+                                        alpha: 0.3,
+                                      ),
+                                      width: 0.5,
+                                    ),
+                                  ),
+                                  child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Icon(
-                                        Icons.draw_outlined,
-                                        size: 40,
-                                        color: colorScheme.onSurfaceVariant
-                                            .withValues(alpha: 0.5),
+                                        Icons.access_time,
+                                        size: 14,
+                                        color: colorScheme.primary,
                                       ),
-                                      const SizedBox(height: 8),
+                                      const SizedBox(width: 6),
                                       Text(
-                                        widget.hint ?? 'No signature yet',
+                                        _formatTimestamp(_timestamp!),
                                         style: Theme.of(context)
                                             .textTheme
-                                            .bodyMedium
+                                            .bodySmall
                                             ?.copyWith(
-                                              color: colorScheme
-                                                  .onSurfaceVariant
-                                                  .withValues(alpha: 0.7),
+                                              color: colorScheme.primary,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w600,
                                             ),
                                       ),
                                     ],
                                   ),
-                                ),
-                        ),
-                        const SizedBox(height: 12),
-                        Row(
-                          children: [
-                            if (_timestamp != null) ...[
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: colorScheme.secondaryContainer,
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      Icons.access_time,
-                                      size: 14,
-                                      color: colorScheme.onSecondaryContainer,
+                                )
+                              else
+                                const SizedBox.shrink(),
+                              if (_signatureData != null)
+                                OutlinedButton(
+                                  onPressed: widget.enabled
+                                      ? _clearSignature
+                                      : null,
+                                  style: OutlinedButton.styleFrom(
+                                    foregroundColor: colorScheme.error,
+                                    backgroundColor: colorScheme.errorContainer,
+                                    side: BorderSide(
+                                      color: colorScheme.error,
+                                      width: 1,
                                     ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      _formatTimestamp(_timestamp!),
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall
-                                          ?.copyWith(
-                                            color: colorScheme
-                                                .onSecondaryContainer,
-                                            fontWeight: FontWeight.w500,
-                                          ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
                                     ),
-                                  ],
-                                ),
-                              ),
-                              const Spacer(),
-                            ] else
-                              const Spacer(),
-                            if (_signatureData != null) ...[
-                              IconButton(
-                                onPressed: widget.enabled
-                                    ? _clearSignature
-                                    : null,
-                                icon: const Icon(Icons.delete_outline),
-                                tooltip: 'Clear signature',
-                                style: IconButton.styleFrom(
-                                  foregroundColor: colorScheme.error,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 8,
+                                    ),
+                                    minimumSize: const Size(0, 32),
+                                  ),
+                                  child: const Icon(
+                                    Icons.delete_outline,
+                                    size: 18,
+                                  ),
+                                )
+                              else
+                                const SizedBox.shrink(),
                             ],
-                            FilledButton.icon(
-                              onPressed: widget.enabled
-                                  ? _openSignatureDrawer
-                                  : null,
-                              icon: Icon(
-                                _signatureData != null
-                                    ? Icons.edit
-                                    : Icons.draw,
-                                size: 18,
-                              ),
-                              label: Text(
-                                _signatureData != null ? 'Redraw' : 'Draw',
-                              ),
-                              style: FilledButton.styleFrom(
-                                backgroundColor: colorScheme.primary,
-                                foregroundColor: colorScheme.onPrimary,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
                       ],
                     ),
