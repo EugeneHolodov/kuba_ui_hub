@@ -14,30 +14,28 @@ class _SignaturePageState extends State<SignaturePage> {
   Uint8List? _customerSignature;
   Uint8List? _managerSignature;
   Uint8List? _witnessSignature;
+  bool _showValidation = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Signature Input'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Signature Input'), centerTitle: true),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           // Header
           Text(
             'Signature Drawing Widget',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Text(
             'A reusable signature input widget with drawing canvas, timestamp, and preview.',
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: 32),
 
@@ -47,7 +45,9 @@ class _SignaturePageState extends State<SignaturePage> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
               side: BorderSide(
-                color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.5),
+                color: Theme.of(
+                  context,
+                ).colorScheme.outline.withValues(alpha: 0.5),
               ),
             ),
             child: Padding(
@@ -58,21 +58,23 @@ class _SignaturePageState extends State<SignaturePage> {
                   Text(
                     'Features',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 12),
                   _buildFeatureItem(
                     context,
                     icon: Icons.draw,
                     title: 'Drawing Canvas',
-                    description: 'Smooth signature drawing with touch or stylus',
+                    description:
+                        'Smooth signature drawing with touch or stylus',
                   ),
                   _buildFeatureItem(
                     context,
                     icon: Icons.access_time,
                     title: 'Timestamp',
-                    description: 'Automatic timestamp when signature is created',
+                    description:
+                        'Automatic timestamp when signature is created',
                   ),
                   _buildFeatureItem(
                     context,
@@ -101,16 +103,19 @@ class _SignaturePageState extends State<SignaturePage> {
           // Examples Section
           Text(
             'Examples',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
 
-          // Example 1: Customer Signature
+          // Example 1: Customer Signature (Required with validation)
           KubaSignatureInput(
             label: 'Customer Signature',
             hint: 'Tap "Draw" to sign',
+            errorText: _showValidation && _customerSignature == null
+                ? 'Customer signature required'
+                : null,
             onSignatureChanged: (signature) {
               setState(() {
                 _customerSignature = signature;
@@ -119,12 +124,14 @@ class _SignaturePageState extends State<SignaturePage> {
           ),
           const SizedBox(height: 24),
 
-          // Example 2: Manager Approval
+          // Example 2: Manager Approval (Required with validation)
           KubaSignatureInput(
             label: 'Manager Approval',
             hint: 'Manager signature required',
-            strokeColor: Theme.of(context).colorScheme.secondary,
             strokeWidth: 4.0,
+            errorText: _showValidation && _managerSignature == null
+                ? 'Manager approval required'
+                : null,
             onSignatureChanged: (signature) {
               setState(() {
                 _managerSignature = signature;
@@ -137,7 +144,6 @@ class _SignaturePageState extends State<SignaturePage> {
           KubaSignatureInput(
             label: 'Witness Signature',
             hint: 'Optional witness signature',
-            strokeColor: Theme.of(context).colorScheme.tertiary,
             strokeWidth: 2.5,
             onSignatureChanged: (signature) {
               setState(() {
@@ -169,9 +175,8 @@ class _SignaturePageState extends State<SignaturePage> {
                       const SizedBox(width: 8),
                       Text(
                         'Signature Status',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -199,20 +204,27 @@ class _SignaturePageState extends State<SignaturePage> {
 
           // Submit Button (demo)
           FilledButton(
-            onPressed: _customerSignature != null && _managerSignature != null
-                ? () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: const Text('Signatures submitted successfully!'),
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        behavior: SnackBarBehavior.floating,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                    );
-                  }
-                : null,
+            onPressed: () {
+              if (_customerSignature != null && _managerSignature != null) {
+                setState(() {
+                  _showValidation = false;
+                });
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: const Text('Signatures submitted successfully!'),
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                );
+              } else {
+                setState(() {
+                  _showValidation = true;
+                });
+              }
+            },
             style: FilledButton.styleFrom(
               minimumSize: const Size(double.infinity, 56),
               backgroundColor: Theme.of(context).colorScheme.primary,
@@ -223,10 +235,7 @@ class _SignaturePageState extends State<SignaturePage> {
             ),
             child: const Text(
               'Submit All Signatures',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
           ),
           const SizedBox(height: 32),
@@ -269,16 +278,16 @@ class _SignaturePageState extends State<SignaturePage> {
               children: [
                 Text(
                   title,
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   description,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ],
             ),
@@ -293,27 +302,26 @@ class _SignaturePageState extends State<SignaturePage> {
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
-            Icon(
-              isSigned ? Icons.check_circle : Icons.radio_button_unchecked,
-              size: 20,
-              color: isSigned
-                  ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
-            ),
-          const SizedBox(width: 8),
-          Text(
-            label,
-            style: Theme.of(context).textTheme.bodyMedium,
+          Icon(
+            isSigned ? Icons.check_circle : Icons.radio_button_unchecked,
+            size: 20,
+            color: isSigned
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(
+                    context,
+                  ).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
           ),
+          const SizedBox(width: 8),
+          Text(label, style: Theme.of(context).textTheme.bodyMedium),
           const Spacer(),
           Text(
             isSigned ? 'Signed' : 'Pending',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: isSigned
-                      ? Theme.of(context).colorScheme.primary
-                      : Theme.of(context).colorScheme.onSurfaceVariant,
-                  fontWeight: FontWeight.w500,
-                ),
+              color: isSigned
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(context).colorScheme.onSurfaceVariant,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ],
       ),
@@ -336,9 +344,9 @@ class _SignaturePageState extends State<SignaturePage> {
           children: [
             Text(
               'Usage Example',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
             Container(
@@ -351,7 +359,6 @@ class _SignaturePageState extends State<SignaturePage> {
                 '''KubaSignatureInput(
   label: 'Customer Signature',
   hint: 'Tap "Draw" to sign',
-  strokeColor: Colors.blue,
   strokeWidth: 3.0,
   onSignatureChanged: (signature) {
     // Handle signature data (Uint8List)
@@ -359,9 +366,9 @@ class _SignaturePageState extends State<SignaturePage> {
   },
 )''',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontFamily: 'monospace',
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
+                  fontFamily: 'monospace',
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
               ),
             ),
           ],
@@ -370,4 +377,3 @@ class _SignaturePageState extends State<SignaturePage> {
     );
   }
 }
-

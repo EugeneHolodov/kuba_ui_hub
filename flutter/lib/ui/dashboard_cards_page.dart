@@ -579,7 +579,7 @@ class _ReorderableAnimatedGridState extends State<_ReorderableAnimatedGrid> {
 
         return DragTarget<int>(
           onWillAcceptWithDetails: (data) {
-            if (data != null && data != index) {
+            if (data.data != index) {
               setState(() {
                 _targetIndex = index;
               });
@@ -593,7 +593,7 @@ class _ReorderableAnimatedGridState extends State<_ReorderableAnimatedGrid> {
             });
           },
           onAcceptWithDetails: (data) {
-            if (data != index) {
+            if (data.data != index) {
               widget.onReorder(data.data, index);
               setState(() {
                 _draggedIndex = null;
