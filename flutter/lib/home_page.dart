@@ -4,7 +4,6 @@ import 'ui/bottom_sheet_page.dart';
 import 'ui/date_picker_page.dart';
 import 'ui/input_page.dart';
 import 'ui/signature_page.dart';
-import 'ui/checklist_page.dart';
 import 'ui/search_bar_menu_page.dart';
 import 'ui/fab_menu_page.dart';
 import 'ui/nav_bar_tabs_menu_page.dart';
@@ -19,6 +18,7 @@ import 'ui/dialog_menu_page.dart';
 import 'ui/switch_page.dart';
 import 'ui/toggle_menu_page.dart';
 import 'ui/feature_list_card_menu_page.dart';
+import 'ui/checklist_overview_page.dart';
 import 'pages/startup_page.dart';
 import 'services/storage_service.dart';
 
@@ -1278,7 +1278,7 @@ class _HomePageState extends State<HomePage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const ChecklistPage(),
+                      builder: (context) => const ChecklistOverviewPage(),
                     ),
                   );
                 },
@@ -1309,13 +1309,13 @@ class _HomePageState extends State<HomePage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Checklist',
+                              'Checklist Card',
                               style: Theme.of(context).textTheme.titleMedium
                                   ?.copyWith(fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              'Three-state checklist: OK, N/A, Deviation',
+                              'Expandable checklist with attachments and status',
                               style: Theme.of(context).textTheme.bodySmall,
                             ),
                           ],

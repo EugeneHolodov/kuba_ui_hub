@@ -68,7 +68,7 @@ class _KubaFeatureListCardState extends State<KubaFeatureListCard> {
       width: double.infinity,
       height: cardHeight,
       child: Card(
-        elevation: 2,
+        elevation: 5,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: InkWell(
           onTap: widget.onTap,

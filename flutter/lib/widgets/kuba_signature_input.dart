@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'dart:ui' as ui;
 import 'dart:typed_data';
 import 'kuba_bottom_sheet/kuba_bottom_sheet.dart';
+import 'kuba_divider_titled.dart';
 
 /// Reusable signature drawing input widget
 class KubaSignatureInput extends StatefulWidget {
@@ -329,6 +330,15 @@ class _KubaSignatureInputState extends State<KubaSignatureInput> {
                             ],
                           ),
                         ),
+                        // Divider after timestamp
+                        if (_timestamp != null) ...[
+                          const SizedBox(height: 12),
+                          KubaDividerTitled(
+                            title: '',
+                            variant: DividerVariant.fullWidth,
+                            spacing: 0,
+                          ),
+                        ],
                       ],
                     ),
                   ),
