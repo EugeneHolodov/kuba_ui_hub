@@ -407,6 +407,10 @@ class _ChecklistOverviewPageState extends State<ChecklistOverviewPage> {
                       context,
                       'Elevation: 5 for depth and prominence',
                     ),
+                    _buildFeatureInfo(
+                      context,
+                      'Smooth Animations: Expandable sections with easeInOut curves',
+                    ),
                   ],
                 ),
               ),

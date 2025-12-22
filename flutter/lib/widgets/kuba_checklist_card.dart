@@ -10,6 +10,7 @@ import 'kuba_attachment.dart';
 /// - Segmented control for status (ok, n/a, deviation)
 /// - Expandable attachments section with required add button and swipeable delete
 /// - Expandable comment input with badge
+/// - Smooth animations for all expandable sections
 class KubaChecklistCard extends StatefulWidget {
   final String title;
   final String? subtitle;
@@ -207,65 +208,85 @@ class _KubaChecklistCardState extends State<KubaChecklistCard> {
                       const SizedBox(height: 16),
 
                       // Comment input section (expandable)
-                      if (widget.onCommentChanged != null &&
-                          _isCommentExpanded) ...[
-                        TextField(
-                          controller: _commentController,
-                          onChanged: widget.onCommentChanged!,
-                          maxLines: 3,
-                          decoration: InputDecoration(
-                            labelText: 'Comment',
-                            hintText: 'Enter your comment...',
-                            filled: true,
-                            fillColor: colorScheme.surface,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(16),
-                              borderSide: BorderSide(
-                                color: colorScheme.outline,
-                              ),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(16),
-                              borderSide: BorderSide(
-                                color: colorScheme.outline,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(16),
-                              borderSide: BorderSide(
-                                color: colorScheme.primary,
-                                width: 2,
-                              ),
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 16,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                      ],
+                      // Animated comment section
+                      AnimatedSize(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                        child:
+                            widget.onCommentChanged != null &&
+                                _isCommentExpanded
+                            ? Column(
+                                children: [
+                                  TextField(
+                                    controller: _commentController,
+                                    onChanged: widget.onCommentChanged!,
+                                    maxLines: 3,
+                                    decoration: InputDecoration(
+                                      labelText: 'Comment',
+                                      hintText: 'Enter your comment...',
+                                      filled: true,
+                                      fillColor: colorScheme.surface,
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(16),
+                                        borderSide: BorderSide(
+                                          color: colorScheme.outline,
+                                        ),
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(16),
+                                        borderSide: BorderSide(
+                                          color: colorScheme.outline,
+                                        ),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(16),
+                                        borderSide: BorderSide(
+                                          color: colorScheme.primary,
+                                          width: 2,
+                                        ),
+                                      ),
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                            horizontal: 16,
+                                            vertical: 16,
+                                          ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16),
+                                ],
+                              )
+                            : const SizedBox.shrink(),
+                      ),
 
-                      // Signed by section (shown when status is selected)
-                      if (widget.status != null) ...[
-                        KubaDividerTitled(
-                          title: 'signed by',
-                          variant: DividerVariant.left,
-                          spacing: 0,
-                        ),
-                        if (widget.userName != null ||
-                            widget.timestamp != null) ...[
-                          const SizedBox(height: 12),
-                          KubaTag(
-                            label: widget.userName,
-                            timestamp: widget.timestamp,
-                            icon: Icons.person,
-                            color: colorScheme.primary,
-                            onColor: colorScheme.primary,
-                          ),
-                        ],
-                        const SizedBox(height: 16),
-                      ],
+                      // Animated signed by section (shown when status is selected)
+                      AnimatedSize(
+                        duration: const Duration(milliseconds: 350),
+                        curve: Curves.easeInOut,
+                        child: widget.status != null
+                            ? Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  KubaDividerTitled(
+                                    title: 'signed by',
+                                    variant: DividerVariant.left,
+                                    spacing: 0,
+                                  ),
+                                  if (widget.userName != null ||
+                                      widget.timestamp != null) ...[
+                                    const SizedBox(height: 12),
+                                    KubaTag(
+                                      label: widget.userName,
+                                      timestamp: widget.timestamp,
+                                      icon: Icons.person,
+                                      color: colorScheme.primary,
+                                      onColor: colorScheme.primary,
+                                    ),
+                                  ],
+                                  const SizedBox(height: 16),
+                                ],
+                              )
+                            : const SizedBox.shrink(),
+                      ),
 
                       // Attachments section (expandable)
                       _buildAttachmentsSection(context, theme, colorScheme),
@@ -360,6 +381,33 @@ class _KubaChecklistCardState extends State<KubaChecklistCard> {
     IconData? icon,
     bool isSelected,
   ) {
+    // Get status-specific colors
+    Color backgroundColor;
+    Color textColor;
+
+    if (isSelected) {
+      switch (status) {
+        case ChecklistStatus.ok:
+          // Lime green - fresh and positive, complements purple
+          backgroundColor = Colors.lightGreen.shade300;
+          textColor = Colors.black87;
+          break;
+        case ChecklistStatus.na:
+          // Purple-blue - complements primary purple color
+          backgroundColor = Colors.indigo.shade200;
+          textColor = Colors.black87;
+          break;
+        case ChecklistStatus.deviation:
+          // Deep orange - warm, matches the orange secondary color
+          backgroundColor = Colors.deepOrange.shade200;
+          textColor = Colors.black87;
+          break;
+      }
+    } else {
+      backgroundColor = Colors.transparent;
+      textColor = colorScheme.onSurface;
+    }
+
     return Expanded(
       child: InkWell(
         onTap: () {
@@ -385,9 +433,7 @@ class _KubaChecklistCardState extends State<KubaChecklistCard> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
           decoration: BoxDecoration(
-            color: isSelected
-                ? colorScheme.primaryContainer
-                : Colors.transparent,
+            color: backgroundColor,
             borderRadius: BorderRadius.only(
               topLeft: status == ChecklistStatus.ok
                   ? const Radius.circular(12)
@@ -407,9 +453,7 @@ class _KubaChecklistCardState extends State<KubaChecklistCard> {
             child: Text(
               label,
               style: theme.textTheme.labelMedium?.copyWith(
-                color: isSelected
-                    ? colorScheme.onPrimaryContainer
-                    : colorScheme.onSurface,
+                color: textColor,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
               ),
               textAlign: TextAlign.center,
@@ -442,7 +486,7 @@ class _KubaChecklistCardState extends State<KubaChecklistCard> {
             child: Container(
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
-                color: Colors.red,
+                color: colorScheme.secondary,
                 shape: BoxShape.circle,
               ),
               constraints: const BoxConstraints(minWidth: 18, minHeight: 18),
@@ -450,7 +494,7 @@ class _KubaChecklistCardState extends State<KubaChecklistCard> {
                 child: Text(
                   '1',
                   style: theme.textTheme.labelSmall?.copyWith(
-                    color: Colors.white,
+                    color: Colors.black,
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
                   ),
@@ -529,29 +573,39 @@ class _KubaChecklistCardState extends State<KubaChecklistCard> {
             ),
           ],
         ),
-        if (isExpanded && widget.attachments.isNotEmpty) ...[
-          const SizedBox(height: 12),
-          ...widget.attachments.asMap().entries.map((entry) {
-            final index = entry.key;
-            final attachment = entry.value;
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: KubaAttachment(
-                fileName: attachment.name,
-                type: _mapIconToAttachmentType(attachment.icon),
-                rightSwipeAction: widget.onAttachmentRemove != null
-                    ? SwipeAction(
-                        label: 'Delete',
-                        icon: Icons.delete,
-                        backgroundColor: colorScheme.error,
-                        iconColor: colorScheme.onError,
-                        onAction: () => widget.onAttachmentRemove!(index),
-                      )
-                    : null,
-              ),
-            );
-          }),
-        ],
+        // Animated attachments list
+        AnimatedSize(
+          duration: const Duration(milliseconds: 350),
+          curve: Curves.easeInOut,
+          child: isExpanded && widget.attachments.isNotEmpty
+              ? Column(
+                  children: [
+                    const SizedBox(height: 12),
+                    ...widget.attachments.asMap().entries.map((entry) {
+                      final index = entry.key;
+                      final attachment = entry.value;
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: KubaAttachment(
+                          fileName: attachment.name,
+                          type: _mapIconToAttachmentType(attachment.icon),
+                          rightSwipeAction: widget.onAttachmentRemove != null
+                              ? SwipeAction(
+                                  label: 'Delete',
+                                  icon: Icons.delete,
+                                  backgroundColor: colorScheme.error,
+                                  iconColor: colorScheme.onError,
+                                  onAction: () =>
+                                      widget.onAttachmentRemove!(index),
+                                )
+                              : null,
+                        ),
+                      );
+                    }),
+                  ],
+                )
+              : const SizedBox.shrink(),
+        ),
       ],
     );
   }
