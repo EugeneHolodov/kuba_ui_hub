@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'kuba_divider_titled.dart';
 import 'kuba_tag.dart';
 import 'kuba_attachment.dart';
+import '../config/kuba_colors.dart';
 
 /// Reusable Material 3 Checklist Card widget
 ///
@@ -389,22 +390,22 @@ class _KubaChecklistCardState extends State<KubaChecklistCard> {
       switch (status) {
         case ChecklistStatus.ok:
           // Lime green - fresh and positive, complements purple
-          backgroundColor = Colors.lightGreen.shade300;
+          backgroundColor = KubaColors.statusOk;
           textColor = Colors.black87;
           break;
         case ChecklistStatus.na:
           // Purple-blue - complements primary purple color
-          backgroundColor = Colors.indigo.shade200;
+          backgroundColor = KubaColors.statusNA;
           textColor = Colors.black87;
           break;
         case ChecklistStatus.deviation:
           // Deep orange - warm, matches the orange secondary color
-          backgroundColor = Colors.deepOrange.shade200;
+          backgroundColor = KubaColors.statusDeviation;
           textColor = Colors.black87;
           break;
       }
     } else {
-      backgroundColor = Colors.transparent;
+      backgroundColor = KubaColors.transparent;
       textColor = colorScheme.onSurface;
     }
 

@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'home_page.dart';
 import 'pages/startup_page.dart';
 import 'services/storage_service.dart';
+import 'config/kuba_theme.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,49 +17,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final app = MaterialApp(
       title: 'Kuba UI Hub',
-      theme: ThemeData(
-        // Material 3 design system with brand colors
-        // All components automatically use Material 3 styling:
-        // - DropdownMenu, DatePickerDialog, CalendarDatePicker
-        // - FilledButton, OutlinedButton, TextButton
-        // - AppBar, TextField, BottomSheet
-        useMaterial3: true,
-        // Helvetica font family
-        // On iOS/macOS: uses system Helvetica
-        // On other platforms: add Helvetica font files to fonts/ directory
-        // or it will fall back to system default sans-serif
-        fontFamily: 'Helvetica',
-        colorScheme: ColorScheme(
-          brightness: Brightness.light,
-          // Primary colors (Purple)
-          primary: const Color(0xFF93328E), // Primary
-          onPrimary: Colors.white,
-          primaryContainer: const Color(0xFF9E4799), // Primary Tint
-          onPrimaryContainer: Colors.white,
-          // Secondary colors (Orange/Amber)
-          secondary: const Color(0xFFF1B434), // Secondary
-          onSecondary: Colors.black87,
-          secondaryContainer: const Color(0xFFF2BC48), // Secondary Tint
-          onSecondaryContainer: Colors.black87,
-          // Error colors
-          error: Colors.red,
-          onError: Colors.white,
-          errorContainer: Colors.red.shade100,
-          onErrorContainer: Colors.red.shade900,
-          // Surface colors
-          surface: Colors.white,
-          onSurface: Colors.black87,
-          surfaceContainerHighest: Colors.grey.shade100,
-          onSurfaceVariant: Colors.black87,
-          // Outline colors
-          outline: Colors.grey.shade400,
-          outlineVariant: Colors.grey.shade300,
-          // Shadow
-          shadow: Colors.black26,
-          // Surface tint
-          surfaceTint: const Color(0xFF93328E),
-        ),
-      ),
+      // Use centralized theme configuration
+      theme: KubaTheme.lightTheme,
+      darkTheme: KubaTheme.darkTheme,
+      themeMode: ThemeMode.light, // Change to ThemeMode.system for system theme
       home: const _AppInitializer(),
     );
 
